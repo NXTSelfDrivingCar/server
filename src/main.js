@@ -1,8 +1,11 @@
-var http = require("http");
+
 var userController = require("./user/userController");
 var User = require("./user/userModel");
-var mongoClient = require("mongodb").MongoClient;
 var port = 5000;
+var express = require("express");
+var session = require("express-session");
+var filestore = require("session-file-store")(session);
+var path = require("path");
 
 /* 
 	Routes:
@@ -11,7 +14,7 @@ var port = 5000;
 	/user/delete - delete a user
 */
 
-function printMainPage() {
+function printMainPage(req, res) {
   res.writeHead(200, { "Content-Type": "text/html" });
 
   res.write("<html><body><p>This is home page.</p></body></html>");
@@ -64,20 +67,22 @@ function parseUser(req, res) {
   });
 }
 
-var server = http.createServer(function (req, res) {
-  switch (req.url) {
-    case "/":
-      printMainPage(req, res);
-      break;
-    case "/user/register":
-      registerUser(req, res);
-      break;
-    case "/user/delete":
-      deleteUser(req, res);
-      break;
-    default:
-      res.end("Invalid request!");
-  }
+var server = express();
+
+server.get("/", (req, res) => {
+  printMainPage(req, res);
+});
+
+server.get("/user/register", (req, res) => {
+  registerUser(req, res);
+});
+
+server.get("/user/delete", (req, res) => {
+  deleteUser(req, res);
+});
+
+server.get("*", (req, res) => {
+  res.end("Invalid request!");
 });
 
 server.listen(port, function (err) {
