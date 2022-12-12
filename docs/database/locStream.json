@@ -1,0 +1,16 @@
+{
+  "locationStream": {
+    "streamID": "<stream_id>",
+    "streamName": "<stream_name>",
+    "streamOwner": "<stream_owner/userID>",
+    "beginTime": "<begin_time>",
+    "endTime": "<end_time>",
+    "location": {
+      "startingX": 0,
+      "startingY": 0,
+      "endingX": 0,
+      "endingY": 0,
+      "accuracy": 0
+    }
+  }
+}

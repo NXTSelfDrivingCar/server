@@ -1,0 +1,10 @@
+{
+  "user": {
+    "unique_id": "<user unique_id>",
+    "stream_id": "<stream_id>",
+    "username": "<your username>",
+    "password": "<your password>",
+    "email": "<your email>",
+    "NXT_API_Key": "<your NXT API key>"
+  }
+}
