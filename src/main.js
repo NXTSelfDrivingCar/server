@@ -5,9 +5,6 @@ var express = require("express");
 var session = require("express-session");
 var filestore = require("session-file-store")(session);
 var path = require("path");
-const { equal } = require("assert");
-const { truncate } = require("fs");
-const { getHashes } = require("crypto");
 
 /* 
 	Routes:
