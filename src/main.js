@@ -6,6 +6,8 @@ var session = require("express-session");
 var filestore = require("session-file-store")(session);
 var path = require("path");
 
+const nonAuthRoutes = ["/favicon.ico", "/user/register", "/user/admin/auth"];
+
 /* 
 	Routes:
 	/ - test page
@@ -68,32 +70,52 @@ function parseUser(req, res) {
   });
 }
 
+function auth(req, res) {
+  // var authHeader = req.headers.authorization;
+  // var auth = new Buffer.from(authHeader.split(" ")[1], "base64")
+  //   .toString()
+  //   .split(":");
+  // // Reading username and password
+  // var username = auth[0];
+  // var password = auth[1];
+  // if (username == "admin" && password == "password") {
+  //   req.session.user = "admin";
+  //   return true;
+  // } else {
+  //   return checkAuth(req, res);
+  // }
+
+  console.log("auth");
+}
+
+function isInArray(value, array) {
+  return array.indexOf(value) > -1;
+}
+
 function checkAuth(req, res, next) {
-  //Za session detalje
-  console.log(req.session);
+  console.log(req.url);
 
+  if (isInArray(req.url, nonAuthRoutes)) {
+    console.log("Non auth route");
+    next(); // pozvati next kako bi se pokrenula sledeca funkcija u ruti
+    return; // i zavrsiti funkciju ovde, umesto da poziva ostatak
+  }
+
+  // if the user is not authenticated
   if (!req.session.user) {
-    var authHeader = req.headers.authorization;
-    var err = new Error("User not authenticated");
-    res.setHeader("WWW-Authenticate", "Basic");
-    err.status = 401;
-    next(err);
+    res.redirect("/user/admin/auth"); // neka bude za sada admin auth, a posle moze da bude user login
 
-    var auth = new Buffer.from(authHeader.split(' ')[1], "base64").toString().split(":");
-
-    // Reading username and password
-    var username = auth[0];
-    var password = auth[1];
-    if (username == "admin" && password == "password") {
-        req.session.user = "admin";
-        return true;
-    }else{
-      return checkAuth(req, res);
+    if (isInArray(req.url, nonAuthRoutes)) {
+      console.log("Non auth route");
     }
-  }else{
+
+    req.session.user = "guest";
+  } else {
     if (req.session.user == "admin") {
+      // ako je admin
+      // promeniti da li je korisnik tipa admin iz baze, a ne samo hardcode
       return true;
-    }else{
+    } else {
       return checkAuth(req, res);
     }
   }
@@ -101,13 +123,15 @@ function checkAuth(req, res, next) {
 
 var server = express();
 
-server.use(session({
-  name: "session-id",
-  secret: "nxtEnter",
-  saveUninitialized: false,
-  resave: false,
-  store: new filestore()
-}));
+server.use(
+  session({
+    name: "session-id",
+    secret: "nxtEnter",
+    saveUninitialized: false,
+    resave: false,
+    store: new filestore(),
+  })
+);
 
 server.get("/", (req, res) => {
   printMainPage(req, res);
@@ -116,15 +140,26 @@ server.get("/", (req, res) => {
 server.get("/logout", (req, res) => {
   res.status(200).clearCookie("session-id");
   req.session.destroy(function (err) {
-    res.redirect('/');
+    res.redirect("/");
   });
-})
+});
 
 //Sve ispod ovoga zahteva auth
 server.use(checkAuth);
 
 server.get("/user/register", (req, res) => {
-  registerUser(req, res);
+  //registerUser(req, res);
+  console.log("Tried to register user");
+});
+
+server.get("/user/admin/auth", (req, res) => {
+  console.log("Admin auth");
+
+  auth(req, res);
+});
+
+server.get("/admin/dashboard", (req, res) => {
+  console.log("Admin dashboard");
 });
 
 server.get("/user/delete", (req, res) => {

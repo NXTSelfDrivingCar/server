@@ -1,0 +1,13 @@
+{
+  "unique_id": "<ticket unique_id>",
+  "date_created": "2013-05-28T18:46:03Z",
+  "date_updated": "2013-05-28T18:46:03Z",
+  "type": "incident",
+  "status": "open",
+  "subject": "My printer is on fire!",
+  "description": "The smoke is very colorful.",
+  "priority": "high",
+  "requester_id": 123456789,
+  "submitter_id": 123456789,
+  "follower_ids": [123456789, 123456789]
+}

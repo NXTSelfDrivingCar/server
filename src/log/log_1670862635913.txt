@@ -1,0 +1,3 @@
+[INFO] [12/11/2022 17:30:35]: "Log file opened"
+[INFO] [12/11/2022 17:30:35]: "Node.js REST web server at port 5000 is running."
+[INFO] [12/11/2022 17:31:1]: "User IsidorJokic:jokic.isidor@gmail.com inserted"
