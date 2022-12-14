@@ -9,18 +9,25 @@ const DATABASE = "testDB";
  * @param {String} collectionName Name of the collection to insert the user into
  * @returns {User} User object that was inserted or `null`
  */
-function insertUser(user, collectionName) {
+async function insertUser(user, collectionName) {
+  var returnValue = false;
+
   mongoClient.connect(CONNECTION, function (err, client) {
     if (err) throw err;
 
     var db = client.db(DATABASE);
 
-    return db.collection(collectionName).insertOne(user, function (err, res) {
-      if (err) throw err;
+    db.collection(collectionName).insertOne(user, function (err, res) {
+      if (err) {
+        console.log("There has been an error inserting the user" + err);
+        returnValue = false;
+      }
       console.log("1 document inserted");
+      returnValue = true;
     });
   });
-  return null;
+
+  return returnValue;
 }
 /**
  * Removes a user from the database
@@ -30,21 +37,26 @@ function insertUser(user, collectionName) {
  *
  */
 function removeUser(user, collectionName) {
+  var deleted = false;
+
   var found = findUserByUsername(user.username, collectionName).then((res) => {
     if (res) {
       mongoClient.connect(CONNECTION, function (err, client) {
         var db = client.db(DATABASE);
 
-        return db
-          .collection(collectionName)
-          .deleteOne(res, function (err, res) {
-            if (err) throw err;
-            console.log("1 document deleted");
-          });
+        db.collection(collectionName).deleteOne(res, function (err, res) {
+          if (err) {
+            throw err;
+          }
+          console.log("1 document deleted");
+          deleted = true;
+        });
       });
     }
-    return null;
+    deleted = false;
   });
+
+  return deleted;
 }
 
 /**
