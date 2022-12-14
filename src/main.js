@@ -35,9 +35,8 @@ async function loginUser(req, res) {
   var foundUser = await userController.loginUser(username, password);
   if (foundUser == null) res.end("User not found!");
   else {
-    console.log(foundUser);
-
-    req.session.user = { username: username, role: "admin" }; // hardcode role
+    // ovde je bolje da se koristi userID umesto username
+    req.session.user = { user_session_id: foundUser.id };
     res.end("User logged in!");
   }
 }
@@ -47,6 +46,8 @@ async function loginUser(req, res) {
 
 // Dodati auto role user
 async function registerUser(req, res) {
+  console.log(req.body);
+
   // make a new user
   var newUser = new User(
     req.body.username,
@@ -72,7 +73,7 @@ function isInArray(value, array) {
   return array.indexOf(value) > -1;
 }
 
-function checkAuth(req, res, next) {
+async function checkAuth(req, res, next) {
   // console.log(req.url);
 
   if (isInArray(req.url, nonAuthRoutes)) {
@@ -86,12 +87,17 @@ function checkAuth(req, res, next) {
     req.session.user = "guest";
     res.redirect("/user/admin/auth"); // neka bude za sada admin auth, a posle moze da bude user login
   } else {
-    if (req.session.user == "admin") {
-      // ako je admin
-      // promeniti da li je korisnik tipa admin iz baze, a ne samo hardcode
+    var isAdmin = await userController.checkAdmin(
+      req.session.user.user_session_id
+    );
+    if (isAdmin) {
+      console.log("User is admin");
+      next();
       return true;
     } else {
-      return;
+      console.log("User not admin");
+      res.redirect("/user/admin/auth");
+      return false;
     }
   }
 
@@ -111,6 +117,8 @@ server.use(
 );
 
 server.use(express.urlencoded({ extended: true }));
+// q: how to save route after login?
+// a: https://stackoverflow.com/questions/13758207/redirecting-to-a-page-after-login-in-node-js
 
 server.get("/", (req, res) => {
   printMainPage(req, res);
@@ -136,7 +144,7 @@ server.get("/user/admin/auth", checkAuth, (req, res) => {
   res.sendFile(path.join(__dirname, "resources", "login_page.html"));
 });
 
-server.get("/admin/dashboard", (req, res) => {
+server.get("/admin/dashboard", checkAuth, (req, res) => {
   console.log("Admin dashboard");
 });
 

@@ -8,7 +8,7 @@ class User {
     this.password = password;
     this.email = email;
     this.nxt_api_key = nxt_api_key;
-    this.roel = role;
+    this.role = role;
   }
 }
 

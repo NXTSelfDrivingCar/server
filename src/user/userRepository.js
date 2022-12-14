@@ -104,4 +104,29 @@ function findUserByUsername(uname, collectionName) {
   });
 }
 
-module.exports = { insertUser, findUser, removeUser, findUserByUsername };
+function findUserById(id, collectionName) {
+  // Promises are used to handle asynchronous operations
+  return new Promise((resolve, reject) => {
+    mongoClient.connect(CONNECTION, function (err, client) {
+      if (err) throw err;
+
+      var db = client.db(DATABASE);
+
+      // Find the user with the specified id
+      db.collection(collectionName).findOne({ id: id }, function (err, result) {
+        if (err) throw err;
+
+        // Return the user object
+        resolve(result);
+      });
+    });
+  });
+}
+
+module.exports = {
+  insertUser,
+  findUser,
+  removeUser,
+  findUserByUsername,
+  findUserById,
+};

@@ -6,8 +6,12 @@ function findUser(user) {
   return userRepository.findUser(user, USERS_COLLECTION);
 }
 
-function findUserByUsername(username) {
-  return userRepository.findUserByUsername(username, USERS_COLLECTION);
+async function findUserByUsername(username) {
+  return await userRepository.findUserByUsername(username, USERS_COLLECTION);
+}
+
+async function findUserById(id) {
+  return await userRepository.findUserById(id, USERS_COLLECTION);
 }
 /**
  * Inserts a user into the database
@@ -56,4 +60,14 @@ async function removeUser(username) {
   return null;
 }
 
-module.exports = { findUser, registerUser, removeUser, loginUser };
+async function checkAdmin(id) {
+  var foundUser = await userRepository.findUserById(id, USERS_COLLECTION);
+  if (foundUser) {
+    if (foundUser.role === "admin") {
+      return true;
+    }
+  }
+  return false;
+}
+
+module.exports = { findUser, registerUser, removeUser, loginUser, checkAdmin };
