@@ -24,10 +24,36 @@ function registerUser(user) {
       }
       return userRepository.insertUser(user, USERS_COLLECTION);
     });
+  return foundUser;
 }
 
-function removeUser(user) {
-  return userRepository.removeUser(user, USERS_COLLECTION);
+function loginUser(username, password) {
+  var foundUser = userRepository
+    .findUserByUsername(username, USERS_COLLECTION)
+    .then((result) => {
+      if (result) {
+        if (result.password === password) {
+          console.log("User logged in");
+          return result;
+        } else {
+          return null;
+        }
+      }
+      return null;
+    });
+  return foundUser;
 }
 
-module.exports = { findUser, registerUser, removeUser };
+async function removeUser(username) {
+  var foundUser = await userRepository.findUserByUsername(
+    username,
+    USERS_COLLECTION
+  );
+
+  if (foundUser) {
+    return userRepository.removeUser(user, USERS_COLLECTION);
+  }
+  return null;
+}
+
+module.exports = { findUser, registerUser, removeUser, loginUser };

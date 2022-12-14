@@ -23,69 +23,49 @@ function printMainPage(req, res) {
   res.end();
 }
 
+async function loginUser(req, res) {
+  console.log(req.body);
+
+  var username = req.body.username;
+  var password = req.body.password;
+
+  console.log(username);
+  console.log(password);
+
+  var foundUser = await userController.loginUser(username, password);
+  if (foundUser == null) res.end("User not found!");
+  else {
+    console.log(foundUser);
+
+    req.session.user = { username: username, role: "admin" }; // hardcode role
+    res.end("User logged in!");
+  }
+}
+
 // register i delete vrlo mogu da se spoje kasnije
 // Ovo je ostavljeno sada ovako da bi se lakse razumelo
-function registerUser(req, res) {
-  parseUser(req, res).then((userData) => {
-    // make a new user
-    var newUser = new User(
-      userData.username,
-      userData.password,
-      userData.email,
-      userData.nxt_api_key
-    );
 
-    // register user
-    var registered = userController.registerUser(newUser);
-    if (registered == null) res.end("User not registered!");
-    else res.end("User registered!");
-  });
+// Dodati auto role user
+async function registerUser(req, res) {
+  // make a new user
+  var newUser = new User(
+    req.body.username,
+    req.body.password,
+    req.body.email,
+    "apikey",
+    "user"
+  );
+
+  // register user
+  var registered = await userController.registerUser(newUser);
+  if (registered == null) res.end("User not registered!");
+  else res.end("User registered!");
 }
 
-function deleteUser(req, res) {
-  parseUser(req, res).then((userData) => {
-    var user = new User(
-      userData.username,
-      userData.password,
-      userData.email,
-      userData.nxt_api_key
-    );
-
-    var deleted = userController.removeUser(user);
-    if (deleted == null) res.end("User not deleted!");
-    else res.end("User deleted!");
-  });
-}
-// parse user data from request asynchonously
-function parseUser(req, res) {
-  var body = "";
-  req.on("data", function (chunk) {
-    body += chunk;
-  });
-  return new Promise((resolve, reject) => {
-    req.on("end", function () {
-      var user = JSON.parse(body);
-      resolve(user);
-    });
-  });
-}
-
-function auth(req, res) {
-  // var authHeader = req.headers.authorization;
-  // var auth = new Buffer.from(authHeader.split(" ")[1], "base64")
-  //   .toString()
-  //   .split(":");
-  // // Reading username and password
-  // var username = auth[0];
-  // var password = auth[1];
-  // if (username == "admin" && password == "password") {
-  //   req.session.user = "admin";
-  //   return true;
-  // } else {
-  //   return checkAuth(req, res);
-  // }
-
-  console.log("auth");
+async function deleteUser(req, res) {
+  var deleted = userController.removeUser(req.body.username);
+  if (deleted == null) res.end("User not deleted!");
+  else res.end("User deleted!");
 }
 
 function isInArray(value, array) {
@@ -93,7 +73,7 @@ function isInArray(value, array) {
 }
 
 function checkAuth(req, res, next) {
-  console.log(req.url);
+  // console.log(req.url);
 
   if (isInArray(req.url, nonAuthRoutes)) {
     console.log("Non auth route");
@@ -103,22 +83,19 @@ function checkAuth(req, res, next) {
 
   // if the user is not authenticated
   if (!req.session.user) {
-    res.redirect("/user/admin/auth"); // neka bude za sada admin auth, a posle moze da bude user login
-
-    if (isInArray(req.url, nonAuthRoutes)) {
-      console.log("Non auth route");
-    }
-
     req.session.user = "guest";
+    res.redirect("/user/admin/auth"); // neka bude za sada admin auth, a posle moze da bude user login
   } else {
     if (req.session.user == "admin") {
       // ako je admin
       // promeniti da li je korisnik tipa admin iz baze, a ne samo hardcode
       return true;
     } else {
-      return checkAuth(req, res);
+      return;
     }
   }
+
+  //next();
 }
 
 var server = express();
@@ -133,6 +110,8 @@ server.use(
   })
 );
 
+server.use(express.urlencoded({ extended: true }));
+
 server.get("/", (req, res) => {
   printMainPage(req, res);
 });
@@ -145,17 +124,16 @@ server.get("/logout", (req, res) => {
 });
 
 //Sve ispod ovoga zahteva auth
-server.use(checkAuth);
+//server.use(checkAuth);
 
 server.get("/user/register", (req, res) => {
-  //registerUser(req, res);
-  console.log("Tried to register user");
+  console.log("Register user");
+  res.sendFile(path.join(__dirname, "resources", "register_page.html"));
 });
 
-server.get("/user/admin/auth", (req, res) => {
+server.get("/user/admin/auth", checkAuth, (req, res) => {
   console.log("Admin auth");
-
-  auth(req, res);
+  res.sendFile(path.join(__dirname, "resources", "login_page.html"));
 });
 
 server.get("/admin/dashboard", (req, res) => {
@@ -168,6 +146,15 @@ server.get("/user/delete", (req, res) => {
 
 server.get("*", (req, res) => {
   res.end("Invalid request!");
+});
+
+//Funkcija gde server dobija podatke od klijenta
+server.post("/user/admin/auth", (req, res, next) => {
+  loginUser(req, res);
+});
+
+server.post("/user/register", (req, res, next) => {
+  registerUser(req, res);
 });
 
 server.use(express.static(path.join(__dirname, "public")));
