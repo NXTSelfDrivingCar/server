@@ -123,10 +123,31 @@ function findUserById(id, collectionName) {
   });
 }
 
+function findUsersByRole(role, collectionName) {
+  return new Promise((resolve, reject) => {
+    mongoClient.connect(CONNECTION, function (err, client) {
+      if (err) throw err;
+
+      var db = client.db(DATABASE);
+
+      // Find the user with the specified id
+      db.collection(collectionName)
+        .find({ role: role })
+        .toArray(function (err, result) {
+          if (err) throw err;
+
+          // Return the user object
+          resolve(result);
+        });
+    });
+  });
+}
+
 module.exports = {
   insertUser,
   findUser,
   removeUser,
   findUserByUsername,
   findUserById,
+  findUsersByRole,
 };

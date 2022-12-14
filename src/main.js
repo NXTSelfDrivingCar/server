@@ -104,6 +104,10 @@ async function checkAuth(req, res, next) {
   //next();
 }
 
+async function getUsers(req, res) {
+  return await userController.findUsersByRole("user");
+}
+
 var server = express();
 
 server.use(
@@ -144,12 +148,23 @@ server.get("/user/admin/auth", checkAuth, (req, res) => {
   res.sendFile(path.join(__dirname, "resources", "login_page.html"));
 });
 
-server.get("/admin/dashboard", checkAuth, (req, res) => {
+server.get("/admin/dashboard", checkAuth, async (req, res) => {
   console.log("Admin dashboard");
+  users = await getUsers(req, res);
+  console.log(users);
+  res.render("admin_dashboard.ejs", {
+    title: "Admin dashboard",
+    users: users,
+  });
 });
 
 server.get("/user/delete", (req, res) => {
   deleteUser(req, res);
+});
+
+server.get("/user/edit", (req, res) => {
+  console.log("Edit user");
+  console.log(req.query);
 });
 
 server.get("*", (req, res) => {

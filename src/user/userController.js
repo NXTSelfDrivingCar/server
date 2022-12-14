@@ -13,6 +13,10 @@ async function findUserByUsername(username) {
 async function findUserById(id) {
   return await userRepository.findUserById(id, USERS_COLLECTION);
 }
+
+async function findUsersByRole(role) {
+  return await userRepository.findUsersByRole(role, USERS_COLLECTION);
+}
 /**
  * Inserts a user into the database
  * @param {User} user User object to be inserted
@@ -70,4 +74,11 @@ async function checkAdmin(id) {
   return false;
 }
 
-module.exports = { findUser, registerUser, removeUser, loginUser, checkAdmin };
+module.exports = {
+  findUser,
+  registerUser,
+  removeUser,
+  loginUser,
+  checkAdmin,
+  findUsersByRole,
+};
