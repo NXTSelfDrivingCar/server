@@ -6,7 +6,12 @@ const tags = { INFO: "INFO", ERROR: "ERROR" };
 
 function formatTimestamp(timestamp) {
   const date = new Date(timestamp);
-  return `${date.getDate()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  return `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}_${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
+}
+
+function formatToday(timestamp) {
+  const date = new Date(timestamp);
+  return `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
 }
 
 class LogHandler {
@@ -21,9 +26,9 @@ class LogHandler {
     if (LogHandler.status == statuses.OPEN) return this;
 
     LogHandler.status = statuses.OPEN;
-    LogHandler.currentFIle = `log_${new Date().getTime().toString()}.txt`;
+    LogHandler.currentFIle = `log_${formatTimestamp(new Date().getTime())}.log`;
 
-    this.log(tags.INFO, "Log file opened");
+    this.log(tags.INFO, "internal_log", "open", "Log file opened");
 
     return this;
   }
@@ -32,16 +37,16 @@ class LogHandler {
     LogHandler.status = statuses.CLOSED;
     LogHandler.currentFIle = null;
 
-    this.log(tags.INFO, "Log file closed");
+    this.log(tags.INFO, "internal_log", "close", "Log file opened");
 
     return this;
   }
 
-  log(tag, message) {
+  log(tag, route, fun, message) {
     if (LogHandler.status == statuses.CLOSED) return;
 
     const timestamp = formatTimestamp(new Date().getTime());
-    const data = `[${tag}] [${timestamp}]: "${message}"\r\n`;
+    const data = `[${tag}] [${timestamp}] [${route}] [${fun}]: "${message}"\r\n`;
 
     fs.appendFile(this.filePath + LogHandler.currentFIle, data, (err) => {
       if (err) throw err;

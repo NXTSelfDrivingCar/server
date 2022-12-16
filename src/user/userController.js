@@ -17,6 +17,10 @@ async function findUserById(id) {
 async function findUsersByRole(role) {
   return await userRepository.findUsersByRole(role, USERS_COLLECTION);
 }
+
+async function filterSearch(filters) {
+  return await userRepository.filterSearch(filters, USERS_COLLECTION);
+}
 /**
  * Inserts a user into the database
  * @param {User} user User object to be inserted
@@ -27,7 +31,10 @@ function registerUser(user) {
     .findUserByUsername(user.username, USERS_COLLECTION)
     .then((result) => {
       if (result) {
-        console.log("User already exists");
+        console.log(
+          "UserController (registerUser) -> User already exists -> " +
+            result.username
+        );
         return null;
       }
       return userRepository.insertUser(user, USERS_COLLECTION);
@@ -41,7 +48,9 @@ function loginUser(username, password) {
     .then((result) => {
       if (result) {
         if (result.password === password) {
-          console.log("User logged in");
+          console.log(
+            "UserController (loginUser) -> User logged in -> " + result.username
+          );
           return result;
         } else {
           return null;
@@ -68,9 +77,15 @@ async function checkAdmin(id) {
   var foundUser = await userRepository.findUserById(id, USERS_COLLECTION);
   if (foundUser) {
     if (foundUser.role === "admin") {
+      console.log(
+        "UserController (checkAdmin) -> User is admin -> " + foundUser.username
+      );
       return true;
     }
   }
+  console.log(
+    "UserController (checkAdmin) -> User is not admin -> " + foundUser.username
+  );
   return false;
 }
 
@@ -81,4 +96,6 @@ module.exports = {
   loginUser,
   checkAdmin,
   findUsersByRole,
+  findUserById,
+  filterSearch,
 };

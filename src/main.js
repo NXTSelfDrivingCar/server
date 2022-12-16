@@ -1,12 +1,26 @@
-var userController = require("./user/userController");
-var User = require("./user/userModel");
-var port = 5000;
+var dotenv = require("dotenv").config({ path: ".env" });
+var { LogHandler } = require("./logging/logHandler.js");
 var express = require("express");
-var session = require("express-session");
-var filestore = require("session-file-store")(session);
+//var filestore = require("session-file-store")(session);
 var path = require("path");
+var port = 5000;
+var session = require("express-session");
+var User = require("./user/userModel");
+var userController = require("./user/userController");
+var cookies = require("cookie-parser");
 
-const nonAuthRoutes = ["/favicon.ico", "/user/register", "/user/admin/auth"];
+var logger = new LogHandler().open();
+
+var jwt = require("jsonwebtoken");
+const { jsonToString } = require("./shared/util.js");
+
+const nonAuthRoutes = [
+  "/",
+  "/favicon.ico",
+  "/user/login",
+  "/user/register",
+  "/user/logout",
+];
 
 /* 
 	Routes:
@@ -16,155 +30,85 @@ const nonAuthRoutes = ["/favicon.ico", "/user/register", "/user/admin/auth"];
   /logout - logout i izbrisi cookie
 */
 
-function printMainPage(req, res) {
-  res.writeHead(200, { "Content-Type": "text/html" });
-
-  res.write("<html><body><p>This is home page.</p></body></html>");
-  res.end();
-}
-
-async function loginUser(req, res) {
-  console.log(req.body);
-
-  var username = req.body.username;
-  var password = req.body.password;
-
-  console.log(username);
-  console.log(password);
-
-  var foundUser = await userController.loginUser(username, password);
-  if (foundUser == null) res.end("User not found!");
-  else {
-    // ovde je bolje da se koristi userID umesto username
-    req.session.user = { user_session_id: foundUser.id };
-    res.end("User logged in!");
-  }
-}
-
-// register i delete vrlo mogu da se spoje kasnije
-// Ovo je ostavljeno sada ovako da bi se lakse razumelo
-
-// Dodati auto role user
-async function registerUser(req, res) {
-  console.log(req.body);
-
-  // make a new user
-  var newUser = new User(
-    req.body.username,
-    req.body.password,
-    req.body.email,
-    "apikey",
-    "user"
-  );
-
-  // register user
-  var registered = await userController.registerUser(newUser);
-  if (registered == null) res.end("User not registered!");
-  else res.end("User registered!");
-}
-
-async function deleteUser(req, res) {
-  var deleted = userController.removeUser(req.body.username);
-  if (deleted == null) res.end("User not deleted!");
-  else res.end("User deleted!");
-}
-
 function isInArray(value, array) {
   return array.indexOf(value) > -1;
 }
 
-async function checkAuth(req, res, next) {
-  // console.log(req.url);
-
-  if (isInArray(req.url, nonAuthRoutes)) {
-    console.log("Non auth route");
-    next(); // pozvati next kako bi se pokrenula sledeca funkcija u ruti
-    return; // i zavrsiti funkciju ovde, umesto da poziva ostatak
-  }
-
-  // if the user is not authenticated
+// Ovo se koristi zbog navbara
+function checkSession(req, res) {
   if (!req.session.user) {
-    req.session.user = "guest";
-    res.redirect("/user/admin/auth"); // neka bude za sada admin auth, a posle moze da bude user login
-  } else {
-    var isAdmin = await userController.checkAdmin(
-      req.session.user.user_session_id
-    );
-    if (isAdmin) {
-      console.log("User is admin");
-      next();
-      return true;
-    } else {
-      console.log("User not admin");
-      res.redirect("/user/admin/auth");
-      return false;
-    }
+    req.session.user = { user_session_id: "guest" };
   }
-
-  //next();
+  return req.session;
 }
 
-async function getUsers(req, res) {
-  return await userController.findUsersByRole("user");
+async function getUserFromSession(req, res) {
+  //if (checkSession(req, res).user.user_session_id === "guest") {
+  return new User("guest", "guest", "guest", "guest", "guest");
+  //}
+  //return await userController.findUserById(req.session.user.user_session_id);
+}
+
+// {
+//   user: {
+//     _id: '639cd95e718924fe31cb4f04',
+//     id: '2d80dee6-f0f5-45b0-9cd2-6cca6fbbbdfe',
+//     username: 'AnTasMes',
+//     password: '123',
+//     email: 'akitasevski112@gmail.com',
+//     nxt_api_key: 'apikey',
+//     role: 'admin'
+//   },
+//   iat: 1671230003,
+//   exp: 1671233603
+// }
+
+function getUserWithToken(req, res) {
+  console.log(" getUsersWithToken -> ");
+  console.log(req.cookies.auth);
+
+  if (req.cookies.auth) {
+    var decoded = jwt.verify(req.cookies.auth, process.env.JWT_SECRET);
+
+    var newUser = new User(
+      decoded.user.username,
+      decoded.user.password,
+      decoded.user.email,
+      decoded.user.nxt_api_key,
+      decoded.user.role
+    );
+
+    return newUser;
+  } else {
+    return new User("guest", "guest", "guest", "guest", "guest");
+  }
 }
 
 var server = express();
 
-server.use(
-  session({
-    name: "session-id",
-    secret: "nxtEnter",
-    saveUninitialized: false,
-    resave: false,
-    store: new filestore(),
-  })
-);
+server.use(cookies());
+
+server.use(express.static(path.join(__dirname, "public")));
 
 server.use(express.urlencoded({ extended: true }));
-// q: how to save route after login?
-// a: https://stackoverflow.com/questions/13758207/redirecting-to-a-page-after-login-in-node-js
 
-server.get("/", (req, res) => {
-  printMainPage(req, res);
-});
+var admin_routes = require("./routes/admin_routes")(server);
+var guest_routes = require("./routes/guest_routes")(server);
+var user_routes = require("./routes/user_routes")(server, getUserFromSession);
 
-server.get("/logout", (req, res) => {
-  res.status(200).clearCookie("session-id");
-  req.session.destroy(function (err) {
-    res.redirect("/");
+server.get("/", async (req, res) => {
+  var decoded = null;
+
+  var user = getUserWithToken(req, res);
+  console.log(user);
+
+  logger.log("INFO", "/", "GET", user.username);
+  res.render("main_page_index.ejs", {
+    title: "Main page",
+    user: user,
+    session: req.session,
   });
-});
-
-//Sve ispod ovoga zahteva auth
-//server.use(checkAuth);
-
-server.get("/user/register", (req, res) => {
-  console.log("Register user");
-  res.sendFile(path.join(__dirname, "resources", "register_page.html"));
-});
-
-server.get("/user/admin/auth", checkAuth, (req, res) => {
-  console.log("Admin auth");
-  res.sendFile(path.join(__dirname, "resources", "login_page.html"));
-});
-
-server.get("/admin/dashboard", checkAuth, async (req, res) => {
-  console.log("Admin dashboard");
-  users = await getUsers(req, res);
-  console.log(users);
-  res.render("admin_dashboard.ejs", {
-    title: "Admin dashboard",
-    users: users,
-  });
-});
-
-server.get("/user/delete", (req, res) => {
-  deleteUser(req, res);
-});
-
-server.get("/user/edit", (req, res) => {
-  console.log("Edit user");
-  console.log(req.query);
+  //res.end();
 });
 
 server.get("*", (req, res) => {
@@ -172,17 +116,10 @@ server.get("*", (req, res) => {
 });
 
 //Funkcija gde server dobija podatke od klijenta
-server.post("/user/admin/auth", (req, res, next) => {
-  loginUser(req, res);
-});
-
-server.post("/user/register", (req, res, next) => {
-  registerUser(req, res);
-});
-
-server.use(express.static(path.join(__dirname, "public")));
 
 server.listen(port, function (err) {
   if (err) throw err;
   console.log("Node.js web server at port 5000 is running.");
 });
+
+module.exports = server;

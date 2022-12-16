@@ -22,7 +22,7 @@ async function insertUser(user, collectionName) {
         console.log("There has been an error inserting the user" + err);
         returnValue = false;
       }
-      console.log("1 document inserted");
+      console.log("UserRepository (insertUser) -> 1 document inserted");
       returnValue = true;
     });
   });
@@ -48,7 +48,7 @@ function removeUser(user, collectionName) {
           if (err) {
             throw err;
           }
-          console.log("1 document deleted");
+          console.log("UserRepository (deleteUser) -> 1 document deleted");
           deleted = true;
         });
       });
@@ -97,6 +97,10 @@ function findUserByUsername(uname, collectionName) {
           if (err) throw err;
 
           // Return the user object
+
+          // console.log(
+          //   "UserRepository (findUserByUsername) -> " + result.username
+          // );
           resolve(result);
         }
       );
@@ -117,6 +121,7 @@ function findUserById(id, collectionName) {
         if (err) throw err;
 
         // Return the user object
+        // console.log("UserRepository (findUserById) -> " + result.username);
         resolve(result);
       });
     });
@@ -137,6 +142,28 @@ function findUsersByRole(role, collectionName) {
           if (err) throw err;
 
           // Return the user object
+          // console.log("UserRepository (findUsersByRole) -> " + result.username);
+          resolve(result);
+        });
+    });
+  });
+}
+
+function filterSearch(filter, collectionName) {
+  return new Promise((resolve, reject) => {
+    mongoClient.connect(CONNECTION, function (err, client) {
+      if (err) throw err;
+
+      var db = client.db(DATABASE);
+
+      // Find the user with the specified id
+      db.collection(collectionName)
+        .find(filter)
+        .toArray(function (err, result) {
+          if (err) throw err;
+
+          // Return the user object
+          // console.log("UserRepository (filterSearch) -> " + result.username);
           resolve(result);
         });
     });
@@ -150,4 +177,5 @@ module.exports = {
   findUserByUsername,
   findUserById,
   findUsersByRole,
+  filterSearch,
 };
