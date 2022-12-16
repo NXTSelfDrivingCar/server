@@ -5,11 +5,16 @@ var path = require("path");
 var port = 5000;
 var User = require("./user/userModel");
 var cookies = require("cookie-parser");
+var jwt = require("jsonwebtoken");
 
 var logger = new LogHandler().open();
 
-var jwt = require("jsonwebtoken");
-
+/**
+ *
+ * @param {*} req
+ * @param {*} res
+ * @returns User from token (guest if no token is found)
+ */
 function getUserWithToken(req, res) {
   console.log(" getUsersWithToken -> ");
   console.log(req.cookies.auth);
@@ -17,6 +22,7 @@ function getUserWithToken(req, res) {
   if (req.cookies.auth) {
     var decoded = jwt.verify(req.cookies.auth, process.env.JWT_SECRET);
 
+    // make a new user from decoded token
     var newUser = new User(
       decoded.user.username,
       decoded.user.password,
@@ -27,6 +33,7 @@ function getUserWithToken(req, res) {
 
     return newUser;
   } else {
+    // return guest user
     return new User("guest", "guest", "guest", "guest", "guest");
   }
 }
@@ -39,20 +46,23 @@ server.use(express.static(path.join(__dirname, "public")));
 
 server.use(express.urlencoded({ extended: true }));
 
+// GETTING ROUTES FROM OTHER FILES
+
 var admin_routes = require("./routes/admin_routes")(server);
 var guest_routes = require("./routes/guest_routes")(server);
-var user_routes = require("./routes/user_routes")(server, getUserFromSession);
+var user_routes = require("./routes/user_routes")(server, getUserWithToken);
+
+// END OF GETTING ROUTES FROM OTHER FILES
 
 server.get("/", async (req, res) => {
   var decoded = null;
 
   var user = getUserWithToken(req, res);
-  console.log(user);
 
   logger.log("INFO", "/", "GET", user.username);
   res.render("main_page_index.ejs", {
     title: "Main page",
-    user: user,
+    user: user, // Passes user for navbar and access control
     session: req.session,
   });
 });

@@ -31,14 +31,17 @@ async function loginUser(req, res, next) {
     "Username: " + username + " - Password: " + password
   );
 
+  // gets user from database if found
   var foundUser = await userController.loginUser(username, password);
   if (foundUser == null) return false;
   else {
+    // if user is found, create a token and send it to the client
+    // Token is created with the user object as payload and the secret key from .env
     const token = jwt.sign({ user: foundUser }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    //res.setHeader("authorization", token);
-    //res.headers = { authorization: token };
+
+    // send token to client
     res.cookie("auth", token, { httpOnly: false });
 
     return true;
@@ -73,13 +76,13 @@ async function registerUser(req, res) {
 
  */
 
-module.exports = function (server, getUserFromSession) {
+module.exports = function (server, getUserWithToken) {
   // =================== GET ROUTES =================== //
 
   server.get("/user/logout", async (req, res) => {
-    var user = await getUserFromSession(req, res);
-    logger.log("INFO", "/user/logout", "GET", user.username);
+    // logger.log("INFO", "/user/logout", "GET", user.username);
 
+    // TODO: [log] user out token and session
     res.status(200).clearCookie("auth");
     res.redirect("/");
   });
@@ -90,7 +93,7 @@ module.exports = function (server, getUserFromSession) {
     res.render("register_page.ejs", {
       title: "Regsiter page",
       result: result,
-      user: await getUserFromSession(req, res),
+      user: await getUserWithToken(req, res), // Gets user for navbar
       session: req.session,
       passResult: passResult,
     });
@@ -100,7 +103,7 @@ module.exports = function (server, getUserFromSession) {
     result = "";
     res.render("login_page.ejs", {
       title: "Login page",
-      user: await getUserFromSession(req, res),
+      user: await getUserWithToken(req, res), // Gets user for navbar
       session: req.session,
       result: result,
     });
@@ -117,7 +120,7 @@ module.exports = function (server, getUserFromSession) {
     } else {
       res.render("login_page.ejs", {
         title: "Login page",
-        user: await getUserFromSession(req, res),
+        user: await getUserWithToken(req, res), // Gets user for navbar
         session: req.session,
         result: result,
       });
@@ -134,12 +137,13 @@ module.exports = function (server, getUserFromSession) {
     } else {
       var result = null;
       if (passResult) {
-        result = await registerUser(req, res);
+        // TODO: Proveriti zasto se ovo poziva drugi put ovde
+        result = await registerUser(req, res); // ZASTO DVA PUTA POZIVAMO REGISTER USER?
       }
 
       res.render("register_page.ejs", {
         title: "Register page",
-        user: await getUserFromSession(req, res),
+        user: await getUserWithToken(req, res), // Gets user for navbar
         session: req.session,
         result: result,
         passResult: passResult,

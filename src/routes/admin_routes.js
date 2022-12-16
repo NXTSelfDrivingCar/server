@@ -19,11 +19,13 @@ async function checkAuth(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.username = decoded.username;
+    req.username = decoded.user.username;
+
+    // decoded.user.username != decoded.username
 
     // Dodati obavestenje ako nisi admin, zasto nisi admin i azsto ne pripadas ovde mamu ti jebm
     // aka zasto si rerouteovan na login
-    if (decoded.role != "admin") return res.redirect("/user/login"); // thanks to this, only admin can access admin routes
+    if (decoded.user.role != "admin") return res.redirect("/user/login"); // thanks to this, only admin can access admin routes
 
     console.log(decoded);
     next();

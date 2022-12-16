@@ -8,7 +8,6 @@ Lista pregleda:
 [x] Korisnici
 [] Log
 
-[] Razdvojiti rute po posebnim fajlovima (admin_routes, user_routes)
+[x] Razdvojiti rute po posebnim fajlovima (admin_routes, user_routes)
 
-[] Obezbediti da se sve proverava preko ID korisnika
 [] Obezbediti proveru ako korisnik ukuca rucno link za admin stranice
