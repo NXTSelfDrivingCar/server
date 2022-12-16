@@ -16,7 +16,12 @@ function objectArrayToString(objectArray, ...keys) {
   return objectArray.map((object) => jsonToString(object));
 }
 
+function isInArray(value, array) {
+  return array.indexOf(value) > -1;
+}
+
 module.exports = {
   jsonToString: jsonToString,
   objectArrayToString: objectArrayToString,
+  isInArray: isInArray,
 };

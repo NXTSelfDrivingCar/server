@@ -7,10 +7,6 @@ var { jsonToString, objectArrayToString } = require("../shared/util");
 var jwt = require("jsonwebtoken");
 
 async function checkAuth(req, res, next) {
-  // console.log("Req.Headers (checkAuth) -> " + jsonToString(req.headers));
-
-  console.log(req.cookies);
-
   if (!req.cookies["auth"]) {
     return res.redirect("/user/login");
   }
@@ -24,6 +20,11 @@ async function checkAuth(req, res, next) {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.username = decoded.username;
+
+    // Dodati obavestenje ako nisi admin, zasto nisi admin i azsto ne pripadas ovde mamu ti jebm
+    // aka zasto si rerouteovan na login
+    if (decoded.role != "admin") return res.redirect("/user/login"); // thanks to this, only admin can access admin routes
+
     console.log(decoded);
     next();
     return;
@@ -34,7 +35,7 @@ async function checkAuth(req, res, next) {
 
 async function filterSeachUsers(req, res) {
   var filters = {};
-  if (req.body != null) var filters = req.body;
+  if (req.body != null) var filters = req.body; // Ako ne postoji body, samo prikazati sve korisnikes
 
   var formatFilters = {};
 

@@ -2,8 +2,6 @@ var userController = require("../user/userController");
 var User = require("../user/userModel");
 var { LogHandler } = require("../logging/logHandler");
 var logger = new LogHandler().open();
-var { jsonToString, objectArrayToString } = require("../shared/util");
-var session = require("express-session");
 var jwt = require("jsonwebtoken");
 require("dotenv").config();
 
