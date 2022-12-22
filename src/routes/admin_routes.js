@@ -1,5 +1,6 @@
 var userController = require("../user/userController");
 var { LogHandler } = require("../logging/logHandler.js");
+var User = require("../user/userModel");
 
 var logger = new LogHandler().open();
 var { jsonToString, objectArrayToString } = require("../shared/util");
@@ -12,7 +13,6 @@ async function checkAuth(req, res, next) {
   }
 
   const token = req.cookies["auth"];
-  console.log("checkAuth -> " + token);
   if (!token) {
     return res.redirect("/user/login");
   }
@@ -27,7 +27,9 @@ async function checkAuth(req, res, next) {
     // aka zasto si rerouteovan na login
     if (decoded.user.role != "admin") return res.redirect("/user/login"); // thanks to this, only admin can access admin routes
 
-    console.log(decoded);
+    console.log("Administrator user: ");
+    console.log(decoded.user);
+
     next();
     return;
   } catch (err) {
@@ -65,6 +67,24 @@ async function deleteUser(req, res) {
   else res.end("User deleted!");
 }
 
+async function updateUser(req, res) {
+  var id = req.body.inputID;
+  var username = req.body.inputUsername;
+  var email = req.body.inputEmail;
+  var role = req.body.inputRole;
+
+  var userContainer = new User(username, null, email, null, role);
+
+  var updated = await userController.updateUser(
+    req.body.inputID,
+    userContainer
+  );
+
+  if (updated) console.log("Updated");
+  else console.log("Not updated");
+  return updated;
+}
+
 /*
 
 ==========================================================================
@@ -96,12 +116,21 @@ module.exports = function (server) {
     });
   });
 
-  server.get("/admin/delete", (req, res) => {
+  server.get("/admin/user/delete", (req, res) => {
     // Brisanje korisnika
     deleteUser(req, res);
   });
 
-  server.get("/admin/edit", (req, res) => {}); // Editovanje korisnika
+  server.get("/admin/user/update", async (req, res) => {
+    if (req.query["id"] == null) return res.end("No user id provided!");
+    var gotUser = await userController.findUserById(req.query["id"]);
+
+    if (gotUser == null) return res.end("User id is not valid");
+    res.render("admin_user_update.ejs", {
+      title: "Update user",
+      user: gotUser,
+    });
+  }); // Editovanje korisnika
 
   // =================== POST ROUTES =================== //
 
@@ -118,5 +147,12 @@ module.exports = function (server) {
       title: "Listing users",
       users: users,
     });
+  });
+
+  server.post("/admin/user/admin_user_update", async (req, res) => {
+    var updatedUser = await updateUser(req, res);
+    if (updatedUser == false)
+      return res.status(400).send("User update failed, check your input data!");
+    res.redirect("/admin/admin_list_users");
   });
 };

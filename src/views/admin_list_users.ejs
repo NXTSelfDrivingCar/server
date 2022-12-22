@@ -90,12 +90,10 @@
                                                 <%= user.role %>
                                             </td>
                                             <td>
-                                                <button class="btn btn-primary"><a
-                                                        href="/user/edit?username=<%=user.username%>"><i
-                                                            class="fa fa-edit"></i></a></button>
-                                                <button class="btn btn-danger"><a
-                                                        href="/user/edit?username=<%=user.username%>"><i
-                                                            class="fa fa-trash-o"></i></a></button>
+                                                <a class="btn btn-primary" href="/admin/user/update?id=<%=user.id%>"><i
+                                                        class="fa fa-edit"></i></a>
+                                                <a class="btn btn-danger" href="/admin/user/delete?id=<%=user.id%>"><i
+                                                        class="fa fa-trash-o"></i></a>
                                             </td>
                                         </tr>
                                         <% } %>

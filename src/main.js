@@ -16,12 +16,25 @@ var logger = new LogHandler().open();
  * @returns User from token (guest if no token is found)
  */
 function getUserWithToken(req, res) {
-  console.log(" getUsersWithToken -> ");
-  console.log(req.cookies.auth);
-
   if (req.cookies.auth) {
-    var decoded = jwt.verify(req.cookies.auth, process.env.JWT_SECRET);
+    var decoded = jwt.verify(
+      req.cookies.auth,
+      process.env.JWT_SECRET,
 
+      // Dodata funkcija u slucaju da je token istekao
+      // Ako je token istekao, vraca null i to dozvoljava da se vrati guest korisnik
+      function (err, decoded) {
+        if (err) {
+          logger.log("ERROR", "getUserWithToken", "jwt.verify", err);
+          return null;
+        }
+        return decoded;
+      }
+    );
+
+    if (decoded == null) {
+      return new User("guest", "guest", "guest", "guest", "guest");
+    }
     // make a new user from decoded token
     var newUser = new User(
       decoded.user.username,

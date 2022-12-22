@@ -170,6 +170,34 @@ function filterSearch(filter, collectionName) {
   });
 }
 
+function updateUser(id, user, collectionName) {
+  console.log("UserRepository (updateUser) -> " + user.username, " ", id);
+
+  return new Promise((resolve, reject) => {
+    mongoClient.connect(CONNECTION, function (err, client) {
+      if (err) throw err;
+
+      var db = client.db(DATABASE);
+
+      // Find the user with the specified id
+      db.collection(collectionName).updateOne(
+        { id: id },
+        {
+          $set: {
+            username: user.username,
+            email: user.email,
+            role: user.role,
+          },
+        },
+        function (err, result) {
+          if (err) throw err;
+          resolve(true);
+        }
+      );
+    });
+  });
+}
+
 module.exports = {
   insertUser,
   findUser,
@@ -178,4 +206,5 @@ module.exports = {
   findUserById,
   findUsersByRole,
   filterSearch,
+  updateUser,
 };

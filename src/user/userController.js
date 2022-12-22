@@ -89,6 +89,15 @@ async function checkAdmin(id) {
   return false;
 }
 
+async function updateUser(id, user) {
+  var foundUser = await userRepository.findUserById(id, USERS_COLLECTION);
+  console.log("UserController (updateUser) -> " + foundUser.username);
+  if (foundUser) {
+    return await userRepository.updateUser(id, user, USERS_COLLECTION);
+  }
+  return false;
+}
+
 module.exports = {
   findUser,
   registerUser,
@@ -98,4 +107,5 @@ module.exports = {
   findUsersByRole,
   findUserById,
   filterSearch,
+  updateUser,
 };
