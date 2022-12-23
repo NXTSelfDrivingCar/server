@@ -24,12 +24,7 @@ async function loginUser(req, res, next) {
   var username = req.body.username;
   var password = req.body.password;
 
-  logger.log(
-    "INFO",
-    req.url,
-    req.method,
-    "Username: " + username + " - Password: " + password
-  );
+  logger.log("INFO", req.url, req.method, username);
 
   // gets user from database if found
   var foundUser = await userController.loginUser(username, password);
@@ -58,10 +53,24 @@ async function registerUser(req, res) {
     "user"
   );
 
+  logger.log(
+    "INFO",
+    req.url,
+    req.method,
+    "Username: " +
+      req.body.username +
+      " - Email: " +
+      req.body.email +
+      " - Role: user"
+  );
+
   // register user
   var registered = await userController.registerUser(newUser);
-  if (registered == null) return false;
-  else {
+  if (registered == null) {
+    logger.log("ERROR", req.url, req.method, "User already exists");
+    return false;
+  } else {
+    logger.log("INFO", req.url, req.method, "User registered");
     return true;
   }
 }

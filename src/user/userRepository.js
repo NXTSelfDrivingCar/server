@@ -1,4 +1,7 @@
 var mongoClient = require("mongodb").MongoClient;
+var User = require("./userModel");
+var { LogHandler } = require("../logging/logHandler");
+var logger = new LogHandler().open();
 
 const CONNECTION = "mongodb://host.docker.internal:27017";
 const DATABASE = "testDB";
@@ -20,9 +23,15 @@ async function insertUser(user, collectionName) {
     db.collection(collectionName).insertOne(user, function (err, res) {
       if (err) {
         console.log("There has been an error inserting the user" + err);
+
+        logger.log("ERROR", "UserRepository", "insertUser", err);
+
         returnValue = false;
       }
       console.log("UserRepository (insertUser) -> 1 document inserted");
+
+      logger.log("INFO", "UserRepository", "insertUser", "1 document inserted");
+
       returnValue = true;
     });
   });
@@ -36,24 +45,30 @@ async function insertUser(user, collectionName) {
  * @returns {User} User object that was removed or `null`
  *
  */
-function removeUser(user, collectionName) {
+function removeUser(id, collectionName) {
   var deleted = false;
 
-  var found = findUserByUsername(user.username, collectionName).then((res) => {
-    if (res) {
-      mongoClient.connect(CONNECTION, function (err, client) {
-        var db = client.db(DATABASE);
+  mongoClient.connect(CONNECTION, function (err, client) {
+    if (err) throw err;
 
-        db.collection(collectionName).deleteOne(res, function (err, res) {
-          if (err) {
-            throw err;
-          }
-          console.log("UserRepository (deleteUser) -> 1 document deleted");
-          deleted = true;
-        });
-      });
-    }
-    deleted = false;
+    var db = client.db(DATABASE);
+
+    var myquery = { id: id };
+
+    db.collection(collectionName).deleteOne(myquery, function (err, obj) {
+      if (err) {
+        console.log("There has been an error deleting the user" + err);
+
+        logger.log("ERROR", "UserRepository", "removeUser", err);
+
+        deleted = false;
+      }
+      console.log("UserRepository (removeUser) -> 1 document deleted");
+
+      logger.log("INFO", "UserRepository", "removeUser", "1 document deleted");
+
+      deleted = true;
+    });
   });
 
   return deleted;
@@ -94,13 +109,18 @@ function findUserByUsername(uname, collectionName) {
       db.collection(collectionName).findOne(
         { username: uname },
         function (err, result) {
-          if (err) throw err;
+          if (err) {
+            logger.log("ERROR", "UserRepository", "findUserByUsername", err);
+            throw err;
+          }
 
-          // Return the user object
+          logger.log(
+            "INFO",
+            "UserRepository",
+            "findUserByUsername",
+            "User found"
+          );
 
-          // console.log(
-          //   "UserRepository (findUserByUsername) -> " + result.username
-          // );
           resolve(result);
         }
       );
@@ -118,10 +138,12 @@ function findUserById(id, collectionName) {
 
       // Find the user with the specified id
       db.collection(collectionName).findOne({ id: id }, function (err, result) {
-        if (err) throw err;
+        if (err) {
+          logger.log("ERROR", "UserRepository", "findUserById", err);
+          throw err;
+        }
 
-        // Return the user object
-        // console.log("UserRepository (findUserById) -> " + result.username);
+        logger.log("INFO", "UserRepository", "findUserById", "User found");
         resolve(result);
       });
     });
@@ -139,10 +161,17 @@ function findUsersByRole(role, collectionName) {
       db.collection(collectionName)
         .find({ role: role })
         .toArray(function (err, result) {
-          if (err) throw err;
+          if (err) {
+            logger.log("ERROR", "UserRepository", "findUsersByRole", err);
+            throw err;
+          }
 
-          // Return the user object
-          // console.log("UserRepository (findUsersByRole) -> " + result.username);
+          logger.log(
+            "INFO",
+            "UserRepository",
+            "findUsersByRole",
+            "Users found"
+          );
           resolve(result);
         });
     });
@@ -160,10 +189,12 @@ function filterSearch(filter, collectionName) {
       db.collection(collectionName)
         .find(filter)
         .toArray(function (err, result) {
-          if (err) throw err;
+          if (err) {
+            logger.log("ERROR", "UserRepository", "filterSearch", err);
+            throw err;
+          }
 
-          // Return the user object
-          // console.log("UserRepository (filterSearch) -> " + result.username);
+          logger.log("INFO", "UserRepository", "filterSearch", "Users found");
           resolve(result);
         });
     });
@@ -190,7 +221,12 @@ function updateUser(id, user, collectionName) {
           },
         },
         function (err, result) {
-          if (err) throw err;
+          if (err) {
+            logger.log("ERROR", "UserRepository", "updateUser", err);
+            throw err;
+          }
+
+          logger.log("INFO", "UserRepository", "updateUser", "User updated");
           resolve(true);
         }
       );

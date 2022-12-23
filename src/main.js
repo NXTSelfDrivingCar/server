@@ -1,5 +1,6 @@
 var dotenv = require("dotenv").config({ path: ".env" });
 var { LogHandler } = require("./logging/logHandler.js");
+var { getUserWithToken } = require("./shared/util");
 var express = require("express");
 var path = require("path");
 var port = 5000;
@@ -8,48 +9,6 @@ var cookies = require("cookie-parser");
 var jwt = require("jsonwebtoken");
 
 var logger = new LogHandler().open();
-
-/**
- *
- * @param {*} req
- * @param {*} res
- * @returns User from token (guest if no token is found)
- */
-function getUserWithToken(req, res) {
-  if (req.cookies.auth) {
-    var decoded = jwt.verify(
-      req.cookies.auth,
-      process.env.JWT_SECRET,
-
-      // Dodata funkcija u slucaju da je token istekao
-      // Ako je token istekao, vraca null i to dozvoljava da se vrati guest korisnik
-      function (err, decoded) {
-        if (err) {
-          logger.log("ERROR", "getUserWithToken", "jwt.verify", err);
-          return null;
-        }
-        return decoded;
-      }
-    );
-
-    if (decoded == null) {
-      return new User("guest", "guest", "guest", "guest", "guest");
-    }
-    // make a new user from decoded token
-    var newUser = new User(
-      decoded.user.username,
-      decoded.user.password,
-      decoded.user.email,
-      decoded.user.nxt_api_key,
-      decoded.user.role
-    );
-
-    return newUser;
-  } else {
-    // return guest user
-    return new User("guest", "guest", "guest", "guest", "guest");
-  }
-}
 
 var server = express();
 

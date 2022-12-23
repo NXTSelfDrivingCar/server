@@ -3,7 +3,11 @@ var { LogHandler } = require("../logging/logHandler.js");
 var User = require("../user/userModel");
 
 var logger = new LogHandler().open();
-var { jsonToString, objectArrayToString } = require("../shared/util");
+var {
+  jsonToString,
+  objectArrayToString,
+  getUserWithToken,
+} = require("../shared/util");
 
 var jwt = require("jsonwebtoken");
 
@@ -62,9 +66,7 @@ async function filterSeachUsers(req, res) {
 }
 
 async function deleteUser(req, res) {
-  var deleted = userController.removeUser(req.body.username);
-  if (deleted == null) res.end("User not deleted!");
-  else res.end("User deleted!");
+  return await userController.removeUser(req.query["id"]);
 }
 
 async function updateUser(req, res) {
@@ -103,6 +105,16 @@ module.exports = function (server) {
   }); // Debug
 
   server.get("/admin/dashboard", checkAuth, async (req, res) => {
+    logger.log(
+      "INFO",
+      req.url,
+      req.method,
+      "Log result auth user: " +
+        getUserWithToken(req, res).id +
+        " | " +
+        getUserWithToken(req, res).username
+    );
+
     res.render("admin_dashboard_index.ejs", {
       title: "Admin dashboard",
     });
@@ -110,22 +122,79 @@ module.exports = function (server) {
 
   server.get("/admin/admin_list_users", checkAuth, async (req, res) => {
     var users = await filterSeachUsers(req, res); // Ovo je array of users
+    logger.log(
+      "INFO",
+      req.url,
+      req.method,
+      "Log result auth user: " +
+        getUserWithToken(req, res).id +
+        " | " +
+        getUserWithToken(req, res).username
+    );
     res.render("admin_list_users.ejs", {
       title: "Listing users",
       users: users,
     });
   });
 
-  server.get("/admin/user/delete", (req, res) => {
-    // Brisanje korisnika
-    deleteUser(req, res);
+  server.get("/admin/user/delete", async (req, res) => {
+    logger.log(
+      "INFO",
+      req.url,
+      req.method,
+      "Log result auth user: " +
+        getUserWithToken(req, res).id +
+        " | " +
+        getUserWithToken(req, res).username +
+        " | " +
+        "User requested: " +
+        req.query["id"]
+    );
+    var deleted = await deleteUser(req, res);
+    res.redirect("/admin/admin_list_users");
   });
 
   server.get("/admin/user/update", async (req, res) => {
     if (req.query["id"] == null) return res.end("No user id provided!");
     var gotUser = await userController.findUserById(req.query["id"]);
 
-    if (gotUser == null) return res.end("User id is not valid");
+    if (gotUser == null) {
+      logger.log(
+        "ERROR",
+        req.url,
+        req.method,
+        "Log result auth user: " +
+          getUserWithToken(req, res).id +
+          " | " +
+          getUserWithToken(req, res).username +
+          " | User requested: " +
+          req.query["id"] +
+          " | " +
+          "User not found"
+      );
+
+      return res.end("User id is not valid");
+    }
+
+    logger.log(
+      "INFO",
+      req.url,
+      req.method,
+      "Log result auth user: " +
+        getUserWithToken(req, res).id +
+        " | " +
+        getUserWithToken(req, res).username +
+        " | " +
+        "User requested: " +
+        gotUser.id +
+        " | " +
+        gotUser.username +
+        " | " +
+        gotUser.email +
+        " | " +
+        gotUser.role
+    );
+
     res.render("admin_user_update.ejs", {
       title: "Update user",
       user: gotUser,
@@ -135,14 +204,18 @@ module.exports = function (server) {
   // =================== POST ROUTES =================== //
 
   server.post("/admin/admin_list_users", async (req, res) => {
+    logger.log("INFO", req.url, req.method, "LISTING USERS START");
+
     var users = await filterSeachUsers(req, res); // Ovo je array of users
+
     logger.log(
       "INFO",
       req.url,
       req.method,
-      "Log result: " + objectArrayToString(users, "id") // Ovo ne vraca nista
+      "Log result: " + objectArrayToString(users, "id")
     );
 
+    logger.log("INFO", req.url, req.method, "LISTING USERS END");
     res.render("admin_list_users.ejs", {
       title: "Listing users",
       users: users,
@@ -150,7 +223,33 @@ module.exports = function (server) {
   });
 
   server.post("/admin/user/admin_user_update", async (req, res) => {
+    logger.log("INFO", req.url, req.method, "UPDATE USER START");
+
     var updatedUser = await updateUser(req, res);
+
+    logger.log(
+      "INFO",
+      req.url,
+      req.method,
+      "Log result auth user: " +
+        getUserWithToken(req, res).id +
+        " | " +
+        getUserWithToken(req, res).username +
+        " | " +
+        "Update result: " +
+        updatedUser +
+        " | " +
+        req.body.inputID +
+        " | " +
+        req.body.inputUsername +
+        " | " +
+        req.body.inputEmail +
+        " | " +
+        req.body.inputRole +
+        " | "
+    );
+
+    logger.log("INFO", req.url, req.method, "UPDATE USER END");
     if (updatedUser == false)
       return res.status(400).send("User update failed, check your input data!");
     res.redirect("/admin/admin_list_users");

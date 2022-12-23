@@ -1,6 +1,8 @@
 const userRepository = require("./userRepository");
 const User = require("./userModel");
 const USERS_COLLECTION = "users";
+var { LogHandler } = require("../logging/logHandler");
+var logger = new LogHandler().open();
 
 function findUser(user) {
   return userRepository.findUser(user, USERS_COLLECTION);
@@ -35,6 +37,14 @@ function registerUser(user) {
           "UserController (registerUser) -> User already exists -> " +
             result.username
         );
+
+        logger.log(
+          "INFO",
+          "UserController",
+          "registerUser",
+          "User already exists: " + result.id + " | " + result.username
+        );
+
         return null;
       }
       return userRepository.insertUser(user, USERS_COLLECTION);
@@ -51,6 +61,14 @@ function loginUser(username, password) {
           console.log(
             "UserController (loginUser) -> User logged in -> " + result.username
           );
+
+          logger.log(
+            "INFO",
+            "UserController",
+            "loginUser",
+            "User logged in: " + result.id + " | " + result.username
+          );
+
           return result;
         } else {
           return null;
@@ -61,15 +79,23 @@ function loginUser(username, password) {
   return foundUser;
 }
 
-async function removeUser(username) {
-  var foundUser = await userRepository.findUserByUsername(
-    username,
-    USERS_COLLECTION
-  );
+async function removeUser(id) {
+  logger.log("INFO", "UserController", "removeUser", "User requested: " + id);
+  var foundUser = await userRepository.findUserById(id, USERS_COLLECTION);
 
   if (foundUser) {
-    return userRepository.removeUser(user, USERS_COLLECTION);
+    logger.log(
+      "INFO",
+      "UserController",
+      "removeUser",
+      "Deleting user: " + foundUser.id + " | " + foundUser.username
+    );
+
+    return userRepository.removeUser(id, USERS_COLLECTION);
   }
+
+  logger.log("INFO", "UserController", "removeUser", "User not found: " + id);
+
   return null;
 }
 
@@ -80,12 +106,30 @@ async function checkAdmin(id) {
       console.log(
         "UserController (checkAdmin) -> User is admin -> " + foundUser.username
       );
+
+      logger.log(
+        "INFO",
+        "UserController",
+        "checkAdmin",
+        "User is admin: " + foundUser.id + " | " + foundUser.username
+      );
+
       return true;
     }
+
+    console.log(
+      "UserController (checkAdmin) -> User is not admin -> " +
+        foundUser.username
+    );
+
+    logger.log(
+      "INFO",
+      "UserController",
+      "checkAdmin",
+      "User is not admin: " + foundUser.id + " | " + foundUser.username
+    );
   }
-  console.log(
-    "UserController (checkAdmin) -> User is not admin -> " + foundUser.username
-  );
+
   return false;
 }
 
@@ -93,8 +137,17 @@ async function updateUser(id, user) {
   var foundUser = await userRepository.findUserById(id, USERS_COLLECTION);
   console.log("UserController (updateUser) -> " + foundUser.username);
   if (foundUser) {
+    logger.log(
+      "INFO",
+      "UserController",
+      "updateUser",
+      "Updating user: " + foundUser.id + " | " + foundUser.username
+    );
+
     return await userRepository.updateUser(id, user, USERS_COLLECTION);
   }
+
+  logger.log("INFO", "UserController", "updateUser", "User not found: " + id);
   return false;
 }
 
