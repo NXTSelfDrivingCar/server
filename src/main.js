@@ -49,3 +49,5 @@ server.listen(port, function (err) {
 });
 
 module.exports = server;
+
+// TODO: Dodati UDP i TCP; 

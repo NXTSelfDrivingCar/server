@@ -42,6 +42,7 @@ class LogHandler {
     return this;
   }
 
+  // TODO: Dodati da se umesto message, tavlja objekat koji se pretvara u JSON ili parmas objekata
   log(tag, route, fun, message) {
     if (LogHandler.status == statuses.CLOSED) return;
 

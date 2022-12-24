@@ -13,3 +13,5 @@ class User {
 }
 
 module.exports = User;
+
+// TODO: Dodati da korisnik ima poslednje vreme logovanja, posledenje vreme zahtevanja HTTP zahteva,... (za statistiku)
