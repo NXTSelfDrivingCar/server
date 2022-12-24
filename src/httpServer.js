@@ -25,11 +25,6 @@ server.use(express.urlencoded({ extended: true }));
 
 var wsServer = require("./wsServer")(server);
 
-wsServer.listen(wsServerPort, function (err) {
-  if (err) throw err;
-  console.log("Node.js WebSocket server at port 5001 is running.");
-});
-
 var admin_routes = require("./routes/admin_routes")(server);
 var guest_routes = require("./routes/guest_routes")(server);
 var user_routes = require("./routes/user_routes")(server, getUserWithToken); // TODO: Skloniti getUserWithToken jer se sada nalazi u util.js
@@ -41,7 +36,19 @@ server.get("/", async (req, res) => {
 
   var user = getUserWithToken(req, res);
 
-  logger.log("INFO", "/", "GET", user.username);
+  logger.log("info", {
+    action: "getMainPage",
+    url: req.url,
+    method: "GET",
+    serverOrigin: "HttpServer",
+    user: {
+      username: user.username,
+      role: user.role,
+      id: user.id,
+    },
+    sessionId: req.sessionID,
+  });
+
   res.render("main_page_index.ejs", {
     title: "Main page",
     user: user, // Passes user for navbar and access control
@@ -54,8 +61,37 @@ server.get("*", (req, res) => {
 });
 
 server.listen(httpServerPort, function (err) {
-  if (err) throw err;
+  if (err) {
+    logger.logError({
+      action: "startServer",
+      details: { serverType: "HttpServer", port: wsServerPort },
+      error: err,
+    });
+    throw err;
+  }
+
+  logger.log("info", {
+    action: "startServer",
+    details: { serverType: "HttpServer", port: httpServerPort },
+  });
   console.log("Node.js web server at port 5000 is running.");
+});
+
+wsServer.listen(wsServerPort, function (err) {
+  if (err) {
+    logger.logError({
+      action: "startServer",
+      details: { serverType: "WebSocket", port: wsServerPort },
+      error: err,
+    });
+    throw err;
+  }
+
+  logger.log("info", {
+    action: "startServer",
+    details: { serverType: "WebSocket", port: wsServerPort },
+  });
+  console.log("Node.js WebSocket server at port 5001 is running.");
 });
 
 module.exports = server;

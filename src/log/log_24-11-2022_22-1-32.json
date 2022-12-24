@@ -1,0 +1,101 @@
+[
+  {
+    "timestamp": "24-11-2022_22-1-32",
+    "tag": "INFO",
+    "source": "internal_log",
+    "action": "open",
+    "message": "Log file opened"
+  },
+  {
+    "action": "startServer",
+    "details": {
+      "serverType": "HttpServer",
+      "port": 5000
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_22-1-33"
+  },
+  {
+    "action": "startServer",
+    "details": {
+      "serverType": "WebSocket",
+      "port": 5001
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_22-1-33"
+  },
+  {
+    "action": "getMainPage",
+    "url": "/",
+    "method": "GET",
+    "serverOrigin": "HttpServer",
+    "user": {
+      "username": "guest",
+      "role": "guest",
+      "id": "96fc5a07-d93e-4bdb-bf82-bbe9fc9f3027"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_22-1-37"
+  },
+  {
+    "action": "getLoginPage",
+    "url": "/user/login",
+    "method": "GET",
+    "serverOrigin": "HttpServer",
+    "tag": "info",
+    "timestamp": "24-11-2022_22-1-44"
+  },
+  {
+    "origin": "UserRepository",
+    "method": "findUserByUsername",
+    "user": {
+      "username": "AnTasMes"
+    },
+    "collectionName": "users",
+    "result": {
+      "user": {
+        "id": "63a227ecec2deaa5023bf74b",
+        "username": "AnTasMes",
+        "role": "admin"
+      }
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_22-1-48"
+  },
+  {
+    "origin": "UserController",
+    "method": "loginUser",
+    "user": {
+      "id": "63a227ecec2deaa5023bf74b",
+      "username": "AnTasMes"
+    },
+    "result": "User logged in",
+    "tag": "info",
+    "timestamp": "24-11-2022_22-1-48"
+  },
+  {
+    "action": "loginUser",
+    "url": "/user/login",
+    "method": "POST",
+    "serverOrigin": "HttpServer",
+    "result": true,
+    "user": {
+      "username": "AnTasMes"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_22-1-48"
+  },
+  {
+    "action": "getMainPage",
+    "url": "/",
+    "method": "GET",
+    "serverOrigin": "HttpServer",
+    "user": {
+      "username": "AnTasMes",
+      "role": "admin",
+      "id": "fe5e4219-d747-46e3-8852-2d8133ba2fb8"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_22-1-48"
+  }
+]

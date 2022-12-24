@@ -14,11 +14,26 @@ function jsonToString(jsonData, ...keys) {
   return JSON.stringify(jsonData);
 }
 
+function jsonFromKeys(jsonData, ...keys) {
+  var result = {};
+  for (var i = 0; i < keys.length; i++) {
+    result[keys[i]] = jsonData[keys[i]];
+  }
+  return result;
+}
+
 function objectArrayToString(objectArray, ...keys) {
   if (keys.length > 0) {
     return objectArray.map((object) => jsonToString(object, ...keys));
   }
   return objectArray.map((object) => jsonToString(object));
+}
+
+function objectArrayToJSON(objectArray, ...keys) {
+  if (keys.length > 0) {
+    return objectArray.map((object) => jsonFromKeys(object, ...keys));
+  }
+  return objectArray.map((object) => jsonFromKeys(object));
 }
 
 function isInArray(value, array) {
@@ -41,7 +56,6 @@ function getUserWithToken(req, res) {
       // Ako je token istekao, vraca null i to dozvoljava da se vrati guest korisnik
       function (err, decoded) {
         if (err) {
-          logger.log("ERROR", "getUserWithToken", "jwt.verify", err);
           return null;
         }
         return decoded;
@@ -72,4 +86,6 @@ module.exports = {
   objectArrayToString: objectArrayToString,
   isInArray: isInArray,
   getUserWithToken: getUserWithToken,
+  objectArrayToJSON: objectArrayToJSON,
+  jsonFromKeys: jsonFromKeys,
 };

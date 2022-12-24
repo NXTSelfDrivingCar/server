@@ -16,7 +16,8 @@ Konekcija:
   ✘ TCP Veza (Za povezivanje sa telefonom?) @cancelled(22-12-24 01:33)
 
 QoL zahtevi:
-  ☐ Napravi logger da bude dobar (da bude json objekat)
+  ✔ Napravi logger da bude dobar (da bude json objekat) @done(22-12-24 21:06)
+  ✔ Logovanje svih bitnih akcija @started(22-12-24 21:06) @done(22-12-24 22:04) @lasted(58m5s)
 
 Nefunkcionalni zahtevi:
   ✔ Razdvojiti rute po posebnim fajlovima (admin_routes, user_routes) @done(22-12-24 01:31)

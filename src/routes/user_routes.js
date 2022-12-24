@@ -6,13 +6,6 @@ var jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 async function checkPasswords(req, res) {
-  logger.log(
-    "INFO",
-    req.url,
-    req.method,
-    "Password 1: " + req.body.password + " - Password 2: " + req.body.password2
-  );
-
   if (req.body.password == req.body.password2) {
     return true;
   } else {
@@ -23,8 +16,6 @@ async function checkPasswords(req, res) {
 async function loginUser(req, res, next) {
   var username = req.body.username;
   var password = req.body.password;
-
-  logger.log("INFO", req.url, req.method, username);
 
   // gets user from database if found
   var foundUser = await userController.loginUser(username, password);
@@ -53,24 +44,11 @@ async function registerUser(req, res) {
     "user"
   );
 
-  logger.log(
-    "INFO",
-    req.url,
-    req.method,
-    "Username: " +
-      req.body.username +
-      " - Email: " +
-      req.body.email +
-      " - Role: user"
-  );
-
   // register user
   var registered = await userController.registerUser(newUser);
   if (registered == null) {
-    logger.log("ERROR", req.url, req.method, "User already exists");
     return false;
   } else {
-    logger.log("INFO", req.url, req.method, "User registered");
     return true;
   }
 }
@@ -89,7 +67,7 @@ module.exports = function (server, getUserWithToken) {
   // =================== GET ROUTES =================== //
 
   server.get("/user/logout", async (req, res) => {
-    // logger.log("INFO", "/user/logout", "GET", user.username);
+    //
 
     // TODO: [log] user out token and session
     res.status(200).clearCookie("auth");
@@ -99,6 +77,15 @@ module.exports = function (server, getUserWithToken) {
   server.get("/user/register", async (req, res) => {
     result = "";
     passResult = "";
+
+    logger.log("info", {
+      action: "getRegisterPage",
+      url: req.url,
+      method: "GET",
+      serverOrigin: "HttpServer",
+      sessionId: req.session,
+    });
+
     res.render("register_page.ejs", {
       title: "Regsiter page",
       result: result,
@@ -110,6 +97,15 @@ module.exports = function (server, getUserWithToken) {
 
   server.get("/user/login", async (req, res) => {
     result = "";
+
+    logger.log("info", {
+      action: "getLoginPage",
+      url: req.url,
+      method: "GET",
+      serverOrigin: "HttpServer",
+      sessionId: req.session,
+    });
+
     res.render("login_page.ejs", {
       title: "Login page",
       user: await getUserWithToken(req, res), // Gets user for navbar
@@ -122,7 +118,18 @@ module.exports = function (server, getUserWithToken) {
 
   server.post("/user/login", async (req, res, next) => {
     var result = await loginUser(req, res, next);
-    logger.log("INFO", "/user/login", "POST", "Log result: " + result);
+
+    logger.log("info", {
+      action: "loginUser",
+      url: req.url,
+      method: "POST",
+      serverOrigin: "HttpServer",
+      sessionId: req.session,
+      result: result,
+      user: {
+        username: req.body.username,
+      },
+    });
 
     if (result) {
       res.redirect("/");
@@ -139,7 +146,19 @@ module.exports = function (server, getUserWithToken) {
   server.post("/user/register", async (req, res, next) => {
     var result = await registerUser(req, res);
     var passResult = await checkPasswords(req, res);
-    logger.log("INFO", "/user/register", "POST", "Log result: " + result);
+
+    logger.log("info", {
+      action: "registerUser",
+      url: req.url,
+      method: "POST",
+      serverOrigin: "HttpServer",
+      sessionId: req.session,
+      result: result,
+      user: {
+        username: req.body.username,
+        email: req.body.email,
+      },
+    });
 
     if (result) {
       res.redirect("/");

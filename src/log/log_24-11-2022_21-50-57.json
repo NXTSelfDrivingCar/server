@@ -1,0 +1,125 @@
+[
+  {
+    "timestamp": "24-11-2022_21-50-57",
+    "tag": "INFO",
+    "source": "internal_log",
+    "action": "open",
+    "message": "Log file opened"
+  },
+  {
+    "action": "startServer",
+    "details": {
+      "serverType": "HttpServer",
+      "port": 5000
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-50-58"
+  },
+  {
+    "action": "startServer",
+    "details": {
+      "serverType": "WebSocket",
+      "port": 5001
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-50-58"
+  },
+  {
+    "action": "listUsers",
+    "method": "POST",
+    "url": "/admin/admin_list_users",
+    "body": {
+      "email": "",
+      "username": "",
+      "role": ""
+    },
+    "cookies": {
+      "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzYTIyN2VjZWMyZGVhYTUwMjNiZjc0YiIsImlkIjoiYTc1ZmY3NzItM2Y2MS00ODgxLTk4YmUtMDM3ZmJkNDlmNzJjIiwidXNlcm5hbWUiOiJBblRhc01lcyIsInBhc3N3b3JkIjoiMTIzIiwiZW1haWwiOiJha2l0YXNldnNraTExMkBnbWFpbC5jb20iLCJueHRfYXBpX2tleSI6ImFwaWtleSIsInJvbGUiOiJhZG1pbiJ9LCJpYXQiOjE2NzE5MTM4NTEsImV4cCI6MTY3MTkxNzQ1MX0.o4HTsHJzgTLwoUpCEd4jf4ROMj2MkIS_hBjh21s-daY"
+    },
+    "listUsers": [
+      {
+        "username": "AnTasMes",
+        "id": "a75ff772-3f61-4881-98be-037fbd49f72c"
+      },
+      {
+        "username": "jovan",
+        "id": "0ed1e22c-1edf-4db4-8623-e8e4123d63ab"
+      },
+      {
+        "username": "Marko",
+        "id": "1c94fae6-bd1c-47d8-99dd-4fc4eef81274"
+      },
+      {
+        "username": "Ivana",
+        "id": "9fa0f028-1855-4e51-8df9-903f210c796a"
+      },
+      {
+        "username": "Simo",
+        "id": "a94f852e-cfff-4d1b-b462-a166a048f221"
+      },
+      {
+        "username": "Stefan",
+        "id": "236308ed-7442-4726-93dc-eca1e32c491d"
+      }
+    ],
+    "tag": "info",
+    "timestamp": "24-11-2022_21-51-3"
+  },
+  {
+    "action": "getMainPage",
+    "url": "/",
+    "method": "GET",
+    "serverOrigin": "HttpServer",
+    "user": {
+      "username": "guest",
+      "role": "guest",
+      "id": "d9ae2be2-684d-4c97-8565-f014efd482fb"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-51-23"
+  },
+  {
+    "action": "getLoginPage",
+    "url": "/user/login",
+    "method": "GET",
+    "serverOrigin": "HttpServer",
+    "tag": "info",
+    "timestamp": "24-11-2022_21-51-24"
+  },
+  {
+    "origin": "UserController",
+    "method": "loginUser",
+    "user": {
+      "id": "63a227ecec2deaa5023bf74b",
+      "username": "AnTasMes"
+    },
+    "result": "User logged in",
+    "tag": "info",
+    "timestamp": "24-11-2022_21-51-28"
+  },
+  {
+    "action": "loginUser",
+    "url": "/user/login",
+    "method": "POST",
+    "serverOrigin": "HttpServer",
+    "result": true,
+    "user": {
+      "username": "AnTasMes"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-51-28"
+  },
+  {
+    "action": "getMainPage",
+    "url": "/",
+    "method": "GET",
+    "serverOrigin": "HttpServer",
+    "user": {
+      "username": "AnTasMes",
+      "role": "admin",
+      "id": "f65e3078-048e-4cb6-a91c-9e05c1b592e0"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-51-28"
+  }
+]

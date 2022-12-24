@@ -38,15 +38,29 @@ function registerUser(user) {
             result.username
         );
 
-        logger.log(
-          "INFO",
-          "UserController",
-          "registerUser",
-          "User already exists: " + result.id + " | " + result.username
-        );
+        logger.log("info", {
+          origin: "UserController",
+          method: "registerUser",
+          user: {
+            id: result._id,
+            username: result.username,
+          },
+          result: "User already exists",
+        });
 
         return null;
       }
+
+      logger.log("info", {
+        origin: "UserController",
+        method: "registerUser",
+        user: {
+          id: user._id,
+          username: user.username,
+        },
+        result: "User registered",
+      });
+
       return userRepository.insertUser(user, USERS_COLLECTION);
     });
   return foundUser;
@@ -62,58 +76,63 @@ function loginUser(username, password) {
             "UserController (loginUser) -> User logged in -> " + result.username
           );
 
-          logger.log(
-            "INFO",
-            "UserController",
-            "loginUser",
-            "User logged in: " + result.id + " | " + result.username
-          );
+          logger.log("info", {
+            origin: "UserController",
+            method: "loginUser",
+            user: {
+              id: result._id,
+              username: result.username,
+            },
+            result: "User logged in",
+          });
 
           return result;
         } else {
           return null;
         }
       }
+
+      logger.log("info", {
+        origin: "UserController",
+        method: "loginUser",
+        user: {
+          username: username,
+        },
+        result: "User not found",
+      });
+
       return null;
     });
   return foundUser;
 }
 
 async function removeUser(id) {
-  logger.log("INFO", "UserController", "removeUser", "User requested: " + id);
   var foundUser = await userRepository.findUserById(id, USERS_COLLECTION);
 
   if (foundUser) {
-    logger.log(
-      "INFO",
-      "UserController",
-      "removeUser",
-      "Deleting user: " + foundUser.id + " | " + foundUser.username
-    );
-
     return userRepository.removeUser(id, USERS_COLLECTION);
   }
-
-  logger.log("INFO", "UserController", "removeUser", "User not found: " + id);
 
   return null;
 }
 
 async function checkAdmin(id) {
+  let logData = {
+    origin: "UserController",
+    method: "checkAdmin",
+    user: {
+      id: id,
+    },
+  };
+
   var foundUser = await userRepository.findUserById(id, USERS_COLLECTION);
   if (foundUser) {
     if (foundUser.role === "admin") {
       console.log(
         "UserController (checkAdmin) -> User is admin -> " + foundUser.username
       );
-
-      logger.log(
-        "INFO",
-        "UserController",
-        "checkAdmin",
-        "User is admin: " + foundUser.id + " | " + foundUser.username
-      );
-
+      logData["result"] = "User is admin";
+      logger.log("info", logData);
       return true;
     }
 
@@ -122,32 +141,35 @@ async function checkAdmin(id) {
         foundUser.username
     );
 
-    logger.log(
-      "INFO",
-      "UserController",
-      "checkAdmin",
-      "User is not admin: " + foundUser.id + " | " + foundUser.username
-    );
+    logData["result"] = "User is not admin";
+    logger.log("info", logData);
   }
 
   return false;
 }
 
 async function updateUser(id, user) {
+  let logData = {
+    origin: "UserController",
+    method: "updateUser",
+    user: {
+      id: id,
+    },
+  };
+
   var foundUser = await userRepository.findUserById(id, USERS_COLLECTION);
+
   console.log("UserController (updateUser) -> " + foundUser.username);
+
   if (foundUser) {
-    logger.log(
-      "INFO",
-      "UserController",
-      "updateUser",
-      "Updating user: " + foundUser.id + " | " + foundUser.username
-    );
+    logData["result"] = "User updated";
+    logger.log("info", logData);
 
     return await userRepository.updateUser(id, user, USERS_COLLECTION);
   }
 
-  logger.log("INFO", "UserController", "updateUser", "User not found: " + id);
+  logData["result"] = "User not found";
+  logger.log("info", logData);
   return false;
 }
 

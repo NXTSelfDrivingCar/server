@@ -1,0 +1,191 @@
+[
+  {
+    "timestamp": "24-11-2022_21-20-37",
+    "tag": "INFO",
+    "source": "internal_log",
+    "action": "open",
+    "message": "Log file opened"
+  },
+  {
+    "action": "startServer",
+    "details": {
+      "serverType": "HttpServer",
+      "port": 5000
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-20-38"
+  },
+  {
+    "action": "startServer",
+    "details": {
+      "serverType": "WebSocket",
+      "port": 5001
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-20-38"
+  },
+  {
+    "action": "getMainPage",
+    "url": "/",
+    "method": "GET",
+    "serverOrigin": "HttpServer",
+    "user": {
+      "username": "guest",
+      "role": "guest",
+      "id": "7a415058-7ed8-4fae-bb15-686855ee7a54"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-20-40"
+  },
+  {
+    "action": "getLoginPage",
+    "url": "/user/login",
+    "method": "GET",
+    "serverOrigin": "HttpServer",
+    "tag": "info",
+    "timestamp": "24-11-2022_21-20-41"
+  },
+  {
+    "action": "loginUser",
+    "url": "/user/login",
+    "method": "POST",
+    "serverOrigin": "HttpServer",
+    "result": true,
+    "user": {
+      "username": "Simo"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-20-44"
+  },
+  {
+    "action": "getMainPage",
+    "url": "/",
+    "method": "GET",
+    "serverOrigin": "HttpServer",
+    "user": {
+      "username": "Simo",
+      "role": "admin",
+      "id": "c42771fd-a8c4-4e05-b893-3e939c00cc40"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-20-44"
+  },
+  {
+    "action": "checkAuth",
+    "method": "GET",
+    "url": "/admin/dashboard",
+    "body": {},
+    "cookies": {
+      "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzYTViMTY4ZWUwMzE4YzEyZGM2N2I5ZCIsImlkIjoiYTk0Zjg1MmUtY2ZmZi00ZDFiLWI0NjItYTE2NmEwNDhmMjIxIiwidXNlcm5hbWUiOiJTaW1vIiwicGFzc3dvcmQiOiIxMjMiLCJlbWFpbCI6InNpbW8uc2tva29AZ21haWwuY29tIiwibnh0X2FwaV9rZXkiOiJhcGlrZXkiLCJyb2xlIjoiYWRtaW4ifSwiaWF0IjoxNjcxOTEzMjQ0LCJleHAiOjE2NzE5MTY4NDR9.pIWX1lzbkf_5VgqspAHpFiiDK-X07wOA0dwUrtqzRsg"
+    },
+    "user": {
+      "id": "a94f852e-cfff-4d1b-b462-a166a048f221",
+      "username": "Simo",
+      "role": "admin"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-20-47"
+  },
+  {
+    "action": "checkAuth",
+    "method": "GET",
+    "url": "/admin/admin_list_users",
+    "body": {},
+    "cookies": {
+      "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzYTViMTY4ZWUwMzE4YzEyZGM2N2I5ZCIsImlkIjoiYTk0Zjg1MmUtY2ZmZi00ZDFiLWI0NjItYTE2NmEwNDhmMjIxIiwidXNlcm5hbWUiOiJTaW1vIiwicGFzc3dvcmQiOiIxMjMiLCJlbWFpbCI6InNpbW8uc2tva29AZ21haWwuY29tIiwibnh0X2FwaV9rZXkiOiJhcGlrZXkiLCJyb2xlIjoiYWRtaW4ifSwiaWF0IjoxNjcxOTEzMjQ0LCJleHAiOjE2NzE5MTY4NDR9.pIWX1lzbkf_5VgqspAHpFiiDK-X07wOA0dwUrtqzRsg"
+    },
+    "user": {
+      "id": "a94f852e-cfff-4d1b-b462-a166a048f221",
+      "username": "Simo",
+      "role": "admin"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-20-47"
+  },
+  {
+    "action": "checkAuth",
+    "method": "GET",
+    "url": "/admin/admin_list_users",
+    "body": {},
+    "cookies": {
+      "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzYTViMTY4ZWUwMzE4YzEyZGM2N2I5ZCIsImlkIjoiYTk0Zjg1MmUtY2ZmZi00ZDFiLWI0NjItYTE2NmEwNDhmMjIxIiwidXNlcm5hbWUiOiJTaW1vIiwicGFzc3dvcmQiOiIxMjMiLCJlbWFpbCI6InNpbW8uc2tva29AZ21haWwuY29tIiwibnh0X2FwaV9rZXkiOiJhcGlrZXkiLCJyb2xlIjoiYWRtaW4ifSwiaWF0IjoxNjcxOTEzMjQ0LCJleHAiOjE2NzE5MTY4NDR9.pIWX1lzbkf_5VgqspAHpFiiDK-X07wOA0dwUrtqzRsg"
+    },
+    "user": {
+      "id": "a94f852e-cfff-4d1b-b462-a166a048f221",
+      "username": "Simo",
+      "role": "admin"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-20-52"
+  },
+  {
+    "action": "getMainPage",
+    "url": "/",
+    "method": "GET",
+    "serverOrigin": "HttpServer",
+    "user": {
+      "username": "guest",
+      "role": "guest",
+      "id": "6aaf592e-ad3f-4922-8bc8-10cef5cd4224"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-20-53"
+  },
+  {
+    "action": "getLoginPage",
+    "url": "/user/login",
+    "method": "GET",
+    "serverOrigin": "HttpServer",
+    "tag": "info",
+    "timestamp": "24-11-2022_21-20-54"
+  },
+  {
+    "action": "loginUser",
+    "url": "/user/login",
+    "method": "POST",
+    "serverOrigin": "HttpServer",
+    "result": true,
+    "user": {
+      "username": "jovan"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-20-57"
+  },
+  {
+    "action": "getMainPage",
+    "url": "/",
+    "method": "GET",
+    "serverOrigin": "HttpServer",
+    "user": {
+      "username": "jovan",
+      "role": "user",
+      "id": "cb458493-bbe2-4f0b-923d-7eb5da08d6cb"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-20-57"
+  },
+  {
+    "action": "checkAuth",
+    "method": "GET",
+    "url": "/admin/dashboard",
+    "body": {},
+    "cookies": {
+      "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzYTQ0Y2Y2M2Q4Mjk0YzQyNDFiYWViZCIsImlkIjoiMGVkMWUyMmMtMWVkZi00ZGI0LTg2MjMtZThlNDEyM2Q2M2FiIiwidXNlcm5hbWUiOiJqb3ZhbiIsInBhc3N3b3JkIjoiMTIzIiwiZW1haWwiOiJqb3ZhbjMyNkBpdHMuZWR1LnJzIiwibnh0X2FwaV9rZXkiOiJhcGlrZXkiLCJyb2xlIjoidXNlciJ9LCJpYXQiOjE2NzE5MTMyNTcsImV4cCI6MTY3MTkxNjg1N30.5SXtITHo5aBzsDyvWvP0tZMiQVXqsNifdc4Qz5LJvk4"
+    },
+    "user": {
+      "id": "0ed1e22c-1edf-4db4-8623-e8e4123d63ab",
+      "username": "jovan",
+      "role": "user"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-21-0"
+  },
+  {
+    "action": "getLoginPage",
+    "url": "/user/login",
+    "method": "GET",
+    "serverOrigin": "HttpServer",
+    "tag": "info",
+    "timestamp": "24-11-2022_21-21-0"
+  }
+]

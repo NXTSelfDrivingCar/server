@@ -7,17 +7,28 @@ var {
   jsonToString,
   objectArrayToString,
   getUserWithToken,
+  objectArrayToJSON,
 } = require("../shared/util");
 
 var jwt = require("jsonwebtoken");
 
 async function checkAuth(req, res, next) {
+  logData = {
+    action: "checkAuth",
+    method: req.method,
+    url: req.url,
+    body: req.body,
+    cookies: req.cookies,
+  };
+
   if (!req.cookies["auth"]) {
+    logger.log("info", logData);
     return res.redirect("/user/login");
   }
 
   const token = req.cookies["auth"];
   if (!token) {
+    logger.log("info", logData);
     return res.redirect("/user/login");
   }
 
@@ -25,18 +36,30 @@ async function checkAuth(req, res, next) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.username = decoded.user.username;
 
+    logData["user"] = {
+      id: decoded.user.id,
+      username: decoded.user.username,
+      role: decoded.user.role,
+    };
+
     // decoded.user.username != decoded.username
 
     // Dodati obavestenje ako nisi admin, zasto nisi admin i azsto ne pripadas ovde mamu ti jebm
     // aka zasto si rerouteovan na login
-    if (decoded.user.role != "admin") return res.redirect("/user/login"); // thanks to this, only admin can access admin routes
+    if (decoded.user.role != "admin") {
+      logData["result"] = "User is not admin";
+      logger.log("info", logData);
+      return res.redirect("/user/login");
+    } // thanks to this, only admin can access admin routes
 
-    console.log("Administrator user: ");
-    console.log(decoded.user);
+    logData["result"] = "User is admin";
+    logger.log("info", logData);
 
     next();
     return;
   } catch (err) {
+    logData["error"] = err;
+    logger.logError(logData);
     return res.redirect("/user/login");
   }
 }
@@ -55,12 +78,6 @@ async function filterSeachUsers(req, res) {
   }
 
   var foundUsers = await userController.filterSearch(formatFilters);
-  logger.log(
-    "INFO",
-    "/admin/admin_list_users",
-    "filterSeachUsers",
-    jsonToString(formatFilters)
-  );
 
   return foundUsers;
 }
@@ -88,13 +105,13 @@ async function updateUser(req, res) {
 }
 
 /*
-*
-*==========================================================================
-*==========================================================================
-*=========================== MODULE EXPORTS ===============================
-*==========================================================================
-*==========================================================================
-*
+ *
+ *==========================================================================
+ *==========================================================================
+ *=========================== MODULE EXPORTS ===============================
+ *==========================================================================
+ *==========================================================================
+ *
  */
 
 module.exports = function (server) {
@@ -105,15 +122,12 @@ module.exports = function (server) {
   }); // Debug
 
   server.get("/admin/dashboard", checkAuth, async (req, res) => {
-    logger.log(
-      "INFO",
-      req.url,
-      req.method,
-      "Log result auth user: " +
-        getUserWithToken(req, res).id +
-        " | " +
-        getUserWithToken(req, res).username
-    );
+    logger.log("info", {
+      action: "openAdminDashboard",
+      method: req.method,
+      url: req.url,
+      cookies: req.cookies,
+    });
 
     res.render("admin_dashboard_index.ejs", {
       title: "Admin dashboard",
@@ -122,78 +136,55 @@ module.exports = function (server) {
 
   server.get("/admin/admin_list_users", checkAuth, async (req, res) => {
     var users = await filterSeachUsers(req, res); // Ovo je array of users
-    logger.log(
-      "INFO",
-      req.url,
-      req.method,
-      "Log result auth user: " +
-        getUserWithToken(req, res).id +
-        " | " +
-        getUserWithToken(req, res).username
-    );
+
+    logger.log("info", {
+      action: "openAdminListUsers",
+      method: req.method,
+      url: req.url,
+      cookies: req.cookies,
+    });
+
     res.render("admin_list_users.ejs", {
       title: "Listing users",
       users: users,
     });
   });
 
-  server.get("/admin/user/delete", async (req, res) => {
-    logger.log(
-      "INFO",
-      req.url,
-      req.method,
-      "Log result auth user: " +
-        getUserWithToken(req, res).id +
-        " | " +
-        getUserWithToken(req, res).username +
-        " | " +
-        "User requested: " +
-        req.query["id"]
-    );
+  server.get("/admin/user/delete", checkAuth, async (req, res) => {
     var deleted = await deleteUser(req, res);
+
+    logger.log("info", {
+      action: "deleteUser",
+      method: req.method,
+      url: req.url,
+      body: req.body,
+      cookies: req.cookies,
+      deleted: deleted,
+    });
+
     res.redirect("/admin/admin_list_users");
   });
 
-  server.get("/admin/user/update", async (req, res) => {
+  server.get("/admin/user/update", checkAuth, async (req, res) => {
     if (req.query["id"] == null) return res.end("No user id provided!");
     var gotUser = await userController.findUserById(req.query["id"]);
 
     if (gotUser == null) {
-      logger.log(
-        "ERROR",
-        req.url,
-        req.method,
-        "Log result auth user: " +
-          getUserWithToken(req, res).id +
-          " | " +
-          getUserWithToken(req, res).username +
-          " | User requested: " +
-          req.query["id"] +
-          " | " +
-          "User not found"
-      );
-
       return res.end("User id is not valid");
     }
 
-    logger.log(
-      "INFO",
-      req.url,
-      req.method,
-      "Log result auth user: " +
-        getUserWithToken(req, res).id +
-        " | " +
-        getUserWithToken(req, res).username +
-        " | " +
-        "User requested: " +
-        gotUser.id +
-        " | " +
-        gotUser.username +
-        " | " +
-        gotUser.email +
-        " | " +
-        gotUser.role
-    );
+    logger.log("info", {
+      action: "openAdminUserUpdate",
+      method: req.method,
+      url: req.url,
+      body: req.body,
+      cookies: req.cookies,
+      user: {
+        id: gotUser.id,
+        username: gotUser.username,
+        email: gotUser.email,
+      },
+    });
 
     res.render("admin_user_update.ejs", {
       title: "Update user",
@@ -203,19 +194,20 @@ module.exports = function (server) {
 
   //* =================== POST ROUTES =================== *//
 
-  server.post("/admin/admin_list_users", async (req, res) => {
-    logger.log("INFO", req.url, req.method, "LISTING USERS START");
+  // TODO: Proveriti da li tehnicki mora da stoji checkAuth u post rutama
 
+  server.post("/admin/admin_list_users", async (req, res) => {
     var users = await filterSeachUsers(req, res); // Ovo je array of users
 
-    logger.log(
-      "INFO",
-      req.url,
-      req.method,
-      "Log result: " + objectArrayToString(users, "id")
-    );
+    logger.log("info", {
+      action: "listUsers",
+      method: req.method,
+      url: req.url,
+      body: req.body,
+      cookies: req.cookies,
+      listUsers: objectArrayToJSON(users, "username", "id"),
+    });
 
-    logger.log("INFO", req.url, req.method, "LISTING USERS END");
     res.render("admin_list_users.ejs", {
       title: "Listing users",
       users: users,
@@ -223,35 +215,34 @@ module.exports = function (server) {
   });
 
   server.post("/admin/user/admin_user_update", async (req, res) => {
-    logger.log("INFO", req.url, req.method, "UPDATE USER START");
-
     var updatedUser = await updateUser(req, res);
 
-    logger.log(
-      "INFO",
-      req.url,
-      req.method,
-      "Log result auth user: " +
-        getUserWithToken(req, res).id +
-        " | " +
-        getUserWithToken(req, res).username +
-        " | " +
-        "Update result: " +
-        updatedUser +
-        " | " +
-        req.body.inputID +
-        " | " +
-        req.body.inputUsername +
-        " | " +
-        req.body.inputEmail +
-        " | " +
-        req.body.inputRole +
-        " | "
-    );
+    logger.log("info", {
+      action: "updateUser",
+      method: req.method,
+      url: req.url,
+      body: req.body,
+      cookies: req.cookies,
+      updated: {
+        id: req.body.inputID,
+        username: req.body.inputUsername,
+        email: req.body.inputEmail,
+        role: req.body.inputRole,
+      },
+    });
 
-    logger.log("INFO", req.url, req.method, "UPDATE USER END");
-    if (updatedUser == false)
+    if (updatedUser == false) {
+      logger.log("info", {
+        action: "updateUser",
+        method: req.method,
+        url: req.url,
+        body: req.body,
+        cookies: req.cookies,
+        status: 400,
+        message: "User update failed, check your input data!",
+      });
       return res.status(400).send("User update failed, check your input data!");
+    }
     res.redirect("/admin/admin_list_users");
   });
 };

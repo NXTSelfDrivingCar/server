@@ -1,0 +1,89 @@
+[
+  {
+    "timestamp": "24-11-2022_21-18-52",
+    "tag": "INFO",
+    "source": "internal_log",
+    "action": "open",
+    "message": "Log file opened"
+  },
+  {
+    "action": "startServer",
+    "details": {
+      "serverType": "HttpServer",
+      "port": 5000
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-18-53"
+  },
+  {
+    "action": "startServer",
+    "details": {
+      "serverType": "WebSocket",
+      "port": 5001
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-18-53"
+  },
+  {
+    "action": "getMainPage",
+    "url": "/",
+    "method": "GET",
+    "serverOrigin": "HttpServer",
+    "user": {
+      "username": "guest",
+      "role": "guest",
+      "id": "329feda4-52c5-48de-b092-b1f80405bf3a"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-18-57"
+  },
+  {
+    "action": "getLoginPage",
+    "url": "/user/login",
+    "method": "GET",
+    "serverOrigin": "HttpServer",
+    "tag": "info",
+    "timestamp": "24-11-2022_21-18-59"
+  },
+  {
+    "action": "loginUser",
+    "url": "/user/login",
+    "method": "POST",
+    "serverOrigin": "HttpServer",
+    "result": true,
+    "user": {
+      "username": "jovan"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-19-2"
+  },
+  {
+    "action": "getMainPage",
+    "url": "/",
+    "method": "GET",
+    "serverOrigin": "HttpServer",
+    "user": {
+      "username": "jovan",
+      "role": "admin",
+      "id": "23af568d-2574-4a95-a2f4-50722d4f8349"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-19-2"
+  },
+  {
+    "ip": "::1",
+    "method": "GET",
+    "url": "/admin/dashboard",
+    "body": {},
+    "cookies": {
+      "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzYTQ0Y2Y2M2Q4Mjk0YzQyNDFiYWViZCIsImlkIjoiMGVkMWUyMmMtMWVkZi00ZGI0LTg2MjMtZThlNDEyM2Q2M2FiIiwidXNlcm5hbWUiOiJqb3ZhbiIsInBhc3N3b3JkIjoiMTIzIiwiZW1haWwiOiJqb3ZhbjMyNkBpdHMuZWR1LnJzIiwibnh0X2FwaV9rZXkiOiJhcGlrZXkiLCJyb2xlIjoiYWRtaW4ifSwiaWF0IjoxNjcxOTEzMTQyLCJleHAiOjE2NzE5MTY3NDJ9.NMR_c_ohRVA7LyEy5dgdE71EzoeTKUOkK4FgkX-DXMY"
+    },
+    "user": {
+      "id": "0ed1e22c-1edf-4db4-8623-e8e4123d63ab",
+      "username": "jovan",
+      "role": "admin"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-19-5"
+  }
+]

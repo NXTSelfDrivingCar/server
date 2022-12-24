@@ -1,0 +1,77 @@
+[
+  {
+    "timestamp": "24-11-2022_21-35-44",
+    "tag": "INFO",
+    "source": "internal_log",
+    "action": "open",
+    "message": "Log file opened"
+  },
+  {
+    "action": "startServer",
+    "details": {
+      "serverType": "HttpServer",
+      "port": 5000
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-35-45"
+  },
+  {
+    "action": "startServer",
+    "details": {
+      "serverType": "WebSocket",
+      "port": 5001
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-35-45"
+  },
+  {
+    "action": "checkAuth",
+    "method": "GET",
+    "url": "/admin/admin_list_users",
+    "body": {},
+    "cookies": {
+      "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzYTIyN2VjZWMyZGVhYTUwMjNiZjc0YiIsImlkIjoiYTc1ZmY3NzItM2Y2MS00ODgxLTk4YmUtMDM3ZmJkNDlmNzJjIiwidXNlcm5hbWUiOiJBblRhc01lcyIsInBhc3N3b3JkIjoiMTIzIiwiZW1haWwiOiJha2l0YXNldnNraTExMkBnbWFpbC5jb20iLCJueHRfYXBpX2tleSI6ImFwaWtleSIsInJvbGUiOiJhZG1pbiJ9LCJpYXQiOjE2NzE5MTM4NTEsImV4cCI6MTY3MTkxNzQ1MX0.o4HTsHJzgTLwoUpCEd4jf4ROMj2MkIS_hBjh21s-daY"
+    },
+    "user": {
+      "id": "a75ff772-3f61-4881-98be-037fbd49f72c",
+      "username": "AnTasMes",
+      "role": "admin"
+    },
+    "result": "User is admin",
+    "tag": "info",
+    "timestamp": "24-11-2022_21-35-49"
+  },
+  {
+    "action": "openAdminListUsers",
+    "method": "GET",
+    "url": "/admin/admin_list_users",
+    "cookies": {
+      "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzYTIyN2VjZWMyZGVhYTUwMjNiZjc0YiIsImlkIjoiYTc1ZmY3NzItM2Y2MS00ODgxLTk4YmUtMDM3ZmJkNDlmNzJjIiwidXNlcm5hbWUiOiJBblRhc01lcyIsInBhc3N3b3JkIjoiMTIzIiwiZW1haWwiOiJha2l0YXNldnNraTExMkBnbWFpbC5jb20iLCJueHRfYXBpX2tleSI6ImFwaWtleSIsInJvbGUiOiJhZG1pbiJ9LCJpYXQiOjE2NzE5MTM4NTEsImV4cCI6MTY3MTkxNzQ1MX0.o4HTsHJzgTLwoUpCEd4jf4ROMj2MkIS_hBjh21s-daY"
+    },
+    "tag": "info",
+    "timestamp": "24-11-2022_21-35-49"
+  },
+  {
+    "action": "openAdminListUsers",
+    "method": "POST",
+    "url": "/admin/admin_list_users",
+    "body": {
+      "email": "",
+      "username": "",
+      "role": ""
+    },
+    "cookies": {
+      "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzYTIyN2VjZWMyZGVhYTUwMjNiZjc0YiIsImlkIjoiYTc1ZmY3NzItM2Y2MS00ODgxLTk4YmUtMDM3ZmJkNDlmNzJjIiwidXNlcm5hbWUiOiJBblRhc01lcyIsInBhc3N3b3JkIjoiMTIzIiwiZW1haWwiOiJha2l0YXNldnNraTExMkBnbWFpbC5jb20iLCJueHRfYXBpX2tleSI6ImFwaWtleSIsInJvbGUiOiJhZG1pbiJ9LCJpYXQiOjE2NzE5MTM4NTEsImV4cCI6MTY3MTkxNzQ1MX0.o4HTsHJzgTLwoUpCEd4jf4ROMj2MkIS_hBjh21s-daY"
+    },
+    "listUsers": [
+      "AnTasMes a75ff772-3f61-4881-98be-037fbd49f72c ",
+      "jovan 0ed1e22c-1edf-4db4-8623-e8e4123d63ab ",
+      "Marko 1c94fae6-bd1c-47d8-99dd-4fc4eef81274 ",
+      "Ivana 9fa0f028-1855-4e51-8df9-903f210c796a ",
+      "Simo a94f852e-cfff-4d1b-b462-a166a048f221 ",
+      "Stefan 236308ed-7442-4726-93dc-eca1e32c491d "
+    ],
+    "tag": "info",
+    "timestamp": "24-11-2022_21-35-53"
+  }
+]
