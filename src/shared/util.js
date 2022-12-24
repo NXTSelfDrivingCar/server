@@ -1,5 +1,7 @@
 var jwt = require("jsonwebtoken");
 var User = require("../user/userModel");
+var { LogHandler } = require("../logging/logHandler");
+var logger = new LogHandler().open();
 
 function jsonToString(jsonData, ...keys) {
   if (keys.length > 0) {

@@ -3,10 +3,15 @@ var { LogHandler } = require("./logging/logHandler.js");
 var { getUserWithToken } = require("./shared/util");
 var express = require("express");
 var path = require("path");
-var port = 5000;
 var User = require("./user/userModel");
 var cookies = require("cookie-parser");
 var jwt = require("jsonwebtoken");
+
+const httpServerPort = 5000;
+const wsServerPort = 5001;
+
+const { Server } = require("socket.io");
+var wildcard = require("socketio-wildcard")();
 
 var logger = new LogHandler().open();
 
@@ -18,11 +23,16 @@ server.use(express.static(path.join(__dirname, "public")));
 
 server.use(express.urlencoded({ extended: true }));
 
-// GETTING ROUTES FROM OTHER FILES
+var wsServer = require("./wsServer")(server);
+
+wsServer.listen(wsServerPort, function (err) {
+  if (err) throw err;
+  console.log("Node.js WebSocket server at port 5001 is running.");
+});
 
 var admin_routes = require("./routes/admin_routes")(server);
 var guest_routes = require("./routes/guest_routes")(server);
-var user_routes = require("./routes/user_routes")(server, getUserWithToken);
+var user_routes = require("./routes/user_routes")(server, getUserWithToken); // TODO: Skloniti getUserWithToken jer se sada nalazi u util.js
 
 // END OF GETTING ROUTES FROM OTHER FILES
 
@@ -43,11 +53,11 @@ server.get("*", (req, res) => {
   res.end("Invalid request!");
 });
 
-server.listen(port, function (err) {
+server.listen(httpServerPort, function (err) {
   if (err) throw err;
   console.log("Node.js web server at port 5000 is running.");
 });
 
 module.exports = server;
 
-// TODO: Dodati UDP i TCP; 
+// TODO: Dodati UDP i TCP;

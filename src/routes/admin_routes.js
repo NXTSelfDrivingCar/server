@@ -215,12 +215,6 @@ module.exports = function (server) {
       "Log result: " + objectArrayToString(users, "id")
     );
 
-    if (users.length == 0) {
-      const zivTostDoc = document.getElementById('zivTost');
-      const tost = new bootstrap.toast(zivTostDoc);
-      tost.show();
-    }
-
     logger.log("INFO", req.url, req.method, "LISTING USERS END");
     res.render("admin_list_users.ejs", {
       title: "Listing users",
