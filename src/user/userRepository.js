@@ -6,6 +6,8 @@ var logger = new LogHandler().open();
 const CONNECTION = "mongodb://host.docker.internal:27017";
 const DATABASE = "testDB";
 
+// ! INSERT USER
+
 /**
  *
  * @param {User} user User object to be inserted
@@ -51,6 +53,9 @@ async function insertUser(user, collectionName) {
 
   return returnValue;
 }
+
+// ! REMOVE USER
+
 /**
  * Removes a user from the database
  * @param {User} user User object to be removed
@@ -100,6 +105,8 @@ function removeUser(id, collectionName) {
 
   return deleted;
 }
+
+// ! FIND USER BY USERNAME
 
 /**
  *
@@ -154,6 +161,8 @@ function findUserByUsername(uname, collectionName) {
   });
 }
 
+// ! FIND USER BY ID
+
 function findUserById(id, collectionName) {
   let logData = {
     origin: "UserRepository",
@@ -197,6 +206,8 @@ function findUserById(id, collectionName) {
   });
 }
 
+// ! FIND USER BY ROLE
+
 function findUsersByRole(role, collectionName) {
   let logData = {
     origin: "UserRepository",
@@ -234,6 +245,8 @@ function findUsersByRole(role, collectionName) {
   });
 }
 
+// ! FILTER SEARCH
+
 function filterSearch(filter, collectionName) {
   let logData = {
     origin: "UserRepository",
@@ -268,6 +281,8 @@ function filterSearch(filter, collectionName) {
     });
   });
 }
+
+// ! UPDATE USER
 
 function updateUser(id, user, collectionName) {
   let logData = {
