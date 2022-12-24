@@ -1,0 +1,18 @@
+Baza podataka:
+  ✔ Da vidi sve korisnike @done(22-12-24 01:27)
+  ✔ Da moze da ih promeni, brise, doda role @done(22-12-24 01:28)
+  ☐ Da procita trenutne logove
+  ☐ And much, much more
+
+Lista admin pregleda:
+  ☐ Tickets
+  ✔ Korisnici @done(22-12-24 01:31)
+  ☐ Log
+
+Konekcija:
+  ☐ UDP Veza (Za prenos stream-a)
+  ✘ TCP Veza (Za povezivanje sa telefonom?) @cancelled(22-12-24 01:33)
+
+Nefunkcionalni zahtevi:
+  ✔ Razdvojiti rute po posebnim fajlovima (admin_routes, user_routes) @done(22-12-24 01:31)
+  ✔ Obezbediti proveru ako korisnik ukuca ručno link za admin stranice @done(22-12-24 01:31)

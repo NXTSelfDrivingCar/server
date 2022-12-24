@@ -128,3 +128,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Da se ne čuvaju naše vsc teme
+settings.json
