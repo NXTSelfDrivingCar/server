@@ -216,33 +216,31 @@ module.exports = function (server) {
 
   server.post("/admin/user/admin_user_update", async (req, res) => {
     var updatedUser = await updateUser(req, res);
-
-    logger.log("info", {
+    let logData = {
       action: "updateUser",
       method: req.method,
       url: req.url,
       body: req.body,
       cookies: req.cookies,
-      updated: {
-        id: req.body.inputID,
-        username: req.body.inputUsername,
-        email: req.body.inputEmail,
-        role: req.body.inputRole,
-      },
-    });
+    };
 
     if (updatedUser == false) {
-      logger.log("info", {
-        action: "updateUser",
-        method: req.method,
-        url: req.url,
-        body: req.body,
-        cookies: req.cookies,
-        status: 400,
-        message: "User update failed, check your input data!",
-      });
+      logData["status"] = 400;
+      logData["message"] = "User update failed, check your input data!";
+
+      logger.log("info", logData);
       return res.status(400).send("User update failed, check your input data!");
     }
+
+    logData["status"] = 200;
+    logData["message"] = "User updated successfully!";
+    logData["user"] = {
+      id: updatedUser.id,
+      username: updatedUser.username,
+      email: updatedUser.email,
+    };
+
+    logger.log("info", logData);
     res.redirect("/admin/admin_list_users");
   });
 };

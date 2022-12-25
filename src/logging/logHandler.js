@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs");
+const { deprecate } = require("util");
 
 const statuses = { OPEN: "OPEN", CLOSED: "CLOSED" };
 const tags = { INFO: "INFO", ERROR: "ERROR" };
@@ -33,14 +34,7 @@ class LogHandler {
       },
     ];
 
-    var jsonData = JSON.stringify(starter, null, 2);
-    fs.writeFileSync(
-      this.filePath + LogHandler.currentFIle,
-      jsonData,
-      (err) => {
-        if (err) throw err;
-      }
-    );
+    this.writeToFile(starter);
   }
 
   open() {
@@ -71,8 +65,6 @@ class LogHandler {
 
   // TODO: Dodati da se umesto message, tavlja objekat koji se pretvara u JSON ili parmas objekata
   log(tag = tags.INFO, data) {
-    if (LogHandler.status == statuses.CLOSED) return;
-
     const timestamp = formatTimestamp(new Date().getTime());
     if (!data["tag"]) data["tag"] = tag;
 
@@ -86,17 +78,32 @@ class LogHandler {
 
     currentLogJson.push(data);
 
+    this.writeToFile(currentLogJson);
+  }
+
+  error(data) {
+    this.log(tags.ERROR, data);
+  }
+
+  /**
+   *
+   * @param {*} data
+   * @deprecated Use error(data) instead
+   */
+  logError(data) {
+    this.log(tags.ERROR, data);
+  }
+
+  writeToFile(data) {
+    if (LogHandler.status == statuses.CLOSED) return;
+
     fs.writeFileSync(
       this.filePath + LogHandler.currentFIle,
-      JSON.stringify(currentLogJson, null, 2),
+      JSON.stringify(data, null, 2),
       (err) => {
         if (err) throw err;
       }
     );
-  }
-
-  logError(data) {
-    this.log(tags.ERROR, data);
   }
 }
 
