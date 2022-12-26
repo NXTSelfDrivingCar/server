@@ -6,12 +6,13 @@ var path = require("path");
 var User = require("./user/userModel");
 var cookies = require("cookie-parser");
 var jwt = require("jsonwebtoken");
-
-const httpServerPort = 5000;
-const wsServerPort = 5001;
+var wildcard = require("socketio-wildcard")();
 
 const { Server } = require("socket.io");
-var wildcard = require("socketio-wildcard")();
+const serverConfig = require("./config/serverConfig");
+
+var httpServerPort = serverConfig.HTTP_PORT;
+var wsServerPort = serverConfig.WS_PORT;
 
 var logger = new LogHandler().open();
 
@@ -19,7 +20,7 @@ var server = express();
 
 server.use(cookies());
 
-server.use(express.static(path.join(__dirname, "public")));
+server.use("/static", express.static(path.join(__dirname, "public")));
 
 server.use(express.urlencoded({ extended: true }));
 

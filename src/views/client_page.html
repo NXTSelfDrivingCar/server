@@ -13,10 +13,10 @@
     </style>
     <title>Document</title>
   </head>
-  <body>
+  <body onload="init()">
     <h3>Html5 WebSockets Example.</h3>
     <div id="message" class="block"></div>
-    <button id="connectBtn" onclick="logCs()">Connect</button>
+    <button id="connectBtn" onclick="connect()">Connect</button>
     <button id="disconnectBtn" onclick="disconnect()">Disconnect</button>
 
     <label for="text">Send something</label>
@@ -25,8 +25,19 @@
     <button id="sendTextBtn" onclick="sendMessage()">Send Message</button>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js"></script>
 
-    <!-- Ovaj deo kooda dole ne radi kada se pozove ovako -->
-    <!-- TODO: Srediti ovo da radi kao odvojeni fajl -->
-    <script type="text/javascript" src="../wsClient.js"></script>
+    <script
+      type="text/javascript"
+      src="http://localhost:5000/static/wsClient.js"
+    ></script>
+
+    <script>
+      function sendMessage() {
+        if (!isConnected())
+          return alert("Not connected to server yet." + JSON.stringify(socket));
+
+        const text = document.getElementById("text").value;
+        socket.emit("message", text);
+      }
+    </script>
   </body>
 </html>
