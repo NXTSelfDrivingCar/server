@@ -42,7 +42,7 @@ function registerUser(user) {
           origin: "UserController",
           method: "registerUser",
           user: {
-            id: result._id,
+            id: result.id,
             username: result.username,
           },
           result: "User already exists",
@@ -55,7 +55,7 @@ function registerUser(user) {
         origin: "UserController",
         method: "registerUser",
         user: {
-          id: user._id,
+          id: user.id,
           username: user.username,
         },
         result: "User registered",
@@ -80,7 +80,7 @@ function loginUser(username, password) {
             origin: "UserController",
             method: "loginUser",
             user: {
-              id: result._id,
+              id: result.id,
               username: result.username,
             },
             result: "User logged in",

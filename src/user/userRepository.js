@@ -19,7 +19,7 @@ async function insertUser(user, collectionName) {
     origin: "UserRepository",
     method: "insertUser",
     user: {
-      id: user._id,
+      id: user.id,
       username: user.username,
     },
     collectionName: collectionName,
@@ -146,13 +146,13 @@ function findUserByUsername(uname, collectionName) {
             throw err;
           }
 
-          logData["result"] = {
-            user: {
-              id: result._id,
-              username: result.username,
-              role: result.role,
-            },
-          };
+          // logData["result"] = {
+          //   user: {
+          //     id: result.id,
+          //     username: result.username,
+          //     role: result.role,
+          //   },
+          // };
           logger.log("info", logData);
           resolve(result);
         }
@@ -191,13 +191,13 @@ function findUserById(id, collectionName) {
           throw err;
         }
 
-        logData["result"] = {
-          user: {
-            id: result._id,
-            username: result.username,
-            role: result.role,
-          },
-        };
+        // logData["result"] = {
+        //   user: {
+        //     id: result.id,
+        //     username: result.username,
+        //     role: result.role,
+        //   },
+        // };
         logger.log("info", logData);
 
         resolve(result);
