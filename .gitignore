@@ -103,7 +103,6 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
 .venv
 env/
 venv/
@@ -131,3 +130,9 @@ dmypy.json
 
 # Da se ne čuvaju naše vsc teme
 settings.json
+
+# Dodato licno
+node_modules/
+.vscode/
+sessions/
+log/

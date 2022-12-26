@@ -24,13 +24,17 @@ function disconnect() {
 function connect() {
   console.log("Connecting client...");
 
-  socket = io.connect(hostUrl, {
-    transports: ["websocket"],
-    cors: {
-      origin: hostUrl,
-      methods: ["GET", "POST"],
-    },
-  });
+  try {
+    socket = io.connect(hostUrl, {
+      transports: ["websocket"],
+      cors: {
+        origin: hostUrl,
+        methods: ["GET", "POST"],
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
 
   socket.on("connect", function () {
     console.log("Client connected!");
