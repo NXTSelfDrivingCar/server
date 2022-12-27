@@ -103,7 +103,6 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
 .venv
 env/
 venv/
@@ -128,3 +127,15 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Da se ne čuvaju naše vsc teme
+settings.json
+
+# Dodato licno
+node_modules/
+.vscode/
+sessions/
+
+# Ovo je stavljeno da ignorise samo log fajlove
+# log_26-11...json
+log_*

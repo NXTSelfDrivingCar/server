@@ -8,8 +8,10 @@ class User {
     this.password = password;
     this.email = email;
     this.nxt_api_key = nxt_api_key;
-    this.roel = role;
+    this.role = role;
   }
 }
 
 module.exports = User;
+
+// TODO: Dodati da korisnik ima poslednje vreme logovanja, posledenje vreme zahtevanja HTTP zahteva,... (za statistiku)

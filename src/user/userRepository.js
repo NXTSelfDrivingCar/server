@@ -1,7 +1,12 @@
 var mongoClient = require("mongodb").MongoClient;
+var User = require("./userModel");
+var { LogHandler } = require("../logging/logHandler");
+var logger = new LogHandler().open();
 
 const CONNECTION = "mongodb://host.docker.internal:27017";
 const DATABASE = "testDB";
+
+// ! INSERT USER
 
 /**
  *
@@ -10,25 +15,47 @@ const DATABASE = "testDB";
  * @returns {User} User object that was inserted or `null`
  */
 async function insertUser(user, collectionName) {
+  let logData = {
+    origin: "UserRepository",
+    method: "insertUser",
+    user: {
+      id: user.id,
+      username: user.username,
+    },
+    collectionName: collectionName,
+  };
+
   var returnValue = false;
 
   mongoClient.connect(CONNECTION, function (err, client) {
-    if (err) throw err;
+    if (err) {
+      logData["error"] = err;
+      logger.logError(logData);
+      throw err;
+    }
 
     var db = client.db(DATABASE);
 
     db.collection(collectionName).insertOne(user, function (err, res) {
       if (err) {
         console.log("There has been an error inserting the user" + err);
+        logData["error"] = err;
+        logger.logError(logData);
         returnValue = false;
       }
-      console.log("1 document inserted");
+      console.log("UserRepository (insertUser) -> 1 document inserted");
+
+      logData["result"] = "User inserted";
+      logger.log("info", logData);
       returnValue = true;
     });
   });
 
   return returnValue;
 }
+
+// ! REMOVE USER
+
 /**
  * Removes a user from the database
  * @param {User} user User object to be removed
@@ -36,45 +63,50 @@ async function insertUser(user, collectionName) {
  * @returns {User} User object that was removed or `null`
  *
  */
-function removeUser(user, collectionName) {
+function removeUser(id, collectionName) {
+  let logData = {
+    origin: "UserRepository",
+    method: "removeUser",
+    user: {
+      id: id,
+    },
+    collectionName: collectionName,
+  };
+
   var deleted = false;
 
-  var found = findUserByUsername(user.username, collectionName).then((res) => {
-    if (res) {
-      mongoClient.connect(CONNECTION, function (err, client) {
-        var db = client.db(DATABASE);
-
-        db.collection(collectionName).deleteOne(res, function (err, res) {
-          if (err) {
-            throw err;
-          }
-          console.log("1 document deleted");
-          deleted = true;
-        });
-      });
+  mongoClient.connect(CONNECTION, function (err, client) {
+    if (err) {
+      logData["error"] = err;
+      logger.logError(logData);
+      throw err;
     }
-    deleted = false;
+
+    var db = client.db(DATABASE);
+
+    var myquery = { id: id };
+
+    db.collection(collectionName).deleteOne(myquery, function (err, obj) {
+      if (err) {
+        console.log("There has been an error deleting the user" + err);
+        logData["error"] = err;
+        logger.logError(logData);
+
+        deleted = false;
+      }
+      console.log("UserRepository (removeUser) -> 1 document deleted");
+
+      logData["result"] = "User deleted";
+      logger.log("info", logData);
+
+      deleted = true;
+    });
   });
 
   return deleted;
 }
 
-/**
- *
- * @param {User} user Specifies the user to be found
- * @param {String} collectionName Name of the collection to find the user in
- * @returns
- */
-function findUser(user, collectionName) {
-  // Ova funkcija ne radi kako treba
-  return db
-    .collection(collectionName)
-    .find(user)
-    .toArray(function (err, result) {
-      if (err) throw err;
-      return result;
-    });
-}
+// ! FIND USER BY USERNAME
 
 /**
  *
@@ -84,9 +116,23 @@ function findUser(user, collectionName) {
  */
 function findUserByUsername(uname, collectionName) {
   // Promises are used to handle asynchronous operations
+
+  let logData = {
+    origin: "UserRepository",
+    method: "findUserByUsername",
+    user: {
+      username: uname,
+    },
+    collectionName: collectionName,
+  };
+
   return new Promise((resolve, reject) => {
     mongoClient.connect(CONNECTION, function (err, client) {
-      if (err) throw err;
+      if (err) {
+        logData["error"] = err;
+        logger.logError(logData);
+        throw err;
+      }
 
       var db = client.db(DATABASE);
 
@@ -94,9 +140,20 @@ function findUserByUsername(uname, collectionName) {
       db.collection(collectionName).findOne(
         { username: uname },
         function (err, result) {
-          if (err) throw err;
+          if (err) {
+            logData["error"] = err;
+            logger.logError(logData);
+            throw err;
+          }
 
-          // Return the user object
+          // logData["result"] = {
+          //   user: {
+          //     id: result.id,
+          //     username: result.username,
+          //     role: result.role,
+          //   },
+          // };
+          logger.log("info", logData);
           resolve(result);
         }
       );
@@ -104,4 +161,185 @@ function findUserByUsername(uname, collectionName) {
   });
 }
 
-module.exports = { insertUser, findUser, removeUser, findUserByUsername };
+// ! FIND USER BY ID
+
+function findUserById(id, collectionName) {
+  let logData = {
+    origin: "UserRepository",
+    method: "findUserById",
+    user: {
+      id: id,
+    },
+    collectionName: collectionName,
+  };
+  // Promises are used to handle asynchronous operations
+  return new Promise((resolve, reject) => {
+    mongoClient.connect(CONNECTION, function (err, client) {
+      if (err) {
+        logData["error"] = err;
+        logger.logError(logData);
+        throw err;
+      }
+
+      var db = client.db(DATABASE);
+
+      // Find the user with the specified id
+      db.collection(collectionName).findOne({ id: id }, function (err, result) {
+        if (err) {
+          logData["error"] = err;
+          logger.logError(logData);
+          throw err;
+        }
+
+        // logData["result"] = {
+        //   user: {
+        //     id: result.id,
+        //     username: result.username,
+        //     role: result.role,
+        //   },
+        // };
+        logger.log("info", logData);
+
+        resolve(result);
+      });
+    });
+  });
+}
+
+// ! FIND USER BY ROLE
+
+function findUsersByRole(role, collectionName) {
+  let logData = {
+    origin: "UserRepository",
+    method: "findUsersByRole",
+    user: {
+      role: role,
+    },
+    collectionName: collectionName,
+  };
+
+  return new Promise((resolve, reject) => {
+    mongoClient.connect(CONNECTION, function (err, client) {
+      if (err) {
+        logData["error"] = err;
+        logger.logError(logData);
+        throw err;
+      }
+
+      var db = client.db(DATABASE);
+
+      // Find the user with the specified id
+      db.collection(collectionName)
+        .find({ role: role })
+        .toArray(function (err, result) {
+          if (err) {
+            logData["error"] = err;
+            logger.logError(logData);
+            throw err;
+          }
+
+          logData["result"] = "Fetch complete";
+          resolve(result);
+        });
+    });
+  });
+}
+
+// ! FILTER SEARCH
+
+function filterSearch(filter, collectionName) {
+  let logData = {
+    origin: "UserRepository",
+    method: "filterSearch",
+    filter: filter,
+    collectionName: collectionName,
+  };
+
+  return new Promise((resolve, reject) => {
+    mongoClient.connect(CONNECTION, function (err, client) {
+      if (err) {
+        logData["error"] = err;
+        logger.logError(logData);
+        throw err;
+      }
+
+      var db = client.db(DATABASE);
+
+      // Find the user with the specified id
+      db.collection(collectionName)
+        .find(filter)
+        .toArray(function (err, result) {
+          if (err) {
+            logData["error"] = err;
+            logger.logError(logData);
+            throw err;
+          }
+
+          logData["result"] = "Fetch complete";
+          resolve(result);
+        });
+    });
+  });
+}
+
+// ! UPDATE USER
+
+function updateUser(id, user, collectionName) {
+  let logData = {
+    origin: "UserRepository",
+    method: "updateUser",
+    user: {
+      id: id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+    },
+    collectionName: collectionName,
+  };
+
+  console.log("UserRepository (updateUser) -> " + user.username, " ", id);
+
+  return new Promise((resolve, reject) => {
+    mongoClient.connect(CONNECTION, function (err, client) {
+      if (err) {
+        logData["error"] = err;
+        logger.logError(logData);
+        throw err;
+      }
+
+      var db = client.db(DATABASE);
+
+      // Find the user with the specified id
+      db.collection(collectionName).updateOne(
+        { id: id },
+        {
+          $set: {
+            username: user.username,
+            email: user.email,
+            role: user.role,
+          },
+        },
+        function (err, result) {
+          if (err) {
+            logData["error"] = err;
+            logger.logError(logData);
+            throw err;
+          }
+          logData["result"] = "Update complete";
+          logger.log("info", logData);
+          resolve(true);
+        }
+      );
+    });
+  });
+}
+
+module.exports = {
+  insertUser,
+  removeUser,
+  findUserByUsername,
+  findUserById,
+  findUsersByRole,
+  filterSearch,
+  updateUser,
+};
