@@ -1,4 +1,5 @@
 var userController = require("../user/userController");
+var logController = require("../logging/logController");
 var { LogHandler } = require("../logging/logHandler.js");
 var User = require("../user/userModel");
 
@@ -11,6 +12,7 @@ var {
 } = require("../shared/util");
 
 var jwt = require("jsonwebtoken");
+const { json } = require("express");
 
 async function checkAuth(req, res, next) {
   logData = {
@@ -191,6 +193,35 @@ module.exports = function (server) {
       user: gotUser,
     });
   }); // Editovanje korisnika
+
+  // Rendering
+  server.get("/admin/logs", checkAuth, async (req, res) => {
+    var allLogs = await logController.getAllLogs();
+    res.render("admin_logs.ejs", {
+      title: "Admin logs",
+      logs: allLogs,
+    });
+  });
+
+  server.get("/admin/logs/view/log", checkAuth, async (req, res) => {
+    var logName = req.query["id"];
+    var logFile = await logController.getLog(logName);
+    var items = JSON.parse(logFile);
+
+    console.log(logger.getCurrentFile());
+    res.render("admin_log_view.ejs", {
+      title: "Admin logs",
+      log: items,
+      currentLog: logger.getCurrentFile(),
+    });
+  });
+
+  server.get("/admin/logs/delete/log", checkAuth, async (req, res) => {
+    var logName = req.query["id"];
+    var deleted = await logController.deleteLog(logName);
+
+    res.redirect("/admin/logs");
+  });
 
   //* =================== POST ROUTES =================== *//
 

@@ -7,13 +7,13 @@ Baza podataka:
 Lista admin pregleda:
   ☐ Tickets
   ✔ Korisnici @done(22-12-24 01:31)
-  ☐ Log
+  ☐ Log @started(22-12-27 18:38)
   
 Konekcija:
   ☐ HTTP Request sa Android aplikacijom
   ✘ UDP Veza (Za prenos stream-a) @cancelled(22-12-24 19:33)
   ✔ Websocket Veza (Za prenos stream-a) @started(22-12-24 18:28) @done(22-12-24 19:33) @lasted(1h5m42s)
-  ☐ Websocket srediti preko html stranice da se otvara
+  ✔ Websocket srediti preko html stranice da se otvara @done(22-12-27 18:11)
   ✘ TCP Veza (Za povezivanje sa telefonom?) @cancelled(22-12-24 01:33)
 
 QoL zahtevi:

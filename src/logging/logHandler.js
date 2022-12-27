@@ -12,7 +12,15 @@ function formatTimestamp(timestamp) {
 
 function fomratTimestampToWrite(timestamp) {
   const date = new Date(timestamp);
-  return `${date.getDate()}-${date.getMonth()}-${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}`;
+  var day = date.getDate();
+  var month = String(date.getMonth()).padStart(2, "0");
+  var year = date.getFullYear();
+  var hours = String(date.getHours()).padStart(2, "0");
+  var minutes = String(date.getMinutes()).padStart(2, "0");
+  var seconds = String(date.getSeconds()).padStart(2, "0");
+  var milliseconds = String(date.getMilliseconds()).padStart(3, "0");
+
+  return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}.${milliseconds}`;
 }
 
 function formatToday(timestamp) {
@@ -25,7 +33,7 @@ class LogHandler {
   static status = statuses.CLOSED;
 
   constructor() {
-    this.filePath = "";
+    this.filePath = "./logs/";
   }
 
   _writeOpener() {
@@ -36,6 +44,7 @@ class LogHandler {
         source: "internal_log",
         action: "open",
         message: "Log file opened",
+        logName: LogHandler.currentFIle,
       },
     ];
 
@@ -77,6 +86,8 @@ class LogHandler {
 
     if (!data["timestamp"]) data["timestamp"] = timestamp;
 
+    data["tag"] = data["tag"].toUpperCase();
+
     let currentLog = fs.readFileSync(
       this.filePath + LogHandler.currentFIle,
       "utf8"
@@ -90,6 +101,10 @@ class LogHandler {
 
   error(data) {
     this.log(tags.ERROR, data);
+  }
+
+  getCurrentFile() {
+    return LogHandler.currentFIle;
   }
 
   /**
