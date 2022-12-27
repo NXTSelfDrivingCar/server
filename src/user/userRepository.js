@@ -3,8 +3,10 @@ var User = require("./userModel");
 var { LogHandler } = require("../logging/logHandler");
 var logger = new LogHandler().open();
 
-const CONNECTION = "mongodb://host.docker.internal:27017";
-const DATABASE = "testDB";
+const mongoConfig = require("../config/mongoConfig");
+
+const CONNECTION = mongoConfig.CONNECTION;
+const DATABASE = mongoConfig.DATABASE;
 
 // ! INSERT USER
 

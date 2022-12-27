@@ -10,6 +10,11 @@ function formatTimestamp(timestamp) {
   return `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}_${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
 }
 
+function fomratTimestampToWrite(timestamp) {
+  const date = new Date(timestamp);
+  return `${date.getDate()}-${date.getMonth()}-${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}`;
+}
+
 function formatToday(timestamp) {
   const date = new Date(timestamp);
   return `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
@@ -26,7 +31,7 @@ class LogHandler {
   _writeOpener() {
     var starter = [
       {
-        timestamp: formatTimestamp(new Date().getTime()),
+        timestamp: fomratTimestampToWrite(new Date().getTime()),
         tag: tags.INFO,
         source: "internal_log",
         action: "open",
@@ -39,6 +44,8 @@ class LogHandler {
 
   open() {
     if (LogHandler.status == statuses.OPEN) return this;
+
+    this._prepareDir();
 
     LogHandler.status = statuses.OPEN;
     LogHandler.currentFIle = `log_${formatTimestamp(
@@ -65,7 +72,7 @@ class LogHandler {
 
   // TODO: Dodati da se umesto message, tavlja objekat koji se pretvara u JSON ili parmas objekata
   log(tag = tags.INFO, data) {
-    const timestamp = formatTimestamp(new Date().getTime());
+    const timestamp = fomratTimestampToWrite(new Date().getTime());
     if (!data["tag"]) data["tag"] = tag;
 
     if (!data["timestamp"]) data["timestamp"] = timestamp;
@@ -93,6 +100,26 @@ class LogHandler {
   logError(data) {
     this.log(tags.ERROR, data);
   }
+
+  /**
+   * Makes sure that the directory for the log files exists
+   * @private
+   */
+  _prepareDir() {
+    console.log("Checking for log directory...");
+    if (fs.existsSync(this.filePath)) return;
+
+    console.log("Creating log directory...");
+    fs.mkdirSync(this.filePath);
+
+    console.log("Log directory created at " + this.filePath);
+  }
+
+  /**
+   * Writes the data to the file
+   * @param {*} data
+   * @private
+   */
 
   writeToFile(data) {
     if (LogHandler.status == statuses.CLOSED) return;
