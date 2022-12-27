@@ -1,4 +1,4 @@
-version: '1.1'
+version: '3.0'
 
 services:
   node:
@@ -24,6 +24,8 @@ services:
       - WS_SERVER_PORT=5001
     depends_on:
       - mongo
+    networks:
+      - nodeNetwork
   mongo:
     container_name: mongo
     image: mongo:latest
@@ -31,3 +33,9 @@ services:
       - "27017:27017"
     volumes:
       - c:/mongo/data:/data/db
+    networks:
+      - nodeNetwork
+      
+networks:
+  nodeNetwork:
+    driver: bridge
