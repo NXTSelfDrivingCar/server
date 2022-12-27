@@ -135,4 +135,7 @@ settings.json
 node_modules/
 .vscode/
 sessions/
-log/
+
+# Ovo je stavljeno da ignorise samo log fajlove
+# log_26-11...json
+log_*
