@@ -20,7 +20,7 @@ class LogHandler {
   static status = statuses.CLOSED;
 
   constructor() {
-    this.filePath = path.join("./", "log/");
+    this.filePath = "";
   }
 
   _writeOpener() {
