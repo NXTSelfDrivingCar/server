@@ -144,7 +144,6 @@ module.exports = function (server, getUserWithToken) {
   });
 
   server.post("/user/register", async (req, res, next) => {
-    var result = await registerUser(req, res);
     var passResult = await checkPasswords(req, res);
 
     logger.log("info", {
@@ -160,15 +159,8 @@ module.exports = function (server, getUserWithToken) {
       },
     });
 
-    if (result) {
-      res.redirect("/");
-    } else {
-      var result = null;
-      if (passResult) {
-        // TODO: Proveriti zasto se ovo poziva drugi put ovde
-        result = await registerUser(req, res); // ZASTO DVA PUTA POZIVAMO REGISTER USER?
-      }
-
+    // If passwords don't match, render page again with error message
+    if (!passResult) {
       res.render("register_page.ejs", {
         title: "Register page",
         user: await getUserWithToken(req, res), // Gets user for navbar
@@ -177,5 +169,88 @@ module.exports = function (server, getUserWithToken) {
         passResult: passResult,
       });
     }
+
+    var result = await registerUser(req, res);
+
+    // If user is registered, redirect to login page
+    if (result) {
+      res.redirect("/user/login");
+    } else {
+      res.render("register_page.ejs", {
+        title: "Register page",
+        user: await getUserWithToken(req, res), // Gets user for navbar
+        session: req.session,
+        result: result,
+        passResult: passResult,
+      });
+    }
+  });
+
+  /*
+   *==========================================================================
+   *==========================================================================
+   *============================= MOBILE ROUTES ==============================
+   *==========================================================================
+   *==========================================================================
+   */
+
+  server.post("/user/login/mobile", async (req, res, next) => {
+    var result = await loginUser(req, res, next);
+
+    logger.log("info", {
+      action: "loginUser",
+      url: req.url,
+      method: "POST",
+      serverOrigin: "HttpServer",
+      deviceOrigin: "Mobile",
+      sessionId: req.session,
+      result: result,
+      user: {
+        username: req.body.username,
+      },
+    });
+
+    if (result) {
+      res.send({ status: "OK" });
+    } else {
+      res.send({ status: "Unauthorized" });
+    }
+  });
+
+  server.post("/user/register/mobile", async (req, res, next) => {
+    var passResult = await checkPasswords(req, res);
+
+    logger.log("info", {
+      action: "registerUser",
+      url: req.url,
+      method: "POST",
+      serverOrigin: "HttpServer",
+      deviceOrigin: "Mobile",
+      sessionId: req.session,
+      result: result,
+      user: {
+        username: req.body.username,
+        email: req.body.email,
+      },
+    });
+
+    if (!passResult) {
+      res.send({ status: "passwordMismatch" });
+      return;
+    }
+
+    var result = await registerUser(req, res);
+
+    if (result) {
+      res.send({ status: "OK" });
+      return;
+    }
+
+    if (!result) {
+      res.send({ status: "userExists" });
+      return;
+    }
+
+    res.send({ status: "error" });
   });
 };

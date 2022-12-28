@@ -9,7 +9,7 @@ var {
   objectArrayToString,
   getUserWithToken,
   objectArrayToJSON,
-} = require("../shared/util");
+} = require("../public/util");
 
 var jwt = require("jsonwebtoken");
 const { json } = require("express");
@@ -208,7 +208,6 @@ module.exports = function (server) {
     var logFile = await logController.getLog(logName);
     var items = JSON.parse(logFile);
 
-    console.log(logger.getCurrentFile());
     res.render("admin_log_view.ejs", {
       title: "Admin logs",
       log: items,

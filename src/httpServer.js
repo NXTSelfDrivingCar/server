@@ -1,6 +1,6 @@
 var dotenv = require("dotenv").config({ path: ".env" });
 var { LogHandler } = require("./logging/logHandler.js");
-var { getUserWithToken } = require("./shared/util");
+var { getUserWithToken } = require("./public/util");
 var express = require("express");
 var path = require("path");
 var User = require("./user/userModel");
