@@ -81,6 +81,21 @@ function getUserWithToken(req, res) {
   }
 }
 
+/**
+ * Checks if json data has all the keys from json format
+ * @param {*} jsonData Json data to check
+ * @param {*} jsonFormat Json format to check against
+ * @returns True if json data has all the keys from json format
+ */
+function checkJsonFormat(jsonData, jsonFormat) {
+  for (var key in jsonFormat) {
+    if (jsonData[key] == undefined) {
+      return false;
+    }
+  }
+  return true;
+}
+
 module.exports = {
   jsonToString: jsonToString,
   objectArrayToString: objectArrayToString,
@@ -88,4 +103,5 @@ module.exports = {
   getUserWithToken: getUserWithToken,
   objectArrayToJSON: objectArrayToJSON,
   jsonFromKeys: jsonFromKeys,
+  checkJsonFormat: checkJsonFormat,
 };

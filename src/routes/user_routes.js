@@ -3,7 +3,20 @@ var User = require("../user/userModel");
 var { LogHandler } = require("../logging/logHandler");
 var logger = new LogHandler().open();
 var jwt = require("jsonwebtoken");
+const { checkJsonFormat } = require("../public/util");
 require("dotenv").config();
+
+const registerFormat = {
+  username: "string",
+  password: "string",
+  password2: "string",
+  email: "string",
+};
+
+const loginFormat = {
+  username: "string",
+  password: "string",
+};
 
 async function checkPasswords(req, res) {
   if (req.body.password == req.body.password2) {
@@ -68,8 +81,6 @@ module.exports = function (server, getUserWithToken) {
 
   server.get("/user/logout", async (req, res) => {
     //
-
-    // TODO: [log] user out token and session
     res.status(200).clearCookie("auth");
     res.redirect("/");
   });
@@ -117,6 +128,10 @@ module.exports = function (server, getUserWithToken) {
   //* =================== POST ROUTES =================== *//
 
   server.post("/user/login", async (req, res, next) => {
+    if (checkJsonFormat(req.body, loginFormat) == false) {
+      return res.status(400).send("Bad request (400) - Invalid JSON format");
+    }
+
     var result = await loginUser(req, res, next);
 
     logger.log("info", {
@@ -144,6 +159,10 @@ module.exports = function (server, getUserWithToken) {
   });
 
   server.post("/user/register", async (req, res, next) => {
+    if (checkJsonFormat(req.body, registerFormat) == false) {
+      return res.status(400).send("Bad request (400) - Invalid JSON format");
+    }
+
     var passResult = await checkPasswords(req, res);
 
     logger.log("info", {
@@ -168,6 +187,7 @@ module.exports = function (server, getUserWithToken) {
         result: result,
         passResult: passResult,
       });
+      return;
     }
 
     var result = await registerUser(req, res);
@@ -175,6 +195,7 @@ module.exports = function (server, getUserWithToken) {
     // If user is registered, redirect to login page
     if (result) {
       res.redirect("/user/login");
+      return;
     } else {
       res.render("register_page.ejs", {
         title: "Register page",
@@ -183,6 +204,7 @@ module.exports = function (server, getUserWithToken) {
         result: result,
         passResult: passResult,
       });
+      return;
     }
   });
 
@@ -195,6 +217,9 @@ module.exports = function (server, getUserWithToken) {
    */
 
   server.post("/user/login/mobile", async (req, res, next) => {
+    if (checkJsonFormat(req.body, loginFormat) == false)
+      return res.send({ status: "invalidFormat" });
+
     var result = await loginUser(req, res, next);
 
     logger.log("info", {
@@ -211,13 +236,17 @@ module.exports = function (server, getUserWithToken) {
     });
 
     if (result) {
-      res.send({ status: "OK" });
+      return res.send({ status: "OK" });
     } else {
-      res.send({ status: "Unauthorized" });
+      return res.send({ status: "Unauthorized" });
     }
   });
 
   server.post("/user/register/mobile", async (req, res, next) => {
+    if (checkJsonFormat(req.body, registerFormat) == false) {
+      return res.send({ status: "invalidFormat" });
+    }
+
     var passResult = await checkPasswords(req, res);
 
     logger.log("info", {
@@ -235,22 +264,19 @@ module.exports = function (server, getUserWithToken) {
     });
 
     if (!passResult) {
-      res.send({ status: "passwordMismatch" });
-      return;
+      return res.send({ status: "passwordMismatch" });
     }
 
     var result = await registerUser(req, res);
 
     if (result) {
-      res.send({ status: "OK" });
-      return;
+      return res.send({ status: "OK" });
     }
 
     if (!result) {
-      res.send({ status: "userExists" });
-      return;
+      return res.send({ status: "userExists" });
     }
 
-    res.send({ status: "error" });
+    return res.send({ status: "error" });
   });
 };
