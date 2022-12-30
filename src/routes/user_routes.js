@@ -236,7 +236,7 @@ module.exports = function (server, getUserWithToken) {
     });
 
     if (result) {
-      return res.send({ status: "OK" });
+      return res.send({ status: "OK", token: req.cookies });
     } else {
       return res.send({ status: "Unauthorized" });
     }
@@ -278,5 +278,24 @@ module.exports = function (server, getUserWithToken) {
     }
 
     return res.send({ status: "error" });
+  });
+
+  server.post("/user/mobile/update", async (req, res, next) => {
+    var token = req.body.token;
+    // Ako ne postoji vrati
+
+    if (token == undefined) {
+      return res.send({ status: "invalidToken" });
+    }
+
+    var verified = jwt.verify(token, process.env.JWT_SECRET);
+
+    var decoded = jwt.decode(token, { complete: true });
+
+    if (decoded.user.id != req.body.userId) {
+      return res.send({ status: "invalidToken" });
+    }
+
+    // TODO: Update user
   });
 };
