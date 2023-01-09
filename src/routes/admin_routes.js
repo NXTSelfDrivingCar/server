@@ -1,7 +1,9 @@
 var userController = require("../user/userController");
+var changeLogController = require("../changelog/changeLogController");
 var logController = require("../logging/logController");
 var { LogHandler } = require("../logging/logHandler.js");
 var User = require("../user/userModel");
+var ChangeLog = require("../changelog/changeLogModel");
 
 var logger = new LogHandler().open();
 var {
@@ -104,6 +106,19 @@ async function updateUser(req, res) {
   if (updated) console.log("Updated");
   else console.log("Not updated");
   return updated;
+}
+
+async function addChangelog(req, res) {
+  var newChangelog = new ChangeLog(
+    req.body.inputTitle,
+    req.body.inputVersion,
+    req.body.inputIsBeta,
+    req.body.inputDescription
+  );
+
+  console.log(newChangelog);
+
+  return await changeLogController.addChangelog(newChangelog);
 }
 
 /*
@@ -222,11 +237,19 @@ module.exports = function (server) {
     res.redirect("/admin/logs");
   });
 
+  server.get("/admin/changelog/add", checkAuth, async (req, res) => {
+    // TODO: Dodati da se ucita poslednji log kada se otvori stranica i da se renderuje (tipa preko datuma)
+    res.render("admin_changelog.ejs");
+  });
+
   //* =================== POST ROUTES =================== *//
 
-  // TODO: Proveriti da li tehnicki mora da stoji checkAuth u post rutama
+  server.post("/admin/changelog/add", checkAuth, async (req, res) => {
+    let changeLog = addChangelog(req, res);
+    res.redirect("/admin/changelog/add");
+  });
 
-  server.post("/admin/admin_list_users", async (req, res) => {
+  server.post("/admin/admin_list_users", checkAuth, async (req, res) => {
     var users = await filterSeachUsers(req, res); // Ovo je array of users
 
     logger.log("info", {
