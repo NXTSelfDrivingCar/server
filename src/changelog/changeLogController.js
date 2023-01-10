@@ -18,9 +18,15 @@ var logger = new LogHandler().open();
  *
  */
 async function addChangelog(changelog) {
-  // TODO: Ukloniti error throwing i zameniti logovanjem
+  var logData = {
+    origin: "ChangeLogController",
+    method: "addChangelog",
+    action: "addChangelog",
+  };
   if (changelog == null) {
-    throw new Error("Changelog cannot be null");
+    logData["error"] = "Changelog cannot be null";
+    logger.error(logData);
+    return null;
   }
 
   let versionCheck = await changelogRepository.getLogByVersion(
@@ -29,7 +35,12 @@ async function addChangelog(changelog) {
   );
 
   if (versionCheck != null) {
-    throw new Error("Changelog with this version already exists");
+    logData["error"] = {
+      message: "Changelog with this version already exists",
+      version: changelog.version,
+    };
+    logger.error(logData);
+    return null;
   }
 
   return await changelogRepository.insertChangeLog(

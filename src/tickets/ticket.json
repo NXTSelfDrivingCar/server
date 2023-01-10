@@ -1,0 +1,15 @@
+{
+  "id": "<id>",
+  "author": "<author>",
+  "title": "<title>",
+  "description": "<description>",
+  "flag": "<flag = unfinished/finished/dismissed>",
+  "category": "<category>",
+  "priority": "<priority>",
+  "reply": {
+    "author": "<author>",
+    "content": "<content>",
+    "date": "<date>"
+  },
+  "date": "<date>"
+}

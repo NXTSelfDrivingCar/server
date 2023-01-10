@@ -20,6 +20,7 @@ async function insertUser(user, collectionName) {
   let logData = {
     origin: "UserRepository",
     method: "insertUser",
+    action: "insertUser",
     user: {
       id: user.id,
       username: user.username,
@@ -69,6 +70,7 @@ function removeUser(id, collectionName) {
   let logData = {
     origin: "UserRepository",
     method: "removeUser",
+    action: "removeUser",
     user: {
       id: id,
     },
@@ -122,6 +124,7 @@ function findUserByUsername(uname, collectionName) {
   let logData = {
     origin: "UserRepository",
     method: "findUserByUsername",
+    action: "findUserByUsername",
     user: {
       username: uname,
     },
@@ -169,6 +172,7 @@ function findUserById(id, collectionName) {
   let logData = {
     origin: "UserRepository",
     method: "findUserById",
+    action: "findUserById",
     user: {
       id: id,
     },
@@ -214,6 +218,7 @@ function findUsersByRole(role, collectionName) {
   let logData = {
     origin: "UserRepository",
     method: "findUsersByRole",
+    action: "findUsersByRole",
     user: {
       role: role,
     },
@@ -253,6 +258,7 @@ function filterSearch(filter, collectionName) {
   let logData = {
     origin: "UserRepository",
     method: "filterSearch",
+    action: "filterSearch",
     filter: filter,
     collectionName: collectionName,
   };
@@ -290,6 +296,7 @@ function updateUser(id, user, collectionName) {
   let logData = {
     origin: "UserRepository",
     method: "updateUser",
+    action: "updateUser",
     user: {
       id: id,
       username: user.username,

@@ -41,7 +41,7 @@ server.get("/", async (req, res) => {
     action: "getMainPage",
     url: req.url,
     method: "GET",
-    serverOrigin: "HttpServer",
+    origin: "HttpServer",
     user: {
       username: user.username,
       role: user.role,
@@ -65,6 +65,7 @@ server.listen(httpServerPort, function (err) {
   if (err) {
     logger.logError({
       action: "startServer",
+      origin: "HttpServer",
       details: { serverType: "HttpServer", port: wsServerPort },
       error: err,
     });
@@ -82,6 +83,7 @@ wsServer.listen(wsServerPort, function (err) {
   if (err) {
     logger.logError({
       action: "startServer",
+      origin: "WebSocket",
       details: { serverType: "WebSocket", port: wsServerPort },
       error: err,
     });
@@ -90,6 +92,7 @@ wsServer.listen(wsServerPort, function (err) {
 
   logger.log("info", {
     action: "startServer",
+    origin: "WebSocket",
     details: { serverType: "WebSocket", port: wsServerPort },
   });
   console.log("Node.js WebSocket server at port 5001 is running.");

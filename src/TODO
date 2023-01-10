@@ -19,7 +19,7 @@ Konekcija:
 QoL zahtevi:
   ✔ Napravi logger da bude dobar (da bude json objekat) @done(22-12-24 21:06)
   ✔ Logovanje svih bitnih akcija @started(22-12-24 21:06) @done(22-12-24 22:04) @lasted(58m5s)
-  ☐ Omoguciti da su logovi podeljeni u sekcije po desavanjima, a ne samo po funkcijama (npr. logovanje -> userController -> userRepository -> result, registracija, itd.)
+  ✘ Omoguciti da su logovi podeljeni u sekcije po desavanjima, a ne samo po funkcijama (npr. logovanje -> userController -> userRepository -> result, registracija, itd.) @cancelled(23-01-10 16:52)
 
 Nefunkcionalni zahtevi:
   ✔ Razdvojiti rute po posebnim fajlovima (admin_routes, user_routes) @done(22-12-24 01:31)

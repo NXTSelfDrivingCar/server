@@ -9,10 +9,17 @@ const CONNECTION = mongoConfig.CONNECTION;
 const DATABASE = mongoConfig.DATABASE;
 
 async function insertChangeLog(changelog, collectionName) {
+  var logData = {
+    origin: "ChangeLogRepository",
+    method: "insertChangeLog",
+    action: "insertChangeLog",
+  };
+
   return new Promise((resolve, reject) => {
     mongoClient.connect(CONNECTION, function (err, client) {
       if (err) {
-        logger.error(err);
+        logData["error"] = err;
+        logger.error(logData);
         reject(err);
       }
 
@@ -20,16 +27,26 @@ async function insertChangeLog(changelog, collectionName) {
 
       let result = db.collection(collectionName).insertOne(changelog);
 
+      logData["result"] = "ChangeLog inserted";
+      logger.log("info", logData);
       resolve(result);
     });
   });
 }
 
 async function getLogByVersion(verson, collectionName) {
+  var logData = {
+    origin: "ChangeLogRepository",
+    method: "getLogByVersion",
+    action: "getLogByVersion",
+    version: verson,
+  };
+
   return new Promise((resolve, reject) => {
     mongoClient.connect(CONNECTION, function (err, client) {
       if (err) {
-        logger.error(err);
+        logData["error"] = err;
+        logger.error(logData);
         reject(err);
       }
 
@@ -37,6 +54,8 @@ async function getLogByVersion(verson, collectionName) {
 
       let result = db.collection(collectionName).find({ version: verson });
 
+      logData["result"] = "ChangeLog found";
+      logger.log("info", logData);
       resolve(result);
     });
   });
@@ -48,10 +67,18 @@ async function getLogByVersion(verson, collectionName) {
  * @returns {Document[]} returns the array of latest logs
  */
 async function getLatestChangeLogs(limit = 1, collectionName) {
+  var logData = {
+    origin: "ChangeLogRepository",
+    method: "getLatestChangeLogs",
+    action: "getLatestChangeLogs",
+    limit: limit,
+  };
+
   return new Promise((resolve, reject) => {
     mongoClient.connect(CONNECTION, function (err, client) {
       if (err) {
-        logger.error(err);
+        logData["error"] = err;
+        logger.error(logData);
         reject(err);
       }
 
@@ -64,6 +91,8 @@ async function getLatestChangeLogs(limit = 1, collectionName) {
         .limit(limit)
         .toArray();
 
+      logData["result"] = "Logs found";
+      logger.log("info", logData);
       resolve(result);
     });
   });

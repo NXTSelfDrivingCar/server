@@ -79,7 +79,6 @@ class LogHandler {
     return this;
   }
 
-  // TODO: Dodati da se umesto message, tavlja objekat koji se pretvara u JSON ili parmas objekata
   log(tag = tags.INFO, data) {
     const timestamp = fomratTimestampToWrite(new Date().getTime());
     if (!data["tag"]) data["tag"] = tag;

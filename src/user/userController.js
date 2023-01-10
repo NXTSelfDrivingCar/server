@@ -41,6 +41,7 @@ function registerUser(user) {
         logger.log("info", {
           origin: "UserController",
           method: "registerUser",
+          action: "registerUser",
           user: {
             id: result.id,
             username: result.username,
@@ -54,6 +55,7 @@ function registerUser(user) {
       logger.log("info", {
         origin: "UserController",
         method: "registerUser",
+        action: "registerUser",
         user: {
           id: user.id,
           username: user.username,
@@ -79,6 +81,7 @@ function loginUser(username, password) {
           logger.log("info", {
             origin: "UserController",
             method: "loginUser",
+            action: "loginUser",
             user: {
               id: result.id,
               username: result.username,
@@ -95,6 +98,7 @@ function loginUser(username, password) {
       logger.log("info", {
         origin: "UserController",
         method: "loginUser",
+        action: "loginUser",
         user: {
           username: username,
         },
@@ -120,6 +124,7 @@ async function checkAdmin(id) {
   let logData = {
     origin: "UserController",
     method: "checkAdmin",
+    action: "checkAdmin",
     user: {
       id: id,
     },
@@ -152,6 +157,7 @@ async function updateUser(id, user) {
   let logData = {
     origin: "UserController",
     method: "updateUser",
+    action: "updateUser",
     user: {
       id: id,
     },
