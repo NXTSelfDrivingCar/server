@@ -2,7 +2,7 @@ Baza podataka:
   ✔ Da vidi sve korisnike @done(22-12-24 01:27)
   ✔ Da moze da ih promeni, brise, doda role @done(22-12-24 01:28)
   ✘ Da procita trenutne logove @cancelled(22-12-24 17:22) @logovi se ne cuvaju u bazi podataka, vec u fajlovima)
-  ☐ And much, much more
+  ✔ Dodati da admin moze da upisuje changelog @done(23-01-10 12:23)
 
 Lista admin pregleda:
   ☐ Tickets
@@ -24,5 +24,6 @@ QoL zahtevi:
 Nefunkcionalni zahtevi:
   ✔ Razdvojiti rute po posebnim fajlovima (admin_routes, user_routes) @done(22-12-24 01:31)
   ✔ Obezbediti proveru ako korisnik ukuca ručno link za admin stranice @done(22-12-24 01:31)
+  ☐ Obezbediti da se svi logovi pisu na isti nacin (radi jednostavnije pretrage kasnije)
   ☐ Server ne sme da se ugasi u slucaju da dodje neka greska (vec da je loguje) 
     ☐ Skloniti svaki throw err iz kooda

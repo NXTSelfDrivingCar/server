@@ -1,4 +1,4 @@
-const userRepository = require("./changeLogRepository");
+const changelogRepository = require("./changeLogRepository");
 const ChangeLog = require("./changeLogModel");
 const CHANGELOG_COLLECTION = "changeLog";
 
@@ -18,8 +18,24 @@ var logger = new LogHandler().open();
  *
  */
 async function addChangelog(changelog) {
-  // TODO: Add validation for the changelog version
-  return await userRepository.insertChangeLog(changelog, CHANGELOG_COLLECTION);
+  // TODO: Ukloniti error throwing i zameniti logovanjem
+  if (changelog == null) {
+    throw new Error("Changelog cannot be null");
+  }
+
+  let versionCheck = await changelogRepository.getLogByVersion(
+    changelog.version,
+    CHANGELOG_COLLECTION
+  );
+
+  if (versionCheck != null) {
+    throw new Error("Changelog with this version already exists");
+  }
+
+  return await changelogRepository.insertChangeLog(
+    changelog,
+    CHANGELOG_COLLECTION
+  );
 }
 /**
  * This returns the changelog with the specified version
@@ -27,7 +43,14 @@ async function addChangelog(changelog) {
  * @returns {ChangeLog} returns the changelog with the specified version
  */
 async function getLogByVersion(version) {
-  return await userRepository.getLogByVersion(version, CHANGELOG_COLLECTION);
+  if (version == null) {
+    throw new Error("Version cannot be null");
+  }
+
+  return await changelogRepository.getLogByVersion(
+    version,
+    CHANGELOG_COLLECTION
+  );
 }
 
 /**
@@ -36,7 +59,7 @@ async function getLogByVersion(version) {
  * @returns {Document[]} returns the array of latest logs
  */
 async function getLatestChangeLogs(limit = 1) {
-  documents = await userRepository.getLatestChangeLogs(
+  documents = await changelogRepository.getLatestChangeLogs(
     limit,
     CHANGELOG_COLLECTION
   );
