@@ -239,7 +239,15 @@ module.exports = function (server) {
 
   server.get("/admin/changelog/add", checkAuth, async (req, res) => {
     // TODO: Dodati da se ucita poslednji log kada se otvori stranica i da se renderuje (tipa preko datuma)
-    res.render("admin_changelog.ejs");
+    let lastChangelog = await changeLogController.getLatestChangeLogs();
+    if (lastChangelog == null) lastChangelog = [];
+
+    if (lastChangelog.length > 0) lastChangelog = lastChangelog[0];
+    console.log(lastChangelog);
+    res.render("admin_changelog.ejs", {
+      title: "Adding changelog",
+      latestChangelog: lastChangelog,
+    });
   });
 
   //* =================== POST ROUTES =================== *//

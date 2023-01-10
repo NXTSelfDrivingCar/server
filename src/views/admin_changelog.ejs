@@ -22,12 +22,30 @@
 
   textarea {
     position: inherit;
-    min-height: min-content;
+    min-height: min-content + 20px;
   }
 </style>
 
-<!-- q: why doesnt container resize with textarea -->
-<!-- a:  -->
+<%
+  function jsonToString(jsonData, ommit = false, ...keys) {
+    var result = {};
+
+    if (ommit) {
+      for (var key in jsonData) {
+        if (!keys.includes(key)) {
+          result[key] = jsonData[key];
+        }
+      }
+      return JSON.stringify(result, null, 2);
+    }
+
+    for (var i = 0; i < keys.length; i++) {
+      result[keys[i]] = jsonData[keys[i]];
+    }
+    return JSON.stringify(result, null, 2);
+  }
+%>
+
 
 <body>
   <%- include('../resources/components/navbar.ejs') %>
@@ -36,7 +54,7 @@
       <h1 class="display-3 text-light">Latest changelog</h1>
     </div>
     <div class="mb-3">
-      <textarea class="form-control" id="floatingTextarea2" style="height: 200px;" readonly></textarea>
+      <textarea class="form-control" id="floatingTextarea2" rows="10" readonly><%= jsonToString(latestChangelog, true, "_id") %></textarea>
     </div>
 
   </div>
