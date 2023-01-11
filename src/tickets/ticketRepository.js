@@ -125,7 +125,7 @@ async function deleteTicket(id, collectionName) {
  *
  * @param {Dict} filter - Filter to be applied to the query
  * @param {string} collectionName - Name of the collection to be queried
- * @returns {Promise<FindCursor>} - Promise with the result of the query
+ * @returns {Promise<WithId<Document>} - Promise with the result of the query
  */
 async function getTicketsByFilter(filter, collectionName) {
   return new Promise((resolve, reject) => {

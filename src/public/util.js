@@ -107,6 +107,10 @@ function checkJsonFormat(jsonData, jsonFormat) {
   return true;
 }
 
+function isEmpty(dictionary) {
+  return Object.keys(dictionary).length === 0;
+}
+
 module.exports = {
   jsonToString: jsonToString,
   objectArrayToString: objectArrayToString,
@@ -115,4 +119,5 @@ module.exports = {
   objectArrayToJSON: objectArrayToJSON,
   jsonFromKeys: jsonFromKeys,
   checkJsonFormat: checkJsonFormat,
+  isEmpty: isEmpty,
 };

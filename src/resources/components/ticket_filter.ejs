@@ -1,27 +1,29 @@
 <div class="container">
   <div class="card mt-3 p-2 shadow">
-    <form method="post" action="/tickets" enctype="application/x-www-form-urlencoded">
-
+    <form method="get" action="/tickets" enctype="application/x-www-form-urlencoded">
       <div class="row">
         <div class="col-4">
           <label for="inputTitle">Priority</label>
-          <select name="inputPriority" class="form-control form-select">
-            <option>Low</option>
-            <option>Medium</option>
-            <option>High</option>
+          <select name="priority" class="form-control form-select">
+            <option value="">All</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
           </select>
         </div>
         <div class="col-4">
           <label for="inputTitle">Status</label>
-          <select name="inputStatus" class="form-control form-select">
-            <option>Open</option>
-            <option>In progress</option>
-            <option>Finished</option>
+          <select name="status" class="form-control form-select">
+            <option value="">All</option>
+            <option value="Open">Open</option>
+            <option value="In progress">In progress</option>
+            <option value="Finished">Finished</option>
           </select>
         </div>
         <div class="col-3">
           <label for="inputTitle">Category</label>
-          <select name="inputCategory" class="form-control form-select">
+          <select name="category" class="form-control form-select">
+            <option value="">All</option>
             <option>NTX Robot</option>
             <option>Web Sajt</option>
             <option>Android Aplikacija</option>

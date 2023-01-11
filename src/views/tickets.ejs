@@ -11,19 +11,22 @@
 
 <body>
   <style>
-    .open {
+    .open,
+    .low {
       border-radius: 5px;
       background-color: #3e8551;
       color: #ffffff;
     }
 
-    .inprogress {
+    .inprogress,
+    .medium {
       border-radius: 5px;
       background-color: #ccbc41;
       color: #ffffff;
     }
 
-    .finished {
+    .finished,
+    .high {
       border-radius: 5px;
       background-color: #cc5441;
       color: #ffffff;
@@ -94,7 +97,7 @@
                 <%= item.category %>
               </div>
               <div class="col">
-                <div class="p-1 text-center <%= (item.priority==='Low') ? 'open' : item.status==='Medium' ? 'finished' : 'inprogress' %>">
+                <div class="p-1 text-center <%= (item.priority==='Low') ? 'low' : item.priority==='High' ? 'high' : 'medium' %>">
                   <%= item.priority %>
                 </div>
               </div>

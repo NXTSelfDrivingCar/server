@@ -2,8 +2,10 @@ const path = require("path");
 const ticketController = require("../tickets/ticketController");
 const userController = require("../user/userController");
 const { Ticket } = require("../tickets/ticketModel");
+const { isEmpty } = require("../public/util");
 
 var { Comment } = require("../tickets/ticketModel");
+const { off } = require("process");
 
 async function createTicket(req, res, user) {
   var title = req.body.inputTitle;
@@ -17,6 +19,32 @@ async function createTicket(req, res, user) {
   return ticketObj;
 }
 
+async function filterSearchTickets(req, res) {
+  var filters = req.query; // Default je {}, tako da ce prikazati sve propusnice
+
+  var formatFilters = {};
+
+  // foreach key in filters
+  for (var key in filters) {
+    if (filters[key] != "") {
+      formatFilters[key] = filters[key];
+    }
+  }
+
+  var foundTickets = await ticketController.getTicketsByFilter(formatFilters);
+  return foundTickets;
+}
+
+/*
+ *
+ *==========================================================================
+ *==========================================================================
+ *=========================== MODULE EXPORTS ===============================
+ *==========================================================================
+ *==========================================================================
+ *
+ */
+
 module.exports = function (server, getUserWithToken) {
   server.get("/user/debug", function (req, res) {
     // open html file
@@ -24,11 +52,16 @@ module.exports = function (server, getUserWithToken) {
   });
 
   server.get("/tickets", async function (req, res) {
-    var allTickets = await ticketController.getAllTickets();
+    console.log("Tickets get:");
+    console.log(req.query);
+
+    var filteredTickets = await filterSearchTickets(req, res);
+    console.log("Filtered tickets: ");
+    console.log(filteredTickets);
 
     var user = await getUserWithToken(req, res);
     res.render("tickets.ejs", {
-      tickets: allTickets,
+      tickets: filteredTickets,
       user: user,
     });
   });
@@ -41,9 +74,6 @@ module.exports = function (server, getUserWithToken) {
     if (ticket == null) {
       res.redirect("/tickets");
     }
-
-    console.log(ticket);
-    console.log(user);
 
     res.render("ticket_view.ejs", {
       ticket: ticket,
@@ -60,7 +90,7 @@ module.exports = function (server, getUserWithToken) {
       res.redirect("/tickets");
     }
 
-    ticket.status = "finished";
+    ticket.status = "Finished";
     await ticketController.updateTicket(ticketID, ticket);
 
     res.redirect("/tickets/t?id=" + ticketID);
@@ -77,10 +107,12 @@ module.exports = function (server, getUserWithToken) {
 
     if (user.role == "guest") {
       res.redirect("/user/login");
+      return;
     }
 
     if (ticket == null) {
       res.redirect("/tickets");
+      return;
     }
 
     var comment = new Comment(user.username, user.role, comment);
@@ -100,5 +132,23 @@ module.exports = function (server, getUserWithToken) {
     ticket = await createTicket(req, res, user);
     console.log(ticket);
     res.redirect("/tickets/t?id=" + ticket.id);
+  });
+
+  server.post("/admin/tickets/t/update", async function (req, res) {
+    var ticketID = req.body.ticketId;
+    var status = req.body.inputStatus;
+    var priority = req.body.inputPriority;
+
+    console.log("TicketID: " + ticketID);
+    console.log("Status: " + status);
+    console.log("Priority: " + priority);
+
+    var ticket = await ticketController.getTicketById(ticketID);
+    ticket.status = status;
+    ticket.priority = priority;
+
+    await ticketController.updateTicket(ticketID, ticket);
+
+    res.redirect("/tickets/t?id=" + ticketID);
   });
 };

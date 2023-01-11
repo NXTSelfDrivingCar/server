@@ -14,19 +14,22 @@
       color: red;
     }
 
-    .open {
+    .open,
+    .low {
       border-radius: 5px;
       background-color: #3e8551;
       color: #ffffff;
     }
 
-    .inprogress {
+    .inprogress,
+    .medium {
       border-radius: 5px;
       background-color: #ccbc41;
       color: #ffffff;
     }
 
-    .finished {
+    .finished,
+    .high {
       border-radius: 5px;
       background-color: #cc5441;
       color: #ffffff;
@@ -71,16 +74,45 @@
             Date: <%= ticket.date %> <br>
             </p>
             <div class="row">
-              <div class="col-10">
-                <% if (user.role === 'admin' && user.id === ticket.author.id && ticket.status != 'finished') { %>
+              <div class="col-7">
+                <% if (user.role === 'admin' && user.id === ticket.author.id && ticket.status != 'Finished') { %>
                 <a href="/tickets/t/close?id=<%=ticket.id%>" class="btn btn-outline-danger">Close ticket</a>
                 <% } %>
               </div>
               <div class="col">
+                <% if (user.role != 'admin') {%>
                 <div class="p-2 text-center <%= (ticket.status==='Open') ? 'open' : ticket.status==='Finished' ? 'finished' : 'inprogress' %>">
                   <%= ticket.status %>
                 </div>
               </div>
+              <% } else {%>
+              <form method="post" action="/admin/tickets/t/update" enctype="application/x-www-form-urlencoded">
+                <div class="col">
+                  <div class="p-2 text-center <%= (ticket.priority==='Low') ? 'low' : ticket.priority==='High' ? 'high' : 'medium' %>">
+                    <select class="form-control form-select" name="inputPriority">
+                      <option <% if (ticket.priority ==="Low") { %> selected <% } %> value="Low">Low</option>
+                      <option <% if (ticket.priority ==="Medium") { %> selected <% } %> value="Medium">Medium</option>
+                      <option <% if (ticket.priority ==="High") { %> selected <% } %> value="High">High</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="p-2 text-center <%= (ticket.status==='Open') ? 'open' : ticket.status==='Finished' ? 'finished' : 'inprogress' %>">
+                    <select class="form-control form-select" name="inputStatus">
+                      <option <% if (ticket.status ==="Open") { %> selected <% } %> value="Open">Open</option>
+                      <option <% if (ticket.status ==="In progress") { %> selected <% } %> value="In progress">In progress</option>
+                      <option <% if (ticket.status ==="Finished") { %> selected <% } %> value="Finished">Finished</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="p-2 text-center">
+                    <input type="hidden" name="ticketId" value="<%= ticket.id %>">
+                    <button type="submit" class="btn btn-outline-success">Save</button>
+                  </div>
+                </div>
+              </form>
+              <% } %>
             </div>
             <hr class="my-4">
             <p>Description: <%= ticket.description %></p>
@@ -97,7 +129,7 @@
                 <div style="white-space: pre-line"><%= comment.text %></div>
               </div>
               <% } %>
-              <% if (ticket.status != 'finished') { %>
+              <% if (ticket.status != 'Finished') { %>
               <div class="d-flex justify-content-end mt-3">
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#commentModal">Reply</button>
               </div>
