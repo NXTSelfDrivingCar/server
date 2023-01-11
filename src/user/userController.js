@@ -1,8 +1,11 @@
 const userRepository = require("./userRepository");
 const User = require("./userModel");
 const USERS_COLLECTION = "users";
+const bcryptConfig = require("../config/bcryptConfig");
+
 var { LogHandler } = require("../logging/logHandler");
 var logger = new LogHandler().open();
+var bcrypt = require("bcryptjs");
 
 function findUser(user) {
   return userRepository.findUser(user, USERS_COLLECTION);
@@ -29,6 +32,16 @@ async function filterSearch(filters) {
  * @returns {User} User object that was inserted or `null` if the user already exists
  */
 function registerUser(user) {
+  var logData = {
+    origin: "UserController",
+    method: "registerUser",
+    action: "register",
+    user: {
+      username: user.username,
+      id: user.id,
+    },
+  };
+
   var foundUser = userRepository
     .findUserByUsername(user.username, USERS_COLLECTION)
     .then((result) => {
@@ -38,30 +51,19 @@ function registerUser(user) {
             result.username
         );
 
-        logger.log("info", {
-          origin: "UserController",
-          method: "registerUser",
-          action: "registerUser",
-          user: {
-            id: result.id,
-            username: result.username,
-          },
-          result: "User already exists",
-        });
+        logData["result"] = "User already exists";
+
+        logger.log("info", logData);
 
         return null;
       }
 
-      logger.log("info", {
-        origin: "UserController",
-        method: "registerUser",
-        action: "registerUser",
-        user: {
-          id: user.id,
-          username: user.username,
-        },
-        result: "User registered",
-      });
+      logData["result"] = "User registered";
+
+      logger.log("info", logData);
+
+      // Encypting password
+      user.password = bcrypt.hashSync(user.password, bcryptConfig.SALT);
 
       return userRepository.insertUser(user, USERS_COLLECTION);
     });
@@ -69,25 +71,30 @@ function registerUser(user) {
 }
 
 function loginUser(username, password) {
+  var logData = {
+    origin: "UserController",
+    method: "loginUser",
+    action: "login",
+  };
+
   var foundUser = userRepository
     .findUserByUsername(username, USERS_COLLECTION)
     .then((result) => {
       if (result) {
-        if (result.password === password) {
+        // Comparing passwords
+        if (bcrypt.compareSync(password, result.password)) {
           console.log(
             "UserController (loginUser) -> User logged in -> " + result.username
           );
 
-          logger.log("info", {
-            origin: "UserController",
-            method: "loginUser",
-            action: "loginUser",
-            user: {
-              id: result.id,
-              username: result.username,
-            },
-            result: "User logged in",
-          });
+          logData["user"] = {
+            id: result.id,
+            username: result.username,
+          };
+
+          logData["result"] = "User logged in";
+
+          logger.log("info", logData);
 
           return result;
         } else {
@@ -95,15 +102,12 @@ function loginUser(username, password) {
         }
       }
 
-      logger.log("info", {
-        origin: "UserController",
-        method: "loginUser",
-        action: "loginUser",
-        user: {
-          username: username,
-        },
-        result: "User not found",
-      });
+      logData["user"] = {
+        username: username,
+      };
+      logData["result"] = "User not found";
+
+      logger.log("info", logData);
 
       return null;
     });

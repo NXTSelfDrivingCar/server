@@ -14,7 +14,7 @@ async function getTicketById(id) {
 }
 
 async function getAllTickets() {
-  return await ticketRepository.getAllTickets(TICKET_COLLECTION).toArray();
+  return await ticketRepository.getAllTickets(TICKET_COLLECTION);
 }
 
 async function updateTicket(id, updatedTicket) {
@@ -30,9 +30,11 @@ async function deleteTicket(id) {
 }
 
 async function getTicketsByFilter(filter) {
-  return await ticketRepository
-    .getTicketsByFilter(filter, TICKET_COLLECTION)
-    .toArray();
+  return await ticketRepository.getTicketsByFilter(filter, TICKET_COLLECTION);
+}
+
+async function addCommentToTicket(id, comment) {
+  return await ticketRepository.addComment(id, comment, TICKET_COLLECTION);
 }
 
 module.exports = {
@@ -42,4 +44,5 @@ module.exports = {
   updateTicket,
   deleteTicket,
   getTicketsByFilter,
+  addCommentToTicket,
 };

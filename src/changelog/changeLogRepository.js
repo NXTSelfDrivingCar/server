@@ -1,7 +1,8 @@
-var { LogHandler } = require("../logging/logHandler");
 var mongoClient = require("mongodb").MongoClient;
-var logger = new LogHandler().open();
 var ChangeLog = require("./changeLogModel");
+
+var { LogHandler } = require("../logging/logHandler");
+var logger = new LogHandler().open();
 
 const mongoConfig = require("../config/mongoConfig");
 
@@ -98,8 +99,44 @@ async function getLatestChangeLogs(limit = 1, collectionName) {
   });
 }
 
+/**
+ * Gets all existing changelogs
+ * @param {string} collectionName - name of the collection to get the logs from
+ * @returns {Promise<FindCursor>} returns the cursor of all logs
+ */
+async function getAllChangelogs(collectionName) {
+  var logData = {
+    origin: "ChangeLogRepository",
+    method: "getAllChangelogs",
+    action: "getAllChangelogs",
+  };
+
+  return new Promise((resolve, reject) => {
+    mongoClient.connect(CONNECTION, function (err, client) {
+      if (err) {
+        logData["error"] = err;
+        logger.error(logData);
+        reject(err);
+      }
+
+      var db = client.db(DATABASE);
+
+      let result = db
+        .collection(collectionName)
+        .find()
+        .sort({ date: -1 })
+        .toArray();
+
+      logData["result"] = "Logs found";
+      logger.log("info", logData);
+      resolve(result);
+    });
+  });
+}
+
 module.exports = {
   insertChangeLog,
   getLogByVersion,
   getLatestChangeLogs,
+  getAllChangelogs,
 };

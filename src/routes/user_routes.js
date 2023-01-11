@@ -3,8 +3,9 @@ var User = require("../user/userModel");
 var { LogHandler } = require("../logging/logHandler");
 var logger = new LogHandler().open();
 var jwt = require("jsonwebtoken");
+
 const { checkJsonFormat } = require("../public/util");
-require("dotenv").config();
+const dotenv = require("dotenv").config({ path: ".env" });
 
 const registerFormat = {
   username: "string",
@@ -48,14 +49,14 @@ async function loginUser(req, res, next) {
 }
 
 async function registerUser(req, res) {
+  var username = req.body.username;
+  var password = req.body.password;
+  var email = req.body.email;
+  var apiKey = "apikey";
+  var role = "user";
+
   // make a new user
-  var newUser = new User(
-    req.body.username,
-    req.body.password,
-    req.body.email,
-    "apikey",
-    "user"
-  );
+  var newUser = new User(username, password, email, apiKey, role);
 
   // register user
   var registered = await userController.registerUser(newUser);

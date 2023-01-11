@@ -81,7 +81,8 @@ function getUserWithToken(req, res) {
       decoded.user.password,
       decoded.user.email,
       decoded.user.nxt_api_key,
-      decoded.user.role
+      decoded.user.role,
+      decoded.user.id
     );
 
     return newUser;

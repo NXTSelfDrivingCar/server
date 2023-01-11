@@ -46,7 +46,7 @@ async function getTicketById(id, collectioName) {
 
       var db = client.db(DATABASE);
 
-      let result = db.collection(collectioName).find({ id: id });
+      let result = db.collection(collectioName).findOne({ id: id });
 
       resolve(result);
     });
@@ -67,7 +67,7 @@ async function getAllTickets(collectionName) {
 
       var db = client.db(DATABASE);
 
-      let result = db.collection(collectionName).find();
+      let result = db.collection(collectionName).find().toArray();
 
       resolve(result);
     });
@@ -136,7 +136,25 @@ async function getTicketsByFilter(filter, collectionName) {
 
       var db = client.db(DATABASE);
 
-      let result = db.collection(collectionName).find(filter);
+      let result = db.collection(collectionName).find(filter).toArray();
+
+      resolve(result);
+    });
+  });
+}
+
+async function addComment(ticketId, comment, collectioName) {
+  return new Promise((resolve, reject) => {
+    mongoClient.connect(CONNECTION, function (err, client) {
+      if (err) {
+        reject(err);
+      }
+
+      var db = client.db(DATABASE);
+
+      let result = db
+        .collection(collectioName)
+        .updateOne({ id: ticketId }, { $push: { comments: comment } });
 
       resolve(result);
     });
@@ -150,4 +168,5 @@ module.exports = {
   updateTicket,
   deleteTicket,
   getTicketsByFilter,
+  addComment,
 };

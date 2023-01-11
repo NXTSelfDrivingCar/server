@@ -82,8 +82,13 @@ async function getLatestChangeLogs(limit = 1) {
   return documents;
 }
 
+async function getAllChangelogs() {
+  return await changelogRepository.getAllChangelogs(CHANGELOG_COLLECTION);
+}
+
 module.exports = {
   addChangelog,
   getLogByVersion,
   getLatestChangeLogs,
+  getAllChangelogs,
 };
