@@ -33,11 +33,12 @@
     }
 
     .admin-comment {
-      background-color: #cc5441;
+      background-color: #d17465;
       color: #ffffff;
       border-radius: 10px;
-      padding: 5px 10px 5px 15px;
+      padding: 5px 15px 5px 15px;
       font-size: 16px;
+      display: inline;
     }
   </style>
 
@@ -63,46 +64,46 @@
     <div class="card shadow">
       <div class="jumbotron jumbotron-fluid">
         <div class="container">
-          <h1 class="display-4"><%= ticket.title %></h1>
-          <p class="lead">
+          <h1 class="display-4 mt-3""><%= ticket.title %></h1>
+          <p class=" lead">
             Category: <%= ticket.category %> <br>
             Priority: <%= ticket.priority %> <br>
             Date: <%= ticket.date %> <br>
-          </p>
-          <div class="row">
-            <div class="col-10">
-              <% if (user.role === 'admin' && user.id === ticket.author.id && ticket.status != 'finished') { %>
-              <a href="/tickets/t/close?id=<%=ticket.id%>" class="btn btn-outline-danger">Close ticket</a>
-              <% } %>
-            </div>
-            <div class="col">
-              <div class="p-2 text-center <%= (ticket.status==='open') ? 'open' : ticket.status==='finished' ? 'finished' : 'inprogress' %>">
-                <%= ticket.status %>
+            </p>
+            <div class="row">
+              <div class="col-10">
+                <% if (user.role === 'admin' && user.id === ticket.author.id && ticket.status != 'finished') { %>
+                <a href="/tickets/t/close?id=<%=ticket.id%>" class="btn btn-outline-danger">Close ticket</a>
+                <% } %>
+              </div>
+              <div class="col">
+                <div class="p-2 text-center <%= (ticket.status==='Open') ? 'open' : ticket.status==='Finished' ? 'finished' : 'inprogress' %>">
+                  <%= ticket.status %>
+                </div>
               </div>
             </div>
-          </div>
-          <hr class="my-4">
-          <p>Description: <%= ticket.description %></p>
-          <hr class="my-4">
-          <div class="mb-3">
-            <p class="display-6">Comments:</p>
+            <hr class="my-4">
+            <p>Description: <%= ticket.description %></p>
+            <hr class="my-4">
+            <div class="mb-3">
+              <p class="display-6">Comments:</p>
 
-            <% for (let comment of ticket.comments) { %>
-            <div class="card p-2 mb-1">
-              <span class="<%= (user.role == 'admin') ? 'admin-comment' : '' %>">
-                Autor: <%= comment.author %> | Date: <%= new Date(comment.date).toLocaleTimeString('en-UK') %> - <%= new Date(comment.date).toLocaleDateString('en-UK') %>
-              </span>
-              <hr class="my-1">
-              <div style="white-space: pre-line"><%= comment.text %></div>
+              <% for (let comment of ticket.comments) { %>
+              <div class="card p-2 mb-1">
+                <div>
+                  <span class="<%= (user.role == 'admin') ? 'admin-comment' : '' %>">Autor: <%= comment.author %> | Date: <%= new Date(comment.date).toLocaleTimeString('en-UK') %> - <%= new Date(comment.date).toLocaleDateString('en-UK') %></span>
+                </div>
+                <hr class="my-1">
+                <div style="white-space: pre-line"><%= comment.text %></div>
+              </div>
+              <% } %>
+              <% if (ticket.status != 'finished') { %>
+              <div class="d-flex justify-content-end mt-3">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#commentModal">Reply</button>
+              </div>
+              <% } %>
+              </>
             </div>
-            <% } %>
-            <% if (ticket.status != 'finished') { %>
-            <div class="d-flex justify-content-end mt-3">
-              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#commentModal">Reply</button>
-            </div>
-            <% } %>
-            </>
-          </div>
         </div>
       </div>
 

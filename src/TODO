@@ -1,4 +1,6 @@
 Baza podataka:
+  ☐ Omoguciti brisanje korisnika sa mobilnog
+  ☐ Omoguciti promenu korisnickog profila sa mobilnog
   ✔ Da vidi sve korisnike @done(22-12-24 01:27)
   ✔ Da moze da ih promeni, brise, doda role @done(22-12-24 01:28)
   ✔ Dodati da admin moze da upisuje changelog @done(23-01-10 12:23)
@@ -12,8 +14,8 @@ Lista korisnickih pregleda:
 Lista admin pregleda:
   ✔ Tickets @done(23-01-11 01:46)
   ✔ Odgovaranje na ticket @done(23-01-11 01:46)
-  ☐ Ptetrazivanje logova
-  ☐ Pretrazivanje ticket-a
+  ☐ Ptetrazivanje logova (Filter)
+  ☐ Pretrazivanje ticket-a (Filter)
   ✔ Korisnici @done(22-12-24 01:31)
   ✔ Log @started(22-12-27 18:38) @done(22-12-27 21:35) @lasted(2h57m38s)
   
@@ -30,6 +32,16 @@ QoL zahtevi:
   ✘ Omoguciti da su logovi podeljeni u sekcije po desavanjima, a ne samo po funkcijama (npr. logovanje -> userController -> userRepository -> result, registracija, itd.) @cancelled(23-01-10 16:52)
 
 Nefunkcionalni zahtevi:
+  ☐ Sredi logs formatiranje
+  ☐ Sredi logs raspored
+  ☐ Dodaj cards na main page
+  ☐ Admin list users sredi formatiranje
+  ☐ Sredi log in i register stranice
+  ☐ Sredi changelog da ima header i naslov u main page
+  ☐ Srediti navbar
+  ☐ Dodati okvir za obične korisnike u komentarima na ticketima
+  ☐ Promeniti da sve bude na Engleskom (Create propusnica)
+  ☐ Obezbediti svaku rutu posebno za eksterne izvore zahteva (Postman post npr.)
   ✔ Razdvojiti rute po posebnim fajlovima (admin_routes, user_routes) @done(22-12-24 01:31)
   ✔ Obezbediti proveru ako korisnik ukuca ručno link za admin stranice @done(22-12-24 01:31)
   ☐ Obezbediti da se svi logovi pisu na isti nacin (radi jednostavnije pretrage kasnije)

@@ -60,7 +60,7 @@
         </div>
       </div>
       <ul class="list-group">
-        <a class="btn list-group-item list-group-item-action">
+        <a class="btn list-group-item list-group-item-action" style="border-radius: 0;">
           <div class="container">
             <div class="row text-center">
               <div class="col">
@@ -84,26 +84,26 @@
 
 
         <% for (let item of tickets) { %>
-        <a class="btn list-group-item list-group-item-action" href='/tickets/t?id=<%=item.id%>'>
+        <a class="btn list-group-item list-group-item-action" href='/tickets/t?id=<%=item.id%>' style="border-radius: 0;">
           <div class="container">
             <div class="row">
-              <div class="col d-flex justify-content-center">
+              <div class="col d-flex justify-content-center mt-1">
                 <%= item.title %>
               </div>
-              <div class="col d-flex justify-content-center">
+              <div class="col d-flex justify-content-center mt-1">
                 <%= item.category %>
               </div>
               <div class="col">
-                <div class="p-1 text-center <%= (item.priority==='low') ? 'open' : item.status==='medium' ? 'finished' : 'inprogress' %>">
+                <div class="p-1 text-center <%= (item.priority==='Low') ? 'open' : item.status==='Medium' ? 'finished' : 'inprogress' %>">
                   <%= item.priority %>
                 </div>
               </div>
               <div class="col">
-                <div class="p-1 text-center <%= (item.status==='open') ? 'open' : item.status==='finished' ? 'finished' : 'inprogress' %>">
+                <div class="p-1 text-center <%= (item.status==='Open') ? 'open' : item.status==='Finished' ? 'finished' : 'inprogress' %>">
                   <%= item.status %>
                 </div>
               </div>
-              <div class="col d-flex justify-content-center">
+              <div class="col d-flex justify-content-center mt-1">
                 <%= new Date(item.date).toLocaleDateString('en-UK')%>
               </div>
             </div>
@@ -145,7 +145,7 @@
             <br>
             <div class="form-group">
               <label for="descriptionTextArea">Deskripcija:</label>
-              <textarea class="form-control" onkeyup="updateLength()" id="descriptionTextArea" name="inputDescription" rows="8" placeholder="Unesite opis ovde..." style="resize: none" maxlength="2000" required></textarea>
+              <textarea class="form-control mb-2" onkeyup="updateLength()" id="descriptionTextArea" name="inputDescription" rows="8" placeholder="Unesite opis ovde..." style="resize: none" maxlength="2000" required></textarea>
               <div id="count">
                 <span id="current_count">0</span>
                 <span id="maximum_count">/ 2000</span>
