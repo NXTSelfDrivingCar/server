@@ -10,10 +10,6 @@
 
 <body>
   <style>
-    .ac {
-      color: red;
-    }
-
     .open,
     .low {
       border-radius: 5px;
@@ -87,28 +83,26 @@
               </div>
               <% } else {%>
               <form method="post" action="/admin/tickets/t/update" enctype="application/x-www-form-urlencoded">
-                <div class="col">
-                  <div class="p-2 text-center <%= (ticket.priority==='Low') ? 'low' : ticket.priority==='High' ? 'high' : 'medium' %>">
-                    <select class="form-control form-select" name="inputPriority">
+                <div class="row">
+                  <div class="col">
+                    <select class="form-control form-select <%= (ticket.priority==='Low') ? 'low' : ticket.priority==='High' ? 'high' : 'medium' %>" name="inputPriority">
                       <option <% if (ticket.priority ==="Low") { %> selected <% } %> value="Low">Low</option>
                       <option <% if (ticket.priority ==="Medium") { %> selected <% } %> value="Medium">Medium</option>
                       <option <% if (ticket.priority ==="High") { %> selected <% } %> value="High">High</option>
                     </select>
                   </div>
-                </div>
-                <div class="col">
-                  <div class="p-2 text-center <%= (ticket.status==='Open') ? 'open' : ticket.status==='Finished' ? 'finished' : 'inprogress' %>">
-                    <select class="form-control form-select" name="inputStatus">
-                      <option <% if (ticket.status ==="Open") { %> selected <% } %> value="Open">Open</option>
-                      <option <% if (ticket.status ==="In progress") { %> selected <% } %> value="In progress">In progress</option>
-                      <option <% if (ticket.status ==="Finished") { %> selected <% } %> value="Finished">Finished</option>
-                    </select>
+                  <div class="col">
+                    <div>
+                      <select class="form-control form-select <%= (ticket.status==='Open') ? 'open' : ticket.status==='Finished' ? 'finished' : 'inprogress' %>" name="inputStatus">
+                        <option <% if (ticket.status ==="Open") { %> selected <% } %> value="Open">Open</option>
+                        <option <% if (ticket.status ==="In progress") { %> selected <% } %> value="In progress">In progress</option>
+                        <option <% if (ticket.status ==="Finished") { %> selected <% } %> value="Finished">Finished</option>
+                      </select>
+                    </div>
                   </div>
-                </div>
-                <div class="col">
-                  <div class="p-2 text-center">
+                  <div class="col text-center">
                     <input type="hidden" name="ticketId" value="<%= ticket.id %>">
-                    <button type="submit" class="btn btn-outline-success">Save</button>
+                    <button type="submit" class="btn btn-outline-success form-control">Save</button>
                   </div>
                 </div>
               </form>
@@ -123,7 +117,7 @@
               <% for (let comment of ticket.comments) { %>
               <div class="card p-2 mb-1">
                 <div>
-                  <span class="<%= (user.role == 'admin') ? 'admin-comment' : '' %>">Autor: <%= comment.author %> | Date: <%= new Date(comment.date).toLocaleTimeString('en-UK') %> - <%= new Date(comment.date).toLocaleDateString('en-UK') %></span>
+                  <span class="<%= (comment.role == 'admin') ? 'admin-comment' : '' %>">Author: <%= comment.author %> | Date: <%= new Date(comment.date).toLocaleTimeString('en-UK') %> - <%= new Date(comment.date).toLocaleDateString('en-UK') %></span>
                 </div>
                 <hr class="my-1">
                 <div style="white-space: pre-line"><%= comment.text %></div>
