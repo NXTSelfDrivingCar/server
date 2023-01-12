@@ -255,6 +255,7 @@ module.exports = function (server) {
     res.redirect("/admin/changelog/add");
   });
 
+  // TODO: Obrisati svaki post method za ono sto bi trebalo da bude get (tipa ovo ispod)
   server.post("/admin/admin_list_users", checkAuth, async (req, res) => {
     var users = await filterSeachUsers(req, res); // Ovo je array of users
 

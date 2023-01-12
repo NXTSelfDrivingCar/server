@@ -34,7 +34,7 @@
 
   <div class="container">
     <div class="card mt-3 p-3 shadow">
-      <form method="get" action="/tickets" enctype="application/x-www-form-urlencoded">
+      <form method="post" action="/admin/admin_list_users" enctype="application/x-www-form-urlencoded">
         <div class="row">
           <div class="col-4">
             <label for="inputTitle">E-Mail</label>
@@ -48,8 +48,8 @@
             <label for="inputTitle">Role</label>
             <select name="role" class="form-control form-select">
               <option value="">All</option>
-              <option>Admin</option>
-              <option>User</option>
+              <option>admin</option>
+              <option>user</option>
             </select>
           </div>
           <div class="col-1">
@@ -111,8 +111,8 @@
                 </div>
               </div>
               <div class="col text-center">
-                <button class="btn btn-primary" href="/admin/user/update?id=<%=user.id%>"><i class="bi bi-pencil-square"></i></button>
-                <button class="btn btn-danger" href="/admin/user/delete?id=<%=user.id%>"><i class="bi bi-trash"></i></button>
+                <a class="btn btn-primary" href="/admin/user/update?id=<%=user.id%>"><i class="bi bi-pencil-square"></i></a>
+                <a class="btn btn-danger" href="/admin/user/delete?id=<%=user.id%>"><i class="bi bi-trash"></i></a>
               </div>
             </div>
           </div>
@@ -121,13 +121,14 @@
         <% } %>
       </ul>
     </div>
+    <% if (users.length==0) { %>
+    <div class="alert alert-danger" role="alert">
+      ✗ Ne postoje korisnici sa ovim parametrima!
+    </div>
+    <% } %>
   </div>
 
-  <% if (users.length==0) { %>
-  <div class="alert alert-danger" role="alert">
-    ✗ Ne postoje korisnici sa ovim parametrima!
-  </div>
-  <% } %>
+
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
   </script>

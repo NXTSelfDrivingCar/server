@@ -40,6 +40,7 @@ Nefunkcionalni zahtevi:
   ✔ Sredi changelog da ima header i naslov u main page @done(23-01-11 23:50)
   ✔ Srediti navbar @done(23-01-11 23:50)
   ✔ Dodati okvir za obične korisnike u komentarima na ticketima @done(23-01-11 23:50)
+  ☐ Uradi trim na svaki input
   ☐ Promeniti da sve bude na Engleskom (Create propusnica)
   ☐ Obezbediti svaku rutu posebno za eksterne izvore zahteva (Postman post npr.)
   ✔ Razdvojiti rute po posebnim fajlovima (admin_routes, user_routes) @done(22-12-24 01:31)
