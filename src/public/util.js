@@ -114,6 +114,10 @@ function isEmpty(dictionary) {
   return Object.keys(dictionary).length === 0;
 }
 
+function getUserWithTokenMobile(req, res) {
+  
+}
+
 module.exports = {
   jsonToString: jsonToString,
   objectArrayToString: objectArrayToString,

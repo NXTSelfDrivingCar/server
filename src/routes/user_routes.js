@@ -4,13 +4,16 @@ var { LogHandler } = require("../logging/logHandler");
 var logger = new LogHandler().open();
 var jwt = require("jsonwebtoken");
 
-const { checkJsonFormat, getUserWithToken } = require("../public/util");
+const {
+  checkJsonFormat,
+  getUserWithToken,
+  jsonFromKeys,
+} = require("../public/util");
 const dotenv = require("dotenv").config({ path: ".env" });
 
 const registerFormat = {
   username: "string",
   password: "string",
-  password2: "string",
   email: "string",
 };
 
@@ -18,14 +21,6 @@ const loginFormat = {
   username: "string",
   password: "string",
 };
-
-async function checkPasswords(req, res) {
-  if (req.body.password == req.body.password2) {
-    return true;
-  } else {
-    return false;
-  }
-}
 
 async function loginUser(req, res, next) {
   var username = req.body.username;
@@ -53,16 +48,18 @@ async function loginUser(req, res, next) {
   }
 }
 
-async function updateUserPassword(req, res) {
-  var oldUser = await getUserWithToken(req, res);
-  oldUser.password = req.body.password;
+async function updateUserPassword(req, res, verified) {
+  var oldUser = jsonFromKeys(verified.user, true, "_id");
 
-  console.log('New password is: ' + oldUser.password);
+  oldUser.password = req.body.newPassword;
+
+  console.log("New password is: " + oldUser.password);
 
   var updated = await userController.updateUser(oldUser.id, oldUser);
+
   if (updated == null) {
     return false;
-  }else{
+  } else {
     return true;
   }
 }
@@ -237,9 +234,13 @@ module.exports = function (server, getUserWithToken) {
    */
 
   server.post("/user/login/mobile", async (req, res, next) => {
+    // Check if JSON format is valid
+    console.log(req.body);
+
     if (checkJsonFormat(req.body, loginFormat) == false)
       return res.send({ status: "invalidFormat" });
 
+    // Gets true or false if user is logged in
     var result = await loginUser(req, res, next);
 
     logger.log("info", {
@@ -255,21 +256,21 @@ module.exports = function (server, getUserWithToken) {
       },
     });
 
-    var user = await getUserWithToken(req, res);
-
+    // If user is logged in, send OK
     if (result) {
-      return res.send({ status: "OK", id: user.id, username: user.username });
+      return res.send({ status: "OK" });
     } else {
       return res.send({ status: "Unauthorized" });
     }
   });
 
   server.post("/user/register/mobile", async (req, res, next) => {
+    // Check if JSON format is valid
+    console.log(req.body);
+
     if (checkJsonFormat(req.body, registerFormat) == false) {
       return res.send({ status: "invalidFormat" });
     }
-
-    var passResult = await checkPasswords(req, res);
 
     logger.log("info", {
       action: "registerUser",
@@ -285,10 +286,7 @@ module.exports = function (server, getUserWithToken) {
       },
     });
 
-    if (!passResult) {
-      return res.send({ status: "passwordMismatch" });
-    }
-
+    // Gets true or false if user is logged in
     var result = await registerUser(req, res);
 
     if (result) {
@@ -303,36 +301,23 @@ module.exports = function (server, getUserWithToken) {
   });
 
   server.post("/user/update/mobile", async (req, res, next) => {
-    // var token = req.body.token;
-    // Ako ne postoji vrati
-    console.log("Update mobile: ");
-    console.log(req.body);
-
-    var token = req.body.tkn;
+    var token = req.body.token;
 
     if (token == undefined) {
-      return res.send({ status: "invalidToken" });
+      return res.send({
+        status: "invalidToken",
+        message: "Token is undefined",
+      });
     }
 
     var verified = jwt.verify(token, process.env.JWT_SECRET);
 
-    console.log("Verified token:");
-    console.log(verified);
+    var result = updateUserPassword(req, res, verified);
 
-    var decoded = jwt.decode(token, { complete: true });
-
-    console.log("Decoded token:");
-    console.log(decoded);
-
-    if (decoded.payload.user.id != verified.user.id) {
-      return res.send({ status: "invalidToken" });
-    }
-
-    var result = updateUserPassword(req, res);
     if (!result) {
-      return res.send({ status: 'Failed update'});
-    }else{
-      return res.send({ status: 'OK'});
+      return res.send({ status: "Failed update" });
+    } else {
+      return res.send({ status: "OK" });
     }
   });
 
@@ -364,9 +349,9 @@ module.exports = function (server, getUserWithToken) {
 
     var result = userController.removeUser(verified.user.id);
     if (!result) {
-      return res.send({ status: 'Failed remove'});
-    }else{
-      return res.send({ status: 'OK'});
+      return res.send({ status: "Failed remove" });
+    } else {
+      return res.send({ status: "OK" });
     }
   });
 };
