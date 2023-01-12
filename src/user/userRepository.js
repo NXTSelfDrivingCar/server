@@ -319,14 +319,46 @@ function updateUser(id, user, collectionName) {
       var db = client.db(DATABASE);
 
       // Find the user with the specified id
+      var result = db
+        .collection(collectionName)
+        .updateOne({ id: id }, { $set: user });
+
+      resolve(result);
+    });
+  });
+}
+
+/*function updateUser(id, user, collectionName) {
+  let logData = {
+    origin: "UserRepository",
+    method: "updateUser",
+    action: "updateUser",
+    user: {
+      id: id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+    },
+    collectionName: collectionName,
+  };
+
+  console.log("UserRepository (updateUser) -> " + user.username, " ", id);
+
+  return new Promise((resolve, reject) => {
+    mongoClient.connect(CONNECTION, function (err, client) {
+      if (err) {
+        logData["error"] = err;
+        logger.logError(logData);
+        throw err;
+      }
+
+      var db = client.db(DATABASE);
+
+      // Find the user with the specified id
       db.collection(collectionName).updateOne(
         { id: id },
         {
-          $set: {
-            username: user.username,
-            email: user.email,
-            role: user.role,
-          },
+          $set: user
         },
         function (err, result) {
           if (err) {
@@ -341,7 +373,7 @@ function updateUser(id, user, collectionName) {
       );
     });
   });
-}
+}*/
 
 module.exports = {
   insertUser,

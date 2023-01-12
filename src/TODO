@@ -1,6 +1,6 @@
 Baza podataka:
-  ☐ Omoguciti brisanje korisnika sa mobilnog
-  ☐ Omoguciti promenu korisnickog profila sa mobilnog
+  ✔ Omoguciti brisanje korisnika sa mobilnog @done(23-01-12 16:48)
+  ✔ Omoguciti promenu korisnickog profila sa mobilnog @done(23-01-12 16:37)
   ✔ Da vidi sve korisnike @done(22-12-24 01:27)
   ✔ Da moze da ih promeni, brise, doda role @done(22-12-24 01:28)
   ✔ Dodati da admin moze da upisuje changelog @done(23-01-10 12:23)
@@ -18,7 +18,7 @@ Lista admin pregleda:
   ☐ Pretrazivanje ticket-a (Filter)
   ✔ Korisnici @done(22-12-24 01:31)
   ✔ Log @started(22-12-27 18:38) @done(22-12-27 21:35) @lasted(2h57m38s)
-  
+
 Konekcija:
   ✔ HTTP Request sa Android aplikacijom @done(23-01-10 17:57)
   ✔ Websocket Veza (Za prenos stream-a) @started(22-12-24 18:28) @done(22-12-24 19:33) @lasted(1h5m42s)
@@ -30,6 +30,9 @@ QoL zahtevi:
   ✔ Napravi logger da bude dobar (da bude json objekat) @done(22-12-24 21:06)
   ✔ Logovanje svih bitnih akcija @started(22-12-24 21:06) @done(22-12-24 22:04) @lasted(58m5s)
   ✘ Omoguciti da su logovi podeljeni u sekcije po desavanjima, a ne samo po funkcijama (npr. logovanje -> userController -> userRepository -> result, registracija, itd.) @cancelled(23-01-10 16:52)
+
+Bagovi:
+  ✔ Kad se ukuca pogrešna šifra, nema Log In dugme @done(23-01-12 16:48)
 
 Nefunkcionalni zahtevi:
   ✔ Sredi logs formatiranje @done(23-01-11 23:40)

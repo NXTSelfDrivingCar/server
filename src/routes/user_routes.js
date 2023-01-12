@@ -4,7 +4,7 @@ var { LogHandler } = require("../logging/logHandler");
 var logger = new LogHandler().open();
 var jwt = require("jsonwebtoken");
 
-const { checkJsonFormat } = require("../public/util");
+const { checkJsonFormat, getUserWithToken } = require("../public/util");
 const dotenv = require("dotenv").config({ path: ".env" });
 
 const registerFormat = {
@@ -49,6 +49,20 @@ async function loginUser(req, res, next) {
     // send token to client
     res.cookie("auth", token, { httpOnly: true, secure: false });
 
+    return true;
+  }
+}
+
+async function updateUserPassword(req, res) {
+  var oldUser = await getUserWithToken(req, res);
+  oldUser.password = req.body.password;
+
+  console.log('New password is: ' + oldUser.password);
+
+  var updated = await userController.updateUser(oldUser.id, oldUser);
+  if (updated == null) {
+    return false;
+  }else{
     return true;
   }
 }
@@ -310,10 +324,49 @@ module.exports = function (server, getUserWithToken) {
     console.log("Decoded token:");
     console.log(decoded);
 
-    if (decoded.user.id != req.body.userId) {
+    if (decoded.payload.user.id != verified.user.id) {
       return res.send({ status: "invalidToken" });
     }
 
-    // TODO: Update user
+    var result = updateUserPassword(req, res);
+    if (!result) {
+      return res.send({ status: 'Failed update'});
+    }else{
+      return res.send({ status: 'OK'});
+    }
+  });
+
+  server.post("/user/remove/mobile", async (req, res, next) => {
+    // var token = req.body.token;
+    // Ako ne postoji vrati
+    console.log("Remove user mobile: ");
+    console.log(req.body);
+
+    var token = req.body.tkn;
+
+    if (token == undefined) {
+      return res.send({ status: "invalidToken" });
+    }
+
+    var verified = jwt.verify(token, process.env.JWT_SECRET);
+
+    console.log("Verified token:");
+    console.log(verified);
+
+    var decoded = jwt.decode(token, { complete: true });
+
+    console.log("Decoded token:");
+    console.log(decoded);
+
+    if (decoded.payload.user.id != verified.user.id) {
+      return res.send({ status: "invalidToken" });
+    }
+
+    var result = userController.removeUser(verified.user.id);
+    if (!result) {
+      return res.send({ status: 'Failed remove'});
+    }else{
+      return res.send({ status: 'OK'});
+    }
   });
 };

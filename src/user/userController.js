@@ -175,12 +175,14 @@ async function updateUser(id, user) {
     logData["result"] = "User updated";
     logger.log("info", logData);
 
+    user.password = bcrypt.hashSync(user.password, bcryptConfig.SALT);
+
     return await userRepository.updateUser(id, user, USERS_COLLECTION);
   }
 
   logData["result"] = "User not found";
   logger.log("info", logData);
-  return false;
+  return null;
 }
 
 module.exports = {
