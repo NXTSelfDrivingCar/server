@@ -39,9 +39,22 @@
       font-size: 16px;
       display: inline;
     }
+
+    .user-comment {
+      background-color: #3e6aba;
+      color: #ffffff;
+      border-radius: 10px;
+      padding: 5px 15px 5px 15px;
+      font-size: 16px;
+      display: inline;
+    }
+
+    .cust-bg {
+      background-color: #f8f7f7;
+    }
   </style>
 
-  <%- include('../resources/components/user_navbar.ejs') %>
+  <%- include('../resources/components/new_navbar.ejs') %>
   <% var counter = 0; %>
   <%
 	
@@ -115,9 +128,9 @@
               <p class="display-6">Comments:</p>
 
               <% for (let comment of ticket.comments) { %>
-              <div class="card p-2 mb-1">
+              <div class="card p-2 mb-2 cust-bg">
                 <div>
-                  <span class="<%= (comment.role == 'admin') ? 'admin-comment' : '' %>">Author: <%= comment.author %> | Date: <%= new Date(comment.date).toLocaleTimeString('en-UK') %> - <%= new Date(comment.date).toLocaleDateString('en-UK') %></span>
+                  <span class="<%= (comment.role == 'admin') ? 'admin-comment' : 'user-comment' %>">Author: <%= comment.author %> | Date: <%= new Date(comment.date).toLocaleTimeString('en-UK') %> - <%= new Date(comment.date).toLocaleDateString('en-UK') %></span>
                 </div>
                 <hr class="my-1">
                 <div style="white-space: pre-line"><%= comment.text %></div>

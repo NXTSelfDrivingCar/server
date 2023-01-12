@@ -24,7 +24,7 @@
     }
   </style>
 
-  <%- include('../resources/components/navbar.ejs') %>
+  <%- include('../resources/components/new_navbar_admin.ejs') %>
 
   <br />
 
@@ -35,7 +35,7 @@
           <div class="card-body">
             <h4 class="card-title">Tickets</h4>
             <p class="card-text">Read all tickets, and execute actions</p>
-            <a href="#" class="stretched-link"></a>
+            <a href="/tickets" class="stretched-link"></a>
           </div>
         </div>
       </div>
@@ -44,7 +44,7 @@
           <div class="card-body">
             <h4 class="card-title">Users</h4>
             <p class="card-text">List specific users and execute actions.</p>
-            <a href="admin_list_users" class="stretched-link"></a>
+            <a href="/admin/admin_list_users" class="stretched-link"></a>
           </div>
         </div>
       </div>
@@ -54,17 +54,17 @@
       <div class="col-sm-6">
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title">Logs</h4>
-            <p class="card-text">List all existing losg</p>
-            <a href="logs" class="stretched-link"></a>
+            <h4 class="card-title">Debla</h4>
+            <p class="card-text">List all existing debla</p>
+            <a href="/admin/logs" class="stretched-link"></a>
           </div>
         </div>
       </div>
       <div class="col-sm-6">
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title">Restartuj robot server</h4>
-            <p class="card-text">Zaustavi i pokreni ponovo robozt server.</p>
+            <h4 class="card-title">Restart robot server</h4>
+            <p class="card-text">Restart robot server</p>
             <a href="#" class="stretched-link"></a>
           </div>
         </div>
@@ -77,7 +77,7 @@
           <div class="card-body">
             <h4 class="card-title">Ubaci novu verziju</h4>
             <p class="card-text">Unesi promene koje su se desile tokom izrade</p>
-            <a href="changelog/add" class="stretched-link"></a>
+            <a href="/admin/changelog/add" class="stretched-link"></a>
           </div>
         </div>
       </div>

@@ -8,53 +8,124 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
 </head>
 
+<style>
+  .info {
+    border-radius: 5px;
+    background-color: #3e8551;
+    color: #ffffff;
+  }
+
+  .error {
+    border-radius: 5px;
+    background-color: #cc5441;
+    color: #ffffff;
+  }
+
+  .card-content {
+    background-color: #212529;
+    color: white;
+    border-radius: 0;
+  }
+
+  .btn:active {
+    color: #161617;
+    background-color: #0c0c92;
+    border-color: #494F57;
+  }
+
+  button:focus {
+    background-color: #0e4c8a;
+  }
+</style>
+
 <body>
-  <%- include('../resources/components/navbar.ejs') %>
+  <%- include('../resources/components/new_navbar_admin.ejs') %>
   <% var counter = 0; %>
   <%
-
+  
   function jsonToString(jsonData, ...keys) {
-  if (keys.length > 0) {
-    var result = "";
-    for (var i = 0; i < keys.length; i++) {
-      result += jsonData[keys[i]] + " ";
+    if (keys.length > 0) {
+      var result = "";
+      for (var i = 0; i < keys.length; i++) {
+        result += jsonData[keys[i]] + " ";
+      }
+      return result;
     }
-    return result;
-  }
-  return JSON.stringify(jsonData, undefined, 2);
+    return JSON.stringify(jsonData, undefined, 2);
   }
   %>
   <br>
 
   <div class="container">
-    <div class="card">
-      <div class="card-header bg-dark text-white">
-        Mala debla
-      </div>
-      <ul class="list-group">
-        <% for (let item of log) { %>
-        <% counter++; %>
-        <a class="btn list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#collapseExample<%=counter%>">
-          <span>Tag: [<%= item.tag %>] - Time stamp: <%= item.timestamp %></span>
-        </a>
-        <div class="collapse" id="collapseExample<%=counter%>">
+    <div class="card shadow">
 
-          <div class="card card-body">
-            <pre class="card-text"><%= jsonToString(item) %></pre>
+      <div class="card-header bg-dark text-white">
+        <p class="display-6 my-auto">Mala debla:</p>
+      </div>
+    </div>
+    <ul class="list-group shadow">
+      <div class="btn list-group-item list-group-item-action" style="border-radius: 0;">
+        <div class="container">
+          <div class="row text-center">
+            <div class="col">
+              Tag
+            </div>
+            <div class="col">
+              Source
+            </div>
+            <div class="col">
+              Action
+            </div>
+            <div class="col">
+              Timestamp
+            </div>
           </div>
         </div>
-        <% } %>
-      </ul>
-    </div>
+      </div>
+
+
+      <% for (let item of log) { %>
+      <% counter++; %>
+      <button class="btn list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#collapseExample<%=counter%>" style="border-radius: 0;">
+        <div class="container">
+          <div class="row">
+            <div class="col d-flex justify-content-center mt-1">
+              <div class="p-1 text-center <%= (item.tag==='INFO') ? 'info' : 'error' %>">
+                <%= item.tag %>
+              </div>
+            </div>
+            <div class="col d-flex justify-content-center mt-1">
+              <%= item.source %>
+            </div>
+            <div class="col d-flex justify-content-center mt-1">
+              <%= item.action %>
+            </div>
+            <div class="col d-flex justify-content-center mt-1">
+              <%= new Date(item.timestamp).toLocaleDateString('en-UK') %> - <%= new Date(item.timestamp).toLocaleTimeString('en-UK') %>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <div class="collapse" id="collapseExample<%=counter%>">
+        <div class="card card-body card-content" style="border-radius: 0;">
+          <pre class="card-text"><%= jsonToString(item) %></pre>
+        </div>
+      </div>
+      <% } %>
+    </ul>
   </div>
+  </div>
+
+
 
   <br>
   <%if(currentLog !== log[0].logName){%>
   <div class="text-center">
     <a href="/admin/logs/delete/log?id=<%= log[0].logName%>" class="btn btn-danger">Delete log</a>
   </div>
-  <%}%>
+  <br> <%}%>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-</body>
-
-</html>
+  </body>
+  
+  </html>

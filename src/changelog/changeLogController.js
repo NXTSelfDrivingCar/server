@@ -1,6 +1,6 @@
 const changelogRepository = require("./changeLogRepository");
 const ChangeLog = require("./changeLogModel");
-const CHANGELOG_COLLECTION = "changeLog";
+const CHANGELOG_COLLECTION = "changelogs";
 
 var { LogHandler } = require("../logging/logHandler");
 var logger = new LogHandler().open();

@@ -32,18 +32,18 @@ QoL zahtevi:
   ✘ Omoguciti da su logovi podeljeni u sekcije po desavanjima, a ne samo po funkcijama (npr. logovanje -> userController -> userRepository -> result, registracija, itd.) @cancelled(23-01-10 16:52)
 
 Nefunkcionalni zahtevi:
-  ☐ Sredi logs formatiranje
-  ☐ Sredi logs raspored
-  ☐ Dodaj cards na main page
-  ☐ Admin list users sredi formatiranje
-  ☐ Sredi log in i register stranice
-  ☐ Sredi changelog da ima header i naslov u main page
-  ☐ Srediti navbar
-  ☐ Dodati okvir za obične korisnike u komentarima na ticketima
+  ✔ Sredi logs formatiranje @done(23-01-11 23:40)
+  ✔ Sredi logs raspored @done(23-01-12 00:21)
+  ✘ Dodaj cards na main page @cancelled(23-01-11 23:51)
+  ✔ Admin list users sredi formatiranje @done(23-01-11 23:42)
+  ✔ Sredi log in i register stranice @done(23-01-12 00:20)
+  ✔ Sredi changelog da ima header i naslov u main page @done(23-01-11 23:50)
+  ✔ Srediti navbar @done(23-01-11 23:50)
+  ✔ Dodati okvir za obične korisnike u komentarima na ticketima @done(23-01-11 23:50)
   ☐ Promeniti da sve bude na Engleskom (Create propusnica)
   ☐ Obezbediti svaku rutu posebno za eksterne izvore zahteva (Postman post npr.)
   ✔ Razdvojiti rute po posebnim fajlovima (admin_routes, user_routes) @done(22-12-24 01:31)
   ✔ Obezbediti proveru ako korisnik ukuca ručno link za admin stranice @done(22-12-24 01:31)
   ☐ Obezbediti da se svi logovi pisu na isti nacin (radi jednostavnije pretrage kasnije)
-  ☐ Server ne sme da se ugasi u slucaju da dodje neka greska (vec da je loguje) 
-    ☐ Skloniti svaki throw err iz kooda
+  ✔ Server ne sme da se ugasi u slucaju da dodje neka greska (vec da je loguje) @done(23-01-11 23:51)
+    ✔ Skloniti svaki throw err iz kooda @done(23-01-11 23:51)

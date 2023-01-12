@@ -53,7 +53,7 @@ async function getLogByVersion(verson, collectionName) {
 
       var db = client.db(DATABASE);
 
-      let result = db.collection(collectionName).find({ version: verson });
+      let result = db.collection(collectionName).findOne({ version: verson });
 
       logData["result"] = "ChangeLog found";
       logger.log("info", logData);

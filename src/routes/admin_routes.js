@@ -116,8 +116,6 @@ async function addChangelog(req, res) {
     req.body.inputDescription
   );
 
-  console.log(newChangelog);
-
   return await changeLogController.addChangelog(newChangelog);
 }
 
@@ -243,7 +241,7 @@ module.exports = function (server) {
     if (lastChangelog == null) lastChangelog = [];
 
     if (lastChangelog.length > 0) lastChangelog = lastChangelog[0];
-    console.log(lastChangelog);
+
     res.render("admin_changelog.ejs", {
       title: "Adding changelog",
       latestChangelog: lastChangelog,

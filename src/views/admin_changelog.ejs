@@ -11,13 +11,14 @@
   <title>Changelog</title>
 </head>
 <style>
-  .container {
+  .container-changelog {
     width: 50%;
     margin: auto;
     border: 2px solid #16181a;
     border-radius: 10px;
     height: auto;
     background-color: #212529;
+    padding: 10px;
   }
 
   textarea {
@@ -48,21 +49,13 @@
 
 
 <body>
-  <%- include('../resources/components/navbar.ejs') %>
-  <div class="container mt-5">
-    <div class="card-header">
-      <h1 class="display-3 text-light">Latest changelog</h1>
-    </div>
-    <div class="mb-3">
-      <textarea class="form-control" id="floatingTextarea2" rows="10" readonly><%= jsonToString(latestChangelog, true, "_id") %></textarea>
-    </div>
+  <%- include('../resources/components/new_navbar_admin.ejs') %>
 
-  </div>
 
-  <div class="container mt-5">
+  <div class="container-changelog">
     <div class="title">
     </div>
-    <div class="form-fluid">
+    <div class="form-fluid shadow">
       <div class="card-header">
         <h1 class="display-3 text-light">Add changelog</h1>
       </div>
@@ -95,6 +88,15 @@
       </form>
     </div>
   </div>
+  <div class="container-changelog mt-4">
+    <div class="card-header">
+      <h1 class="display-3 text-light">Latest changelog</h1>
+    </div>
+    <div class="mb-3">
+      <textarea class="form-control" id="floatingTextarea2" rows="10" readonly><%= jsonToString(latestChangelog, true, "_id") %></textarea>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 </body>
 
 </html>

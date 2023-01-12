@@ -37,12 +37,17 @@ async function loginUser(req, res, next) {
   else {
     // if user is found, create a token and send it to the client
     // Token is created with the user object as payload and the secret key from .env
+    console.log("Found user: " + foundUser.username);
+
     const token = jwt.sign({ user: foundUser }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
+    console.log("Token: ");
+    console.log(token);
+
     // send token to client
-    res.cookie("auth", token, { httpOnly: false });
+    res.cookie("auth", token, { httpOnly: true, secure: false });
 
     return true;
   }
@@ -236,8 +241,10 @@ module.exports = function (server, getUserWithToken) {
       },
     });
 
+    var user = await getUserWithToken(req, res);
+
     if (result) {
-      return res.send({ status: "OK", token: req.cookies });
+      return res.send({ status: "OK", id: user.id, username: user.username });
     } else {
       return res.send({ status: "Unauthorized" });
     }
@@ -281,9 +288,13 @@ module.exports = function (server, getUserWithToken) {
     return res.send({ status: "error" });
   });
 
-  server.post("/user/mobile/update", async (req, res, next) => {
-    var token = req.body.token;
+  server.post("/user/update/mobile", async (req, res, next) => {
+    // var token = req.body.token;
     // Ako ne postoji vrati
+    console.log("Update mobile: ");
+    console.log(req.body);
+
+    var token = req.body.tkn;
 
     if (token == undefined) {
       return res.send({ status: "invalidToken" });
@@ -291,7 +302,13 @@ module.exports = function (server, getUserWithToken) {
 
     var verified = jwt.verify(token, process.env.JWT_SECRET);
 
+    console.log("Verified token:");
+    console.log(verified);
+
     var decoded = jwt.decode(token, { complete: true });
+
+    console.log("Decoded token:");
+    console.log(decoded);
 
     if (decoded.user.id != req.body.userId) {
       return res.send({ status: "invalidToken" });

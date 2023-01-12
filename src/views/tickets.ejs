@@ -31,10 +31,14 @@
       background-color: #cc5441;
       color: #ffffff;
     }
+
+    .display-6 {
+      margin: 0;
+    }
   </style>
 
 
-  <%- include('../resources/components/user_navbar.ejs');%>
+  <%- include('../resources/components/new_navbar.ejs');%>
   <%- include('../resources/components/ticket_filter.ejs');%>
   <% var counter=0; %>
   <% function jsonToString(jsonData, ...keys) { if (keys.length> 0) {
@@ -48,12 +52,12 @@
 
       <div class="card-header bg-dark text-white">
         <div class="row d-flex justify-content-between">
-          <div class="col-3">
+          <div class="col-3 my-auto">
             <p class="display-6">Propusnice:</p>
           </div>
           <div class="col-3 mt-2">
             <% if (user.role != 'guest') { %>
-            <div class="d-flex justify-content-end mb-3">
+            <div class="d-flex justify-content-end my-auto">
               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ticketModal">Napravi Propusnicu</button>
             </div>
             <% } %>
@@ -61,7 +65,7 @@
         </div>
       </div>
       <ul class="list-group">
-        <a class="btn list-group-item list-group-item-action" style="border-radius: 0;">
+        <div class="list-group-item" style="border-radius: 0;">
           <div class="container">
             <div class="row text-center">
               <div class="col">
@@ -81,7 +85,7 @@
               </div>
             </div>
           </div>
-        </a>
+        </div>
 
 
         <% for (let item of tickets) { %>

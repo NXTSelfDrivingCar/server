@@ -57,11 +57,14 @@ function isInArray(value, array) {
  * @returns User from token (guest if no token is found)
  */
 function getUserWithToken(req, res) {
+  console.log("Get user with token");
+  console.log("Cookies: ");
+  console.log(req.cookies);
+
   if (req.cookies.auth) {
     var decoded = jwt.verify(
       req.cookies.auth,
       process.env.JWT_SECRET,
-
       // Dodata funkcija u slucaju da je token istekao
       // Ako je token istekao, vraca null i to dozvoljava da se vrati guest korisnik
       function (err, decoded) {

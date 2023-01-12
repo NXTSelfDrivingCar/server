@@ -9,7 +9,7 @@
 </head>
 
 <body>
-  <%- include('../resources/components/user_navbar.ejs') %>
+  <%- include('../resources/components/new_navbar.ejs') %>
 
   <style>
     .card-content {
@@ -40,24 +40,45 @@
   <div class="container">
     <div class="card shadow">
       <div class="card-header bg-dark text-white">
-        Promena debla
+        <p class="display-6 my-auto">Promena debla:</p>
       </div>
       <ul class="list-group">
+        <div class="list-group-item" style="border-radius: 0;">
+          <div class="container">
+            <div class="row text-center">
+              <div class="col">
+                Title
+              </div>
+              <div class="col">
+                Date
+              </div>
+            </div>
+          </div>
+        </div>
+
+
         <% for (let item of changelog) { %>
         <% counter++; %>
         <a class="btn list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#collapseExample<%=counter%>" style="border-radius: 0;">
-          <span>Title: <%= item.title %> - Date: <%= item.date.toLocaleDateString("en-UK", {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-          }), %></span>
+          <div class="container">
+            <div class="row">
+              <div class="col d-flex justify-content-center mt-1">
+                <%= item.title %>
+              </div>
+              <div class="col d-flex justify-content-center mt-1">
+                <%= new Date(item.date).toLocaleDateString('en-UK')%>
+              </div>
+            </div>
+          </div>
+
         </a>
         <div class="collapse" id="collapseExample<%=counter%>">
 
           <div class="card card-body card-content">
-            <pre class="card-text"><h4>Version: <%= item.version %> | Is Beta: <%= item.isBeta %></h4>Description: <br><%= item.description %></pre>
+            <pre class="card-text"><h4>Version: <%= item.version %> | Is Beta: <%= item.isBeta %></h4><hr class="my-1">Description: <br><%= item.description %></pre>
           </div>
         </div>
+
         <% } %>
       </ul>
     </div>

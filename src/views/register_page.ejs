@@ -2,76 +2,70 @@
 <html lang="en">
 
 <head>
-    <title>Log in</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <title>Log in</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 </head>
 
 <body>
 
-    <%- include('../resources/components/user_navbar.ejs') %>
+  <%- include('../resources/components/new_navbar.ejs') %>
 
-        <form method="post" action="/user/register" enctype="application/x-www-form-urlencoded">
+  <form method="post" action="/user/register" enctype="application/x-www-form-urlencoded">
+    <div class="container mt-4">
+      <div class="card shadow p-4" style="width: 600px; margin: auto;">
+        <div class="row align-items-center">
 
-            <br><br>
-            <div class="container">
-                <div class="row align-items-center" align="center">
-                    <div class="col">
-                    </div>
-                    <div class="col">
+          <div class="col">
 
-                        <h4 style="color: whitesmoke">Username:</h4>
-                        <input type="username" name="username" id="username" class="form-control" placeholder="Username"
-                            required />
+            <div class="display-6 text-center">Register</div>
 
-                        <br>
-
-                        <h4 style="color: whitesmoke">E-mail:</h4>
-                        <input type="username" name="email" id="email" class="form-control" placeholder="E-mail"
-                            required />
-
-                        <br>
-
-                        <h4 style="color: whitesmoke">Password:</h4>
-                        <input type="password" name="password" id="password" class="form-control" placeholder="Password"
-                            required />
-
-                        <br>
-
-                        <h4 style="color: whitesmoke">Confirm assword:</h4>
-                        <input type="password" name="password2" id="password2" class="form-control"
-                            placeholder="Confirm password" required />
-
-                        <br>
-
-                        <input type="submit" class="btn btn-success" style="width:100%" value="Register"></input>
-
-                        <br><br>
-
-                        <% if(result===false) { %>
-                            <div class="alert alert-danger" role="alert">
-                                ✗ User already exists!
-                            </div>
-                            <% } %>
-
-
-                                <% if(passResult===false) { %>
-                                    <div class="alert alert-danger" role="alert">
-                                        ✗ Passwords do not match!
-                                    </div>
-                                    <% } %>
-                    </div>
-                    <div class="col">
-                    </div>
-                </div>
+            <div class="p-2 mt-3">
+              <lead>Username:</lead>
+              <input type="text" name="username" id="username" class="form-control" placeholder="Username" />
             </div>
-        </form>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
-            </script>
+            <div class="p-2">
+              <lead>E-mail:</h4>
+                <input type="email" name="email" id="email" class="form-control" placeholder="E-mail" />
+            </div>
+
+            <div class="p-2">
+              <lead>Password:</h4>
+                <input type="password" name="password" id="password" class="form-control" placeholder="Password" />
+            </div>
+
+            <div class="p-2">
+              <lead>Repeat Password:</h4>
+                <input type="password" name="password2" id="password2" class="form-control" placeholder="Repat password" />
+            </div>
+
+            <input type="submit" class="btn btn-success mt-3" style="width:100%" value="Register"></input>
+
+            
+
+            <% if(result===false) { %>
+              <br><br>
+              <div class="alert alert-danger" role="alert">
+                ✗ User already exists!
+              </div>
+            <% } %>
+
+
+            <% if(passResult===false) { %>
+              <br><br>
+              <div class="alert alert-danger" role="alert">
+                ✗ Passwords do not match!
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
+  </script>
 </body>
 
 </html>

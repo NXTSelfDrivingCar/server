@@ -5,7 +5,6 @@ const { Ticket } = require("../tickets/ticketModel");
 const { isEmpty } = require("../public/util");
 
 var { Comment } = require("../tickets/ticketModel");
-const { off } = require("process");
 
 async function createTicket(req, res, user) {
   var title = req.body.inputTitle;
@@ -52,12 +51,7 @@ module.exports = function (server, getUserWithToken) {
   });
 
   server.get("/tickets", async function (req, res) {
-    console.log("Tickets get:");
-    console.log(req.query);
-
     var filteredTickets = await filterSearchTickets(req, res);
-    console.log("Filtered tickets: ");
-    console.log(filteredTickets);
 
     var user = await getUserWithToken(req, res);
     res.render("tickets.ejs", {
@@ -83,7 +77,6 @@ module.exports = function (server, getUserWithToken) {
 
   server.get("/tickets/t/close", async function (req, res) {
     var ticketID = req.query.id;
-    console.log(ticketID);
     var ticket = await ticketController.getTicketById(ticketID);
 
     if (ticket == null) {
@@ -130,7 +123,6 @@ module.exports = function (server, getUserWithToken) {
     }
 
     ticket = await createTicket(req, res, user);
-    console.log(ticket);
     res.redirect("/tickets/t?id=" + ticket.id);
   });
 
@@ -138,10 +130,6 @@ module.exports = function (server, getUserWithToken) {
     var ticketID = req.body.ticketId;
     var status = req.body.inputStatus;
     var priority = req.body.inputPriority;
-
-    console.log("TicketID: " + ticketID);
-    console.log("Status: " + status);
-    console.log("Priority: " + priority);
 
     var ticket = await ticketController.getTicketById(ticketID);
     ticket.status = status;
