@@ -157,7 +157,7 @@ async function checkAdmin(id) {
   return false;
 }
 
-async function updateUser(id, user) {
+async function updateUser(id, user, type) {
   let logData = {
     origin: "UserController",
     method: "updateUser",
@@ -167,6 +167,31 @@ async function updateUser(id, user) {
     },
   };
 
+  if (type === "password") {
+    console.log(
+      "UserController (updateUser) user password -> " + user.password
+    );
+
+    user.password = bcrypt.hashSync(user.password, bcryptConfig.SALT);
+
+    console.log(
+      "UserController (updateUser) user password -> " + user.password
+    );
+  }
+
+  if (type === "username") {
+    var foundUser = await userRepository.findUserByUsername(
+      user.username,
+      USERS_COLLECTION
+    );
+
+    if (foundUser) {
+      logData["result"] = "Username already exists";
+      logger.log("info", logData);
+      return null;
+    }
+  }
+
   var foundUser = await userRepository.findUserById(id, USERS_COLLECTION);
 
   console.log("UserController (updateUser) -> " + foundUser.username);
@@ -174,8 +199,6 @@ async function updateUser(id, user) {
   if (foundUser) {
     logData["result"] = "User updated";
     logger.log("info", logData);
-
-    user.password = bcrypt.hashSync(user.password, bcryptConfig.SALT);
 
     return await userRepository.updateUser(id, user, USERS_COLLECTION);
   }

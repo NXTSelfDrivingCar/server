@@ -2,24 +2,24 @@
   body {
     background-color: white;
   }
-
+  
   shadow {
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 5px 0 rgba(0, 0, 0, 0.19);
   }
-
+  
   .shadow-navbar {
     box-shadow: 0 -10px 10px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
   }
-
+  
   @font-face {
     font-family: hubotSans;
     src: url('https://fonts.cdnfonts.com/css/hubot-sans');
   }
-
+  
   div {
     font-family: 'Hubot-Sans', sans-serif;
   }
-
+  
   .vl {
     border-left: 2px solid gray;
   }
@@ -42,7 +42,7 @@
           <li class="nav-item">
             <a class="nav-link" href="#">Robots</a>
           </li>
-
+          
           <div class="vl"></div>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -66,9 +66,18 @@
         </ul>
         <div class="vl"></div>
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/user/logout">Log out</a>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Profile
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/user/settings">Settings</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="/user/logout">Log out</a></li>
+            </ul>
           </li>
         </ul>
-  </nav>
-</div>
+      </nav>
+    </div>

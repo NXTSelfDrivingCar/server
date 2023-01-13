@@ -57,10 +57,6 @@ function isInArray(value, array) {
  * @returns User from token (guest if no token is found)
  */
 function getUserWithToken(req, res) {
-  console.log("Get user with token");
-  console.log("Cookies: ");
-  console.log(req.cookies);
-
   if (req.cookies.auth) {
     var decoded = jwt.verify(
       req.cookies.auth,
@@ -114,9 +110,7 @@ function isEmpty(dictionary) {
   return Object.keys(dictionary).length === 0;
 }
 
-function getUserWithTokenMobile(req, res) {
-  
-}
+function getUserWithTokenMobile(req, res) {}
 
 module.exports = {
   jsonToString: jsonToString,

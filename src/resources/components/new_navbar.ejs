@@ -27,61 +27,70 @@
 
 <br>
 
-  <div class="container-sm sticky-top p-3">
+<div class="container-sm sticky-top p-3">
 
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark rounded shadow-navbar">
-      <div class="container-fluid">
-        <a class="navbar-brand">NXT GUI Server</a>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/">Main page</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/tickets">Tickets</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Robots</a>
-            </li>
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark rounded shadow-navbar">
+    <div class="container-fluid">
+      <a class="navbar-brand">NXT GUI Server</a>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/">Main page</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/tickets">Tickets</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Robots</a>
+          </li>
 
-            <% if (user['role'] == 'admin') { %>
-            <div class="vl"></div>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Admin
-              </a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="/admin/dashboard">Admin Dashboard</a></li>
-                <li>
-                  <hr class="dropdown-divider">
-                </li>
-                <li><a class="dropdown-item" href="/tickets">Tickets</a></li>
-                <li><a class="dropdown-item" href="/admin/logs">Logs</a></li>
-                <li><a class="dropdown-item" href="/admin/admin_list_users">Users</a></li>
-                <li><a class="dropdown-item" href="/admin/changelog/add">Create changelog</a></li>
-                <li>
-                  <hr class="dropdown-divider">
-                </li>
-                <li><a class="dropdown-item" href="#">Restart robot server</a></li>
-              </ul>
-            </li>
-            <% } %>
-          </ul>
+          <% if (user['role'] == 'admin') { %>
           <div class="vl"></div>
-          <ul class="navbar-nav ms-auto">
-            <% if(user['role'] !=="guest" ) { %>
-            <li class="nav-item">
-              <a class="nav-link" href="/user/logout">Log out</a>
-            </li>
-            <% }else{ %>
-            <li class="nav-item">
-              <a class="nav-link" href="/user/login">Log in</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/user/register">Register</a>
-            </li>
-            <% } %>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Admin
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/admin/dashboard">Admin Dashboard</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="/tickets">Tickets</a></li>
+              <li><a class="dropdown-item" href="/admin/logs">Logs</a></li>
+              <li><a class="dropdown-item" href="/admin/admin_list_users">Users</a></li>
+              <li><a class="dropdown-item" href="/admin/changelog/add">Create changelog</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="#">Restart robot server</a></li>
+            </ul>
+          </li>
+          <% } %>
+        </ul>
+        <div class="vl"></div>
+        <ul class="navbar-nav ms-auto">
+          <% if(user['role'] !=="guest" ) { %>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <%= user['username'] %>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/user/settings">Settings</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="/user/logout">Log out</a></li>
+            </ul>
+          </li>
+          <% }else{ %>
+          <li class="nav-item">
+            <a class="nav-link" href="/user/login">Log in</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/user/register">Register</a>
+          </li>
+          <% } %>
 
-          </ul>
-    </nav>
-  </div>
+        </ul>
+  </nav>
+</div>

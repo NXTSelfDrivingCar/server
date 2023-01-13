@@ -32,14 +32,10 @@ async function loginUser(req, res, next) {
   else {
     // if user is found, create a token and send it to the client
     // Token is created with the user object as payload and the secret key from .env
-    console.log("Found user: " + foundUser.username);
 
     const token = jwt.sign({ user: foundUser }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-
-    console.log("Token: ");
-    console.log(token);
 
     // send token to client
     res.cookie("auth", token, { httpOnly: true, secure: false });
@@ -142,7 +138,73 @@ module.exports = function (server, getUserWithToken) {
     });
   });
 
+  server.get("/user/settings", async (req, res) => {
+    res.render("user_edit.ejs", {
+      title: "Edit user",
+      user: await getUserWithToken(req, res),
+    });
+  });
+
   //* =================== POST ROUTES =================== *//
+
+  server.post("/user/remove", async (req, res) => {
+    var user = await getUserWithToken(req, res);
+
+    if (!user) {
+      return res.redirect("/user/login");
+    }
+
+    var removed = await userController.removeUser(user.id);
+
+    res.clearCookie("auth");
+
+    if (removed == null) {
+      return res.status(500).send("Internal server error (500)");
+    } else {
+      return res.redirect("/");
+    }
+  });
+
+  server.post("/user/edit", async (req, res) => {
+    var user = await getUserWithToken(req, res);
+
+    if (!user) {
+      return res.redirect("/user/login");
+    }
+
+    // TODO: Ovo treba refaktorirati do maksimuma jer je krs
+    console.log("Body:");
+    console.log(req.body);
+
+    console.log("Verified: ");
+    console.log(user);
+
+    var key = req.body.type;
+    var value = req.body.value;
+
+    var oldUser = jsonFromKeys(user, true, "_id");
+
+    console.log("Old user: ");
+    console.log(oldUser);
+
+    oldUser[key] = value;
+
+    var updated = await userController.updateUser(oldUser.id, oldUser, key);
+
+    res.clearCookie("auth");
+
+    var token = jwt.sign({ user: oldUser }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.cookie("auth", token, { httpOnly: true, secure: false });
+
+    if (updated == null) {
+      return res.status(500).send("Internal server error (500)");
+    } else {
+      return res.redirect("/user/settings");
+    }
+  });
 
   server.post("/user/login", async (req, res, next) => {
     if (checkJsonFormat(req.body, loginFormat) == false) {
@@ -180,8 +242,6 @@ module.exports = function (server, getUserWithToken) {
       return res.status(400).send("Bad request (400) - Invalid JSON format");
     }
 
-    var passResult = await checkPasswords(req, res);
-
     logger.log("info", {
       action: "registerUser",
       url: req.url,
@@ -196,7 +256,7 @@ module.exports = function (server, getUserWithToken) {
     });
 
     // If passwords don't match, render page again with error message
-    if (!passResult) {
+    if (req.body.password != req.body.password2) {
       res.render("register_page.ejs", {
         title: "Register page",
         user: await getUserWithToken(req, res), // Gets user for navbar
