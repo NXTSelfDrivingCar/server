@@ -96,12 +96,13 @@ async function updateUser(req, res) {
   var email = req.body.inputEmail;
   var role = req.body.inputRole;
 
-  var userContainer = new User(username, null, email, null, role);
+  var oldUser = await userController.findUserById(id);
 
-  var updated = await userController.updateUser(
-    req.body.inputID,
-    userContainer
-  );
+  oldUser.username = username;
+  oldUser.email = email;
+  oldUser.role = role;
+
+  var updated = await userController.updateUser(req.body.inputID, oldUser);
 
   if (updated) console.log("Updated");
   else console.log("Not updated");
