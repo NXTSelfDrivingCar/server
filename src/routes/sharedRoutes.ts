@@ -13,14 +13,14 @@ module.exports = function(app: Application) {
 
     // ! =================== POST ROUTES =================== //
     
-    app.post("/tickets/t/close", logger.logRoute("postCloseTicket"), (req: Request, res: Response) => {
+    app.post("/tickets/t/close", logger.logRoute("closeTicket"), (req: Request, res: Response) => {
         res.send("Close ticket")
 
         // Close ticket
         // Redirect to /tickets/t:id=ticket_id if success
     })
 
-    app.post("/tickets/t/comment", logger.logRoute("postTicketComment"), (req: Request, res: Response) => {
+    app.post("/tickets/t/comment", logger.logRoute("addTicketComment"), (req: Request, res: Response) => {
         res.send("Comment ticket")
 
         // Comment ticket

@@ -42,4 +42,5 @@ WebSocket:
 
 Logs:
     ✔ Log @done(23-01-20 21:45)
+    ☐ Dodati route origin za logovanje ruta (Radi lakseg pretrazivanja)
 

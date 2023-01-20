@@ -14,7 +14,7 @@ module.exports = function(app: Application) {
         // redirect to /
     })
 
-    app.get("/user/profile",logger.logRoute("getProfile"), (req: Request, res: Response) => {
+    app.get("/user/profile",logger.logRoute("viewUserProfile"), (req: Request, res: Response) => {
         res.send("Profile page")
 
         // render the profile page
@@ -22,7 +22,7 @@ module.exports = function(app: Application) {
 
     // ! =================== POST ROUTES =================== //
 
-    app.post("/user/update", logger.logRoute("postUpdate"), (req: Request, res: Response) => {
+    app.post("/user/update", logger.logRoute("udpateUser"), (req: Request, res: Response) => {
         res.send("Update user")
 
         // update user
@@ -67,7 +67,7 @@ module.exports = function(app: Application) {
         // return status INTERNAL_SERVER_ERROR if something went wrong
     })
 
-    app.post("/user/update/mobile", logger.logRoute("mobileUpdate"), (req: Request, res: Response) => {
+    app.post("/user/update/mobile", logger.logRoute("mobileUpdateUser"), (req: Request, res: Response) => {
         res.send("Update user")
 
         // Update user
@@ -77,7 +77,7 @@ module.exports = function(app: Application) {
     })
 
     // TODO: Add mobile route for delete user (DELETE)
-    app.post("/user/delete/mobile", (req: Request, res: Response) => {
+    app.post("/user/delete/mobile", logger.logRoute("mobileDeleteUser"), (req: Request, res: Response) => {
         res.send("Delete user")
 
         // Delete user
