@@ -1,0 +1,39 @@
+Rute:
+    ☐ Admin rute
+    ☐ User rute
+    ☐ Guest rute
+    ☐ Public rute
+
+Authorization:
+    ☐ Admin authorization
+    ☐ User authorization
+    ☐ Guest authorization
+
+MVC:
+    User:
+        ☐ Model
+        ☐ View
+        ☐ Controller
+    Changelog:
+        ☐ Model
+        ☐ View
+        ☐ Controller
+    Ticket:
+        ☐ Model
+        ☐ View
+        ☐ Controller
+        Comment:
+            ☐ Model
+            ☐ View
+            ☐ Controller
+    Log:
+        ☐ Model
+        ☐ View
+        ☐ Controller
+
+WebSocket:
+    ☐ WebSocket
+
+Logs:
+    ☐ Log
+

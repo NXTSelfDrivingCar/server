@@ -1,10 +1,10 @@
 const path = require("path");
-const ticketController = require("../tickets/ticketController");
-const userController = require("../user/userController");
-const { Ticket } = require("../tickets/ticketModel");
-const { isEmpty } = require("../public/util");
+const ticketController = require("../../tickets/ticketController");
+const userController = require("../../user/userController");
+const { Ticket } = require("../../tickets/ticketModel");
+const { isEmpty } = require("../../public/util");
 
-var { Comment } = require("../tickets/ticketModel");
+var { Comment } = require("../../tickets/ticketModel");
 
 async function createTicket(req, res, user) {
   var title = req.body.inputTitle;

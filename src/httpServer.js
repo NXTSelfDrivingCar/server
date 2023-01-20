@@ -9,7 +9,7 @@ var jwt = require("jsonwebtoken");
 var wildcard = require("socketio-wildcard")();
 
 const { Server } = require("socket.io");
-const serverConfig = require("./config/serverConfig");
+const serverConfig = require("./config/httpServerConfig");
 const changeLogController = require("./changelog/changeLogController");
 
 var httpServerPort = serverConfig.HTTP_PORT;
@@ -27,7 +27,7 @@ server.use(express.urlencoded({ extended: true }));
 
 var wsServer = require("./wsServer")(server);
 
-var admin_routes = require("./routes/admin_routes")(server);
+var admin_routes = require("./routes/old/admin_routes")(server);
 var guest_routes = require("./routes/guest_routes")(server, getUserWithToken);
 var user_routes = require("./routes/user_routes")(server, getUserWithToken); // TODO: Skloniti getUserWithToken jer se sada nalazi u util.js
 

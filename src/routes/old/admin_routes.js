@@ -1,9 +1,9 @@
-var userController = require("../user/userController");
-var changeLogController = require("../changelog/changeLogController");
-var logController = require("../logging/logController");
-var { LogHandler } = require("../logging/logHandler.js");
-var User = require("../user/userModel");
-var ChangeLog = require("../changelog/changeLogModel");
+var userController = require("../../user/userController");
+var changeLogController = require("../../changelog/changeLogController");
+var logController = require("../../logging/old/logController");
+var { LogHandler } = require("../../logging/logHandler.js");
+var User = require("../../user/userModel");
+var ChangeLog = require("../../changelog/changeLogModel");
 
 var logger = new LogHandler().open();
 var {
@@ -11,7 +11,7 @@ var {
   objectArrayToString,
   getUserWithToken,
   objectArrayToJSON,
-} = require("../public/util");
+} = require("../../public/util");
 
 var jwt = require("jsonwebtoken");
 const { json } = require("express");

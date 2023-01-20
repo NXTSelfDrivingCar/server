@@ -1,6 +1,6 @@
-var userController = require("../user/userController");
-var User = require("../user/userModel");
-var { LogHandler } = require("../logging/logHandler");
+var userController = require("../../user/userController");
+var User = require("../../user/userModel");
+var { LogHandler } = require("../../logging/logHandler");
 var logger = new LogHandler().open();
 var jwt = require("jsonwebtoken");
 
@@ -8,7 +8,7 @@ const {
   checkJsonFormat,
   getUserWithToken,
   jsonFromKeys,
-} = require("../public/util");
+} = require("../../public/util");
 const dotenv = require("dotenv").config({ path: ".env" });
 
 const registerFormat = {

@@ -1,4 +1,4 @@
-const userRepository = require("./userRepository");
+const userRepository = require("./userRepository_dep");
 const User = require("./userModel");
 const USERS_COLLECTION = "users";
 const bcryptConfig = require("../config/bcryptConfig");
