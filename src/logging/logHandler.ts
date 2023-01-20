@@ -11,7 +11,7 @@ const fileName = `log_${Date.now()}.json`;
  * @class LogHandler 
  * @property {PathLike} filePath - The path to the logs directory
  * @property {PathLike} currentFile - The path to the current log file
- * @property {String} status - The status of the log file
+ * @property {string} status - The status of the log file
  * 
  * @method open - Opens a new log file
  * @method close - Closes the current log file
@@ -234,20 +234,20 @@ class LogHandler{
      * // }
      * 
      */
-    logRoute(action: String, extra: any = {}) {
+    logRoute(action: string, extra: any = {}) {
         return (req: Request, res: Response, next: any) => {
             this._logRoute(req, res, action, extra);
             next();
         }
     }
 
-    getFileName(): String{
+    getFileName(): string{
         return LogHandler.currentFile.toString().split("\\")[LogHandler.currentFile.toString().split("\\").length - 1];
     }
 
     // ! =================== PRIVATE METHODS =================== //
 
-    private _log(tag: String = tags.INFO, data: any){
+    private _log(tag: string = tags.INFO, data: any){
 
         var timestamp = new Date().getTime();
 
@@ -309,7 +309,7 @@ class LogHandler{
         this._writeToFile(starter);
     }
 
-    private _logRoute(req: Request, res: Response, action: String, extra: any = {}){
+    private _logRoute(req: Request, res: Response, action: string, extra: any = {}){
 
         var logData: any = {
             action: action,

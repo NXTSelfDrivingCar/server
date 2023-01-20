@@ -1,7 +1,12 @@
 import { Application, Request, Response } from "express";
 import { LogHandler } from "../logging/logHandler";
 
+// TODO: Skloniti ove importe odavde
+import { ChangelogController } from "../changelog/changelogController";
+import { Changelog } from "../changelog/changelogModel";
+
 const logger = new LogHandler();
+const changelogController = new ChangelogController();
 /*
 *
 *==========================================================================
@@ -16,9 +21,12 @@ module.exports = function(app: Application) {
 
     // ! =================== GET ROUTES =================== //
 
-    app.get("/", logger.logRoute("getIndex"), (req: Request, res: Response) => {
-        res.send("Main page")
-
+    app.get("/", logger.logRoute("getIndex"), async (req: Request, res: Response) => {
+        // res.send("Main page")
+        res.render("main_page_index.ejs", {
+            title: "Main page",
+            changelog: await changelogController.getChangelogs()
+        })
         // render the index page
     });
 
