@@ -1,8 +1,14 @@
-Rute:
-    ☐ Admin rute
-    ☐ User rute
-    ☐ Guest rute
-    ☐ Public rute
+Routes:
+    Base:
+        ✔ Admin routes @done(23-01-20 21:46)
+        ✔ User routes @done(23-01-20 21:46)
+        ✔ Guest routes @done(23-01-20 21:46)
+        ✔ Public routes @done(23-01-20 21:46)
+    Functional:
+        ☐ Admin routes
+        ☐ User routes
+        ☐ Guest routes
+        ☐ Public routes
 
 Authorization:
     ☐ Admin authorization
@@ -35,5 +41,5 @@ WebSocket:
     ☐ WebSocket
 
 Logs:
-    ☐ Log
+    ✔ Log @done(23-01-20 21:45)
 
