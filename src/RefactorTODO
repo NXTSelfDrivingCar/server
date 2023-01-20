@@ -18,23 +18,23 @@ Authorization:
 MVC:
     User:
         ☐ Model
-        ☐ View
+        ✔ View @done(23-01-20 21:56)
         ☐ Controller
     Changelog:
         ☐ Model
-        ☐ View
+        ✔ View @done(23-01-20 21:56)
         ☐ Controller
     Ticket:
         ☐ Model
-        ☐ View
+        ✔ View @done(23-01-20 21:56)
         ☐ Controller
         Comment:
             ☐ Model
-            ☐ View
+            ✔ View @done(23-01-20 21:56)
             ☐ Controller
     Log:
         ☐ Model
-        ☐ View
+        ✔ View @done(23-01-20 21:56)
         ☐ Controller
 
 WebSocket:
