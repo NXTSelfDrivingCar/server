@@ -11,6 +11,7 @@ Routes:
         ☐ Public routes
 
 Authorization:
+    ☐ Authorization class
     ☐ Admin authorization
     ☐ User authorization
     ☐ Guest authorization
@@ -21,9 +22,9 @@ MVC:
         ✔ View @done(23-01-20 21:56)
         ☐ Controller
     Changelog:
-        ☐ Model
+        ✔ Model @done(23-01-21 01:44)
         ✔ View @done(23-01-20 21:56)
-        ☐ Controller
+        ✔ Controller @done(23-01-21 01:44)
     Ticket:
         ☐ Model
         ✔ View @done(23-01-20 21:56)
@@ -36,6 +37,12 @@ MVC:
         ☐ Model
         ✔ View @done(23-01-20 21:56)
         ☐ Controller
+
+View:
+    Podeliti view u delove:
+        ☐ Header
+        ☐ Footer
+        ☐ Content
 
 WebSocket:
     ☐ WebSocket

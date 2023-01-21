@@ -20,6 +20,7 @@ const fileName = `log_${Date.now()}.json`;
  * @method warn - Logs data to the current log file with the WARNING tag
  * @method logRoute - Logs data to the current log file with the INFO tag and the route action
  * @method getFileName - Returns the name of the current log file
+ * @method getFilePath - Returns the path to the current log file
  * 
  * @constructor - Creates a new LogHandler instance
  * 
@@ -42,6 +43,8 @@ class LogHandler{
 
         this.open();
     }
+
+    // * =================== PUBLIC METHODS =================== //
     
     open(){
         if(LogHandler.status == statuses.OPEN){
@@ -250,18 +253,19 @@ class LogHandler{
     }
 
     // ! =================== PRIVATE METHODS =================== //
+    
+    private _parseData(tag: string, data: any): any{
+        if(!data["tag"]) data["tag"] = tags.INFO;
+        if(!data["timestamp"]) data["timestamp"] = new Date().getTime();
+
+        data["tag"] = data["tag"].toUpperCase();
+
+        return data;
+    }
 
     private _log(tag: string = tags.INFO, data: any){
 
-        var timestamp = new Date().getTime();
-
-        // If tag is not set, set it
-        if(!data["tag"]) data["tag"] = tag;
-        
-        // If timestamp is not set, set it
-        if(!data["timestamp"]) data["timestamp"] = timestamp;
-
-        data["tag"] = data["tag"].toUpperCase();
+        data = this._parseData(tag, data);
 
         var currentLog = fs.readFileSync(LogHandler.currentFile, "utf8");
 
@@ -283,7 +287,6 @@ class LogHandler{
     }
 
     private _writeToFile(data: any){
-        // Check if directory exists and create it if it doesn't
         if(LogHandler.status == statuses.CLOSED){
             this.open();
         }
