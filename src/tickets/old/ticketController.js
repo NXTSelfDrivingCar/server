@@ -2,7 +2,7 @@ const ticketRepository = require("./ticketRepository");
 const Ticket = require("./ticketModel");
 const TICKET_COLLECTION = "userTickets";
 
-var { LogHandler } = require("../logging/logHandler");
+var { LogHandler } = require("../../logging/logHandler");
 var logger = new LogHandler().open();
 
 async function createTicket(ticket) {

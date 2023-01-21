@@ -33,6 +33,9 @@ module.exports = function(app: Application) {
 
     
     app.get("*", logger.logRoute("get404"), (req: Request, res: Response) => {
+
+        if (req.path === "/favicon.ico") return;
+
         res.send("404 page")
 
         // render the 404 page
