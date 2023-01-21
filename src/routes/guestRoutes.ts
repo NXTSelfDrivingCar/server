@@ -36,7 +36,8 @@ module.exports = function(app: Application) {
         // render the tickets page
     })
 
-    app.get("/tickets/t", logger.logRoute("viewTicket"), (req: Request, res: Response) => {
+    // Ovo se poziva localhost:5000/tickets/t/1 ; localhost:5000/tickets/t/2
+    app.get("/tickets/t/:id", logger.logRoute("viewTicket"), (req: Request, res: Response) => {
         res.send("Specific ticket page")
 
         // render the specific ticket page
