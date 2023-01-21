@@ -1,5 +1,3 @@
-const dotenv = require("dotenv").config({ path: ".env" });
-
-module.exports = {
-  SALT: 8,
-};
+export class BCryptConfig {
+  static SALT = 8;
+}
