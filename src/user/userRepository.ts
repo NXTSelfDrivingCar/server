@@ -46,9 +46,13 @@ export class UserRepository extends MongoRepository<User> {
         };
 
         try {
+            logger.info(this.logData);
+
             return await this._collection!!.insertOne(user);
         } catch (err) {
-            console.log(err);
+            this.logData.error = err;
+            logger.error(this.logData);
+
             return null;
         }
     }
