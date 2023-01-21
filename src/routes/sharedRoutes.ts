@@ -31,13 +31,16 @@ module.exports = function(app: Application) {
         // Redirect to /tickets/t:id=ticket_id if success
     })
 
+    // ! =================== IGNORE ROUTES =================== //
+    // ! =================== IGNORE ROUTES =================== //
+    // ! =================== IGNORE ROUTES =================== //
+
+    app.get('/favicon.ico', (req, res) => res.status(204).end());
     
     app.get("*", logger.logRoute("get404"), (req: Request, res: Response) => {
 
         if (req.path === "/favicon.ico") return;
 
         res.send("404 page")
-
-        // render the 404 page
     })
 }

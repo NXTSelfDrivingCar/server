@@ -3,7 +3,7 @@ import fs, { PathLike } from "fs";
 import { Request, Response } from "express";
 
 const statuses = { OPEN: "OPEN", CLOSED: "CLOSED" };
-const tags = { INFO: "INFO", ERROR: "ERROR", WARN: "WARNING" };
+const levels = { INFO: "INFO", ERROR: "ERROR", WARN: "WARNING" };
 const fileName = `log_${Date.now()}.json`;
 
 /**
@@ -16,9 +16,9 @@ const fileName = `log_${Date.now()}.json`;
  * @method open - Opens a new log file
  * @method close - Closes the current log file
  * @method log - Logs data to the current log file
- * @method error - Logs data to the current log file with the ERROR tag
- * @method warn - Logs data to the current log file with the WARNING tag
- * @method logRoute - Logs data to the current log file with the INFO tag and the route action
+ * @method error - Logs data to the current log file with the ERROR level
+ * @method warn - Logs data to the current log file with the WARNING level
+ * @method logRoute - Logs data to the current log file with the INFO level and the route action
  * @method getFileName - Returns the name of the current log file
  * @method getFilePath - Returns the path to the current log file
  * 
@@ -73,6 +73,14 @@ class LogHandler{
         LogHandler.currentFile = "";
     }
 
+   /**
+    * 
+    * @deprecated For info logging, use info(data: any) instead
+    */
+    log(data: any){
+        this._log(levels.INFO, data);
+    }
+
     /**
      * Logs data to the current log file
      * 
@@ -84,16 +92,16 @@ class LogHandler{
      * 
      * // Output:
      * // {
-     * //     "tag": "INFO",
+     * //     "level": "INFO",
      * //     "timestamp": 123456789,
      * //     "message": "Hello World!"
      * // }
      * 
-     * logger.log({message: "Hello World!", tag: "CUSTOM_TAG"})
+     * logger.log({message: "Hello World!", level: "CUSTOM_TAG"})
      * 
      * // Output:
      * // {
-     * //     "tag": "CUSTOM_TAG",
+     * //     "level": "CUSTOM_TAG",
      * //     "timestamp": 123456789,
      * //     "message": "Hello World!"
      * // }
@@ -102,33 +110,33 @@ class LogHandler{
      * 
      * // Output:
      * // {
-     * //     "tag": "INFO",
+     * //     "level": "INFO",
      * //     "timestamp": 123456789,
      * //     "message": "Hello World!"
      * // }
      * 
-     * logger.log({message: "Hello World!", tag: "CUSTOM_TAG", timestamp: 123456789})
+     * logger.log({message: "Hello World!", level: "CUSTOM_TAG", timestamp: 123456789})
      * 
      * // Output:
      * // {
-     * //     "tag": "CUSTOM_TAG",
+     * //     "level": "CUSTOM_TAG",
      * //     "timestamp": 123456789,
      * //     "message": "Hello World!"
      * // }
      * 
-     * logger.log({message: "Hello World!", tag: "CUSTOM_TAG", timestamp: 123456789, extra: "extra data"})
+     * logger.log({message: "Hello World!", level: "CUSTOM_TAG", timestamp: 123456789, extra: "extra data"})
      * 
      * // Output:
      * // {
-     * //     "tag": "CUSTOM_TAG",
+     * //     "level": "CUSTOM_TAG",
      * //     "timestamp": 123456789,
      * //     "message": "Hello World!",
      * //     "extra": "extra data"
      * // }
      * 
      */
-    log(data: any){
-        this._log(tags.INFO, data);
+    info(data: any){
+        this._log(levels.INFO, data);
     }
     
     /**
@@ -141,16 +149,16 @@ class LogHandler{
      * 
      * // Output:
      * // {
-     * //     "tag": "ERROR",
+     * //     "level": "ERROR",
      * //     "timestamp": 123456789,
      * //     "message": "Hello World!"
      * // }
      * 
-     * logger.error({message: "Hello World!", tag: "CUSTOM_TAG"})
+     * logger.error({message: "Hello World!", level: "CUSTOM_TAG"})
      * 
      * // Output:
      * // {
-     * //     "tag": "CUSTOM_TAG",
+     * //     "level": "CUSTOM_TAG",
      * //     "timestamp": 123456789,
      * //     "message": "Hello World!"
      * // }
@@ -159,25 +167,25 @@ class LogHandler{
      * 
      * // Output:
      * // {
-     * //     "tag": "ERROR",
+     * //     "level": "ERROR",
      * //     "timestamp": 123456789,
      * //     "message": "Hello World!"
      * // }
      * 
-     * logger.error({message: "Hello World!", tag: "CUSTOM_TAG", timestamp: 123456789})
+     * logger.error({message: "Hello World!", level: "CUSTOM_TAG", timestamp: 123456789})
      * 
      * // Output:
      * // {
-     * //     "tag": "CUSTOM_TAG",
+     * //     "level": "CUSTOM_TAG",
      * //     "timestamp": 123456789,
      * //     "message": "Hello World!"
      * // }
      * 
-     * logger.error({message: "Hello World!", tag: "CUSTOM_TAG", timestamp: 123456789, extra: "extra data"})
+     * logger.error({message: "Hello World!", level: "CUSTOM_TAG", timestamp: 123456789, extra: "extra data"})
      * 
      * // Output:
      * // {
-     * //     "tag": "CUSTOM_TAG",
+     * //     "level": "CUSTOM_TAG",
      * //     "timestamp": 123456789,
      * //     "message": "Hello World!",
      * //     "extra": "extra data"
@@ -185,7 +193,7 @@ class LogHandler{
      * 
      */
     error(data: any){
-        this._log(tags.ERROR, data);
+        this._log(levels.ERROR, data);
     }
 
     /**
@@ -198,23 +206,23 @@ class LogHandler{
      * 
      * // Output:
      * // {
-     * //     "tag": "WARN",
+     * //     "level": "WARN",
      * //     "timestamp": 123456789,
      * //     "message": "Hello World!"
      * // }
      * 
-     * logger.warn({message: "Hello World!", tag: "CUSTOM_TAG"})
+     * logger.warn({message: "Hello World!", level: "CUSTOM_TAG"})
      * 
      * // Output:
      * // {
-     * //     "tag": "CUSTOM_TAG",
+     * //     "level": "CUSTOM_TAG",
      * //     "timestamp": 123456789,
      * //     "message": "Hello World!"
      * // }
      * 
      */
     warn(data: any){
-        this._log(tags.WARN, data);
+        this._log(levels.WARN, data);
     }
 
     /**
@@ -229,7 +237,7 @@ class LogHandler{
      * 
      * // Output:
      * // {
-     * //     "tag": "INFO",
+     * //     "level": "INFO",
      * //     "timestamp": 123456789,
      * //     "action": "getTesting",
      * //     "method": "GET",
@@ -254,18 +262,18 @@ class LogHandler{
 
     // ! =================== PRIVATE METHODS =================== //
     
-    private _parseData(tag: string, data: any): any{
-        if(!data["tag"]) data["tag"] = tags.INFO;
+    private _parseData(level: string, data: any): any{
+        if(!data["level"]) data["level"] = levels.INFO;
         if(!data["timestamp"]) data["timestamp"] = new Date().getTime();
 
-        data["tag"] = data["tag"].toUpperCase();
+        data["level"] = data["level"].toUpperCase();
 
         return data;
     }
 
-    private _log(tag: string = tags.INFO, data: any){
+    private _log(level: string = levels.INFO, data: any){
 
-        data = this._parseData(tag, data);
+        data = this._parseData(level, data);
 
         var currentLog = fs.readFileSync(LogHandler.currentFile, "utf8");
 
@@ -305,7 +313,7 @@ class LogHandler{
         var starter = [
             {
                 timestamp: new Date().getTime(),
-                tag: tags.INFO,
+                level: levels.INFO,
                 source: "internal_log",
                 action: "open",
                 message: "Log file opened",
@@ -337,4 +345,4 @@ class LogHandler{
     }
 }
 
-export { LogHandler, statuses, tags };
+export { LogHandler, statuses, levels };

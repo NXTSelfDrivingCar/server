@@ -44,7 +44,7 @@ module.exports = function(app: Application) {
         // TODO: render the users list page by empty filter if query is empty
     })
 
-    app.get("/admin/user/update/:id", logger.logRoute("updateUser"), (req: Request, res: Response) => {
+    app.get("/admin/user/update", logger.logRoute("updateUser"), (req: Request, res: Response) => {
         res.send("Admin users update")
 
         // render the update user page

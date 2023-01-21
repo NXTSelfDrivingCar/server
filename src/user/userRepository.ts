@@ -1,6 +1,4 @@
-import { MongoConfig } from "../config/mongoDB/mongoConfig";
 import { LogHandler } from "../logging/logHandler";
-import { MongoClient } from "mongodb";
 import { User } from "./userModel";
 import { MongoRepository } from "../config/mongoDB/mongoRepository";
 
@@ -8,50 +6,10 @@ const logger = new LogHandler();
 
 export class UserRepository extends MongoRepository<User> {
 
-    public async insert(user: User): Promise<any> {
-        if(!await this._isConnected()) return null;
-
-        try {
-            return await this._collection!!.insertOne(user);
-        } catch (err) {
-            console.log(err);
-            return null;
-        }
-    }
+    // * =================== PUBLIC METHODS =================== //
 
     public async findAll(): Promise<any> {
-        if (!await this._isConnected()) return null;
-
-        try {
-            return await this._collection!!.find().toArray();
-        }
-        catch (err) {
-            console.log(err);
-            return null;
-        }
-    }
-
-    public async delete(id: string): Promise<any> {
-        if (!await this._isConnected()) return null;
-
-        try {
-            return await this._collection!!.deleteOne({ id: id });
-        }
-        catch (err) {
-            console.log(err);
-            return null;
-        }
-    }
-
-    public async updateUser(id: string, updates: any): Promise<any> {
-        if (!await this._isConnected()) return null;
-
-        try {
-            return await this._collection!!.updateOne({ id: id }, { $set: updates });
-        }
-        catch (err) {
-            return null;
-        }
+        return await this._findUserByFilter({});
     }
     
     public async findUserById(id: string): Promise<any> {
@@ -77,7 +35,64 @@ export class UserRepository extends MongoRepository<User> {
     public async findUsersByFilter(filter: any): Promise<any> {
         return await this._findUserByFilter(filter);
     }
-    
+
+    public async insert(user: User): Promise<any> {
+        if(!await this._isConnected()) return null;
+
+        this.logData.method = "insert";
+        this.logData.user = {
+            id: user.id,
+            username: user.username,
+        };
+
+        try {
+            return await this._collection!!.insertOne(user);
+        } catch (err) {
+            console.log(err);
+            return null;
+        }
+    }
+
+    public async delete(id: string): Promise<any> {
+        if (!await this._isConnected()) return null;
+
+        this.logData.method = "delete";
+        this.logData.id = id;
+
+        try {
+            logger.info(this.logData);
+
+            return await this._collection!!.deleteOne({ id: id });
+        }
+        catch (err) {
+            this.logData.error = err;
+            logger.error(this.logData);
+
+            return null;
+        }
+    }
+
+    public async updateUser(id: string, updates: any): Promise<any> {
+        if (!await this._isConnected()) return null;
+
+        this.logData.method = "updateUser";
+        this.logData.id = id;
+        
+        //TODO: Exclude password
+        this.logData.updates = updates; 
+
+        try {
+            logger.info(this.logData);
+
+            return await this._collection!!.updateOne({ id: id }, { $set: updates });
+        }
+        catch (err) {
+            this.logData.error = err;
+            logger.error(this.logData);
+
+            return null;
+        }
+    }
 
     // ! =================== PRIVATE METHODS =================== //
 
@@ -89,10 +104,17 @@ export class UserRepository extends MongoRepository<User> {
     private async _findUserByFilter(filter: any, limit: number = 0): Promise<Array<any>> {
         if(!await this._isConnected()) return [];
 
+        this.logData.method = "_findUserByFilter";
+        this.logData.filter = filter;
+
         try {
+            logger.info(this.logData);
+
             return await this._collection!!.find(filter as any).limit(limit).toArray();
         } catch (err) {
-            console.log(err);
+            this.logData.error = err;
+            logger.error(this.logData);
+
             return [];
         }
     }

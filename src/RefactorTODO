@@ -18,7 +18,7 @@ Authorization:
 
 MVC:
     User:
-        ☐ Model
+        ✔ Model @done(23-01-21 21:57)
         ✔ View @done(23-01-20 21:56)
         ☐ Controller
     Changelog:
@@ -34,7 +34,7 @@ MVC:
             ✔ View @done(23-01-20 21:56)
             ☐ Controller
     Log:
-        ☐ Model
+        ✔ Model @done(23-01-21 21:58)
         ✔ View @done(23-01-20 21:56)
         ☐ Controller
 
@@ -51,3 +51,5 @@ Logs:
     ✔ Log @done(23-01-20 21:45)
     ☐ Dodati route origin za logovanje ruta (Radi lakseg pretrazivanja)
 
+Other:
+    ☐ Srediti util.js
