@@ -15,12 +15,6 @@ const logger = new LogHandler();
 
 module.exports = function(app: Application) {
 
-    app.get("*", logger.logRoute("get404"), (req: Request, res: Response) => {
-        res.send("404 page")
-
-        // render the 404 page
-    })
-
     // ! =================== POST ROUTES =================== //
     
     app.post("/tickets/t/close", logger.logRoute("closeTicket"), (req: Request, res: Response) => {
@@ -35,5 +29,12 @@ module.exports = function(app: Application) {
 
         // Comment ticket
         // Redirect to /tickets/t:id=ticket_id if success
+    })
+
+    
+    app.get("*", logger.logRoute("get404"), (req: Request, res: Response) => {
+        res.send("404 page")
+
+        // render the 404 page
     })
 }

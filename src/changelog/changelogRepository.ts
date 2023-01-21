@@ -1,21 +1,11 @@
-import { Collection, Db, MongoClient } from "mongodb";
 import { LogHandler } from "../logging/logHandler";
 import { Changelog } from "./changelogModel";
-import { MongoConfig } from "../config/mongoConfig";
+import { MongoRepository } from "../config/mongoDB/mongoRepository";
 
 const logger = new LogHandler();
 
-export class ChangelogRepository {
-    private _client: MongoClient | null = null;
-    private _db: Db | null = null;
-    private _collection: Collection | null = null;
-    private _collectionName: string;
+export class ChangelogRepository extends MongoRepository<Changelog> {
     
-    constructor(collectionName: string) {
-        this._client = new MongoClient(MongoConfig.CONNECTION);
-        this._collectionName = collectionName;
-    }
-
     // * =================== PUBLIC METHODS =================== //
 
     /**
@@ -45,6 +35,11 @@ export class ChangelogRepository {
     public async findChangelogsByVersion(version: string): Promise<any> {
         return await this._findChangelogsByFilter({ version: version });
     }
+
+    public async delete(id: string): Promise<any> {
+        throw new Error("Method not implemented.");
+    }
+
 
     /**
      * Finds the latest changelogs
@@ -77,25 +72,6 @@ export class ChangelogRepository {
         } catch (err) {
             console.log(err);
             return [];
-        }
-    }
-
-    /**
-     * Checks if the client is connected to the database asynchroniously
-     * @returns True if connected, false if error
-     */
-    private async _isConnected(): Promise<boolean> {  
-        try
-        {
-            await this._client!!.connect();
-            this._db = this._client!!.db(MongoConfig.DATABASE);
-            this._collection = this._db!!.collection(this._collectionName);
-            return true
-        }
-        catch(err)
-        {
-            console.log(err);
-            return false;
         }
     }
 }

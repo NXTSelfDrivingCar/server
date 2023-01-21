@@ -4,6 +4,10 @@ import { LogHandler } from "../logging/logHandler"
 
 const logger = new LogHandler()
 
+import { UserController } from "../user/userController"
+
+const userController = new UserController()
+
 /*
 *
 *==========================================================================
@@ -24,10 +28,20 @@ module.exports = function(app: Application) {
         // render the dashboard page
     })
 
-    app.get("/admin/users/list", logger.logRoute("listUsers"), (req: Request, res: Response) => {
-        res.send("Admin users list")
+    app.get("/admin/users/list", logger.logRoute("listUsers"), async (req: Request, res: Response) => {
+        // res.send("Admin users list")
+        
+        // ! TESTCODE
 
-        // render the users list page by empty filter if query is empty
+        // TODO: Remove this test code
+        res.render("admin_list_users.ejs", {
+            title: "Admin users list",
+            users: await userController.findUsersByFilter({role: "user"})
+        })
+
+        // ! END TESTCODE
+
+        // TODO: render the users list page by empty filter if query is empty
     })
 
     app.get("/admin/user/update/:id", logger.logRoute("updateUser"), (req: Request, res: Response) => {

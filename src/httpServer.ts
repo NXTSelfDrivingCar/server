@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 import cookies from "cookie-parser";
 
 // Import HTTP server config
-import { HttpServerConfig } from "./config/httpServerConfig";
+import { HttpServerConfig } from "./config/server/httpServerConfig";
 
 // Import logger
 import { LogHandler } from "./logging/logHandler";
@@ -26,8 +26,8 @@ app.use("/static", express.static(path.join(__dirname, "public")));
 // Import routes
 const guestRoutes = require ("./routes/guestRoutes")(app);
 const userRoutes = require ("./routes/userRoutes")(app);
-const sharedRoutes = require ("./routes/sharedRoutes")(app);
 const adminRoutes = require ("./routes/adminRoutes")(app);
+const sharedRoutes = require ("./routes/sharedRoutes")(app);
 
 // Start server
 app.listen(HttpServerConfig.PORT, () => {
@@ -37,15 +37,3 @@ app.listen(HttpServerConfig.PORT, () => {
       });
     console.log(`HTTP Server listening on port ${HttpServerConfig.PORT}`);
 });
-
-
-
-// var dotenv = require("dotenv").config({ path: ".env" });
-// var { LogHandler } = require("./logging/logHandler.js");
-// var { getUserWithToken } = require("./public/util");
-// var express = require("express");
-// var path = require("path");
-// var User = require("./user/userModel");
-// var cookies = require("cookie-parser");
-// var jwt = require("jsonwebtoken");
-// var wildcard = require("socketio-wildcard")();

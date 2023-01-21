@@ -1,9 +1,9 @@
 const userRepository = require("./userRepository_dep");
 const User = require("./userModel");
 const USERS_COLLECTION = "users";
-const bcryptConfig = require("../config/bcryptConfig");
+const bcryptConfig = require("../../config/bcryptConfig");
 
-var { LogHandler } = require("../logging/logHandler");
+var { LogHandler } = require("../../logging/logHandler");
 var logger = new LogHandler().open();
 var bcrypt = require("bcryptjs");
 
