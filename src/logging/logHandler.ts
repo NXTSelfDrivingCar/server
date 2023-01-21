@@ -35,10 +35,10 @@ class LogHandler{
     static currentFile: PathLike = "";
     static status = statuses.CLOSED;
 
-    filePath: PathLike;
+    static filePath: PathLike;
 
     constructor(){
-        this.filePath = path.join(__dirname, "..", "logs");
+        LogHandler.filePath = path.join(__dirname, "..", "logs");
 
         this.open();
     }
@@ -50,7 +50,7 @@ class LogHandler{
 
         this._prepareDir();
 
-        LogHandler.currentFile = path.join(this.filePath.toString(), fileName);
+        LogHandler.currentFile = path.join(LogHandler.filePath.toString(), fileName);
         LogHandler.status = statuses.OPEN;
 
         this._writeOpener();
@@ -245,6 +245,10 @@ class LogHandler{
         return LogHandler.currentFile.toString().split("\\")[LogHandler.currentFile.toString().split("\\").length - 1];
     }
 
+    getFilePath(): string{
+        return LogHandler.filePath.toString();
+    }
+
     // ! =================== PRIVATE METHODS =================== //
 
     private _log(tag: string = tags.INFO, data: any){
@@ -270,12 +274,12 @@ class LogHandler{
 
     private _prepareDir(){
         console.log("Checking for log directory...");
-        if(fs.existsSync(this.filePath)) return;
+        if(fs.existsSync(LogHandler.filePath)) return;
 
         console.log("Creating log directory...");
-        fs.mkdirSync(this.filePath);
+        fs.mkdirSync(LogHandler.filePath);
 
-        console.log("Log directory created at: " + this.filePath);
+        console.log("Log directory created at: " + LogHandler.filePath);
     }
 
     private _writeToFile(data: any){
@@ -315,6 +319,7 @@ class LogHandler{
             action: action,
             method: req.method,
             url: req.url,
+            path: req.path,
         }
 
         if(JSON.stringify(extra) !== "{}") logData["content"] = extra;
@@ -322,6 +327,8 @@ class LogHandler{
         if (JSON.stringify(req.body) !== "{}") logData["body"] = req.body;
 
         if (JSON.stringify(req.query) !== "{}") logData["query"] = req.query;
+
+        if (JSON.stringify(req.params) !== "{}") logData["params"] = req.params;
 
         this.log(logData);
     }
