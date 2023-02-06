@@ -333,7 +333,7 @@ class LogHandler{
             path: req.path,
         }
 
-        if(JSON.stringify(extra) !== "{}") logData["content"] = extra;
+        if (JSON.stringify(extra) !== "{}") logData["content"] = extra;
 
         if (JSON.stringify(req.body) !== "{}") logData["body"] = req.body;
 

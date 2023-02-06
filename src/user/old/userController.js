@@ -5,7 +5,7 @@ const bcryptConfig = require("../../config/shared/bcryptConfig");
 
 var { LogHandler } = require("../../logging/logHandler");
 var logger = new LogHandler().open();
-var bcrypt = require("bcryptjs");
+// var bcrypt = require("bcryptjs");
 
 function findUser(user) {
   return userRepository.findUser(user, USERS_COLLECTION);

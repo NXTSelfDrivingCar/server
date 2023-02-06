@@ -1,5 +1,4 @@
 import { Application, Request, Response } from "express"
-import { LoggerLevel } from "mongodb"
 import { LogHandler } from "../logging/logHandler"
 
 const logger = new LogHandler()

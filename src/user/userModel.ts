@@ -1,4 +1,6 @@
-import uuid from 'uuid';
+import {v4} from 'uuid';
+
+const uuId = v4();
 
 export class User {
     id: any;
@@ -8,7 +10,7 @@ export class User {
     password: string;
     apiToken: string;
 
-    constructor(id: any = uuid.v4, role: string, username: string, email: string, password: string, apiToken: string) {
+    constructor( username: string, password: string, email: string, role: string, apiToken: string, id: any = uuId) {
         this.id = id;
         this.role = role;
         this.username = username;

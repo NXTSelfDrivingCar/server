@@ -1,5 +1,6 @@
 import fs, { PathLike } from "fs";
 import path from "path";
+import _ from "lodash";
 
 export class LogRepository {
     private filePath: PathLike;
@@ -8,15 +9,61 @@ export class LogRepository {
         this.filePath = filePath;
     }
 
-    findAll(){
-        return fs.readdirSync(this.filePath);
+    findLogValueByLevel(name: string, level: string){
+        return this.findLogValueByFilter(name, {level: level.toUpperCase()});
     }
 
-    findLogByName(name: string){
-        return fs.readFileSync(path.join(this.filePath.toString(), name));
+    findLogValueByDate(name: string, date: Date){
+        return this.findLogValueByFilter(name, {date: date});
     }
 
-    deleteLogByName(name: string){
-        return fs.unlinkSync(path.join(this.filePath.toString(), name));
+    findLogValueByAction(name: string, action: string){
+        return this.findLogValueByFilter(name, {action: action});
+    }
+
+    findLogValueByFilter(name: string, filter: any){
+        var log = this.findLogValueByFileName(name);
+
+        return _.filter(log, filter);
+    }
+
+    findAllLogFiles(){
+        try{
+            return fs.readdirSync(this.filePath);
+        }catch(err){
+            console.log(err);
+
+            return null;
+        }
+    }
+
+    findLogValueByFileName(name: string){
+        try{
+            return fs.readFileSync(path.join(this.filePath.toString(), this._parseName(name)));
+        }catch(err){
+            console.log(err);
+
+            return null;
+        }
+    }
+
+    deleteLogFileByName(name: string){
+        try{
+            fs.unlinkSync(path.join(this.filePath.toString(), this._parseName(name)));
+
+            return true;
+        }catch(err){
+            console.log(err);
+
+            return false;
+        }
+    }
+
+    
+
+    // ! =================== Private Methods =================== //
+
+    private _parseName(name: string){
+        return name.endsWith(".json") ? name : name + ".json";
     }
 }

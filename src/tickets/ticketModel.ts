@@ -1,4 +1,6 @@
-import uuid from "uuid"
+import { v4 } from 'uuid';
+
+const uuid = v4();
 
 export class Ticket {
     id: any;
@@ -11,7 +13,7 @@ export class Ticket {
     status: string = "Open";
     priority: string = "Low";
 
-    constructor(title: string, category: string, description: string, priority: string = "Low", status: string = "Open", date = new Date(), id: any = uuid.v4) {
+    constructor(title: string, category: string, description: string, priority: string = "Low", status: string = "Open", date = new Date(), id: any = uuid) {
         this.id = id;
         this.date = date;
         this.title = title;

@@ -1,4 +1,6 @@
-import uuid from 'uuid';
+import { v4 } from 'uuid';
+
+const uuid = v4();
 
 class Changelog{
     id: any;
@@ -8,7 +10,7 @@ class Changelog{
     description: string;
     date: Date = new Date();
 
-    constructor(title: string, version: string, isBeta: boolean = false, description: string, id = uuid.v4){
+    constructor(title: string, version: string, isBeta: boolean = false, description: string, id = uuid){
         this.id = id;
         this.title = title;
         this.version = version;

@@ -9,31 +9,31 @@ export class UserRepository extends MongoRepository<User> {
     // * =================== PUBLIC METHODS =================== //
 
     public async findAll(): Promise<any> {
-        return await this._findUserByFilter({});
+        return await this._findUsersByFilter({});
     }
     
     public async findUserById(id: string): Promise<any> {
-        var user = await this._findUserByFilter({ id: id });
-
-        return JSON.stringify(user) !== "[]" ? user : null;
+        return (await this._findUsersByFilter({ id: id }))[0];
     }
 
     public async findUserByUsername(username: string): Promise<any> {
-        var user = await this._findUserByFilter({ username: username });
-
-        return JSON.stringify(user) !== "[]" ? user : null;
+        return (await this._findUsersByFilter({ username: username }))[0];
     }
     
     public async findUsersByEmail(email: string): Promise<any> {
-        return await this._findUserByFilter({ email: email} );
+        return await this._findUsersByFilter({ email: email} );
     }
 
     public async findUsersByRole(role: string): Promise<any> {
-        var user = await this._findUserByFilter({ role: role });
+        var user = await this._findUsersByFilter({ role: role });
     }
 
     public async findUsersByFilter(filter: any): Promise<any> {
-        return await this._findUserByFilter(filter);
+        return await this._findUsersByFilter(filter);
+    }
+
+    public async findUserByFilter(filter: any): Promise<any>{
+        return (await this.findUsersByFilter(filter))[0];
     }
 
     public async insert(user: User): Promise<any> {
@@ -105,7 +105,7 @@ export class UserRepository extends MongoRepository<User> {
      * @param filter Filter to use
      * @returns Users that match the filter or empty array if error
      */
-    private async _findUserByFilter(filter: any, limit: number = 0): Promise<Array<any>> {
+    private async _findUsersByFilter(filter: any, limit: number = 0): Promise<Array<any>> {
         if(!await this._isConnected()) return [];
 
         this.logData.method = "_findUserByFilter";
