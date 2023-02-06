@@ -5,10 +5,48 @@ Routes:
         ✔ Guest routes @done(23-01-20 21:46)
         ✔ Public routes @done(23-01-20 21:46)
     Functional:
-        ☐ Admin routes
-        ☐ User routes
-        ☐ Guest routes
-        ☐ Public routes
+        Admin:
+            GET:
+                ☐ Dashboard
+                ☐ User list
+                ☐ User update
+                ☐ Log files list
+                ☐ Log file detailed view
+                ☐ Log file filter
+                ☐ Changelog add
+            POST:
+                ☐ User update
+                ☐ Changelog add
+                ☐ Ticket update
+            DELETE:
+                ☐ User delete
+                ☐ Log file delete
+        User:
+            GET:
+                ☐ Logout
+                ☐ Profile
+            POST:
+                ☐ Profile update
+            DELETE:
+                ☐ Profile delete
+        Guest:
+            GET:
+                ☐ Main page
+                ☐ Ticket list
+                ☐ Ticket detailed view
+                ☐ Login
+                ☐ Register
+            POST:
+                ☐ Login
+                ☐ Register
+        Shared:
+            POST:
+                ☐ Ticket close
+                ☐ Ticket comment
+            INGORE:
+                ✔ Favicon.ico @done(23-02-06 23:37)
+                ✔ * @done(23-02-06 23:37)
+
 
 Authorization:
     ☐ Authorization class
@@ -20,15 +58,15 @@ MVC:
     User:
         ✔ Model @done(23-01-21 21:57)
         ✔ View @done(23-01-20 21:56)
-        ☐ Controller
+        ✔ Controller @done(23-02-06 23:28)
     Changelog:
         ✔ Model @done(23-01-21 01:44)
         ✔ View @done(23-01-20 21:56)
-        ✔ Controller @done(23-01-21 01:44)
+        ✔ Controller @done(23-02-06 23:28)
     Ticket:
-        ☐ Model
+        ✔ Model @done(23-02-06 23:28)
         ✔ View @done(23-01-20 21:56)
-        ☐ Controller
+        ✔ Controller @done(23-02-06 23:28)
         Comment:
             ☐ Model
             ✔ View @done(23-01-20 21:56)
@@ -36,7 +74,7 @@ MVC:
     Log:
         ✔ Model @done(23-01-21 21:58)
         ✔ View @done(23-01-20 21:56)
-        ☐ Controller
+        ✔ Controller @done(23-02-06 23:28)
 
 View:
     Podeliti view u delove:
