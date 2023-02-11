@@ -6,10 +6,11 @@ const logger = new LogHandler()
 
 import { UserController } from "../user/userController"
 import { LogController } from "../logging/logController"
-import { AutoEncryptionLoggerLevel } from "mongodb"
+import { TicketController } from "../tickets/ticketController"
 
 const userController = new UserController()
 const logController = new LogController()
+const ticketController = new TicketController()
 
 /*
 *
@@ -99,11 +100,14 @@ module.exports = function(app: Application) {
         res.redirect("/admin/users/list")
     })
 
-    app.post("/admin/tickets/t/update", logger.logRoute("updateTicket"), Authorization.authRole("admin"), (req: Request, res: Response) => {
-        res.send("Admin tickets update")
+    app.post("/admin/tickets/t/update", logger.logRoute("updateTicket"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
+        for(var key in req.body) {
+            if(req.body[key] === "") delete req.body[key]
+        }
 
-        // Update ticket
-        // Redirect to /admin/tickets/t:id=ticket_id
+        await ticketController.updateTicket(req.body.ticketId, req.body)
+
+        res.redirect("/tickets/t/" + req.body.ticketId)
     })
 
     // ! =================== DELETE ROUTES =================== //

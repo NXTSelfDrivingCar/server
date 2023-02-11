@@ -2,7 +2,6 @@ import { Application, Request, Response } from "express";
 import { LogHandler } from "../logging/logHandler";
 
 import { ChangelogController } from "../changelog/changelogController";
-import { Changelog } from "../changelog/changelogModel";
 import { Authorization } from "../cookie/authorization";
 import { UserController } from "../user/userController";
 import { TicketController } from "../tickets/ticketController";
@@ -28,35 +27,50 @@ module.exports = function(app: Application) {
     // ! =================== GET ROUTES =================== //
 
     app.get("/", logger.logRoute("getIndex"), async (req: Request, res: Response) => {
-        // res.send("Main page")
+        // Render index page
         res.render("main_page_index.ejs", {
             title: "Main page",
             changelog: await changelogController.getChangelogs(),
             user: await Authorization.getUserFromCookie("auth", req)
         })
-        // render the index page
     });
 
     app.get("/tickets", logger.logRoute("viewTickets"), async (req: Request, res: Response) => {
+        // Render list of tickets
+
         for(var key in req.query) {
             if(req.query[key] === "") delete req.query[key]
         }
 
         res.render("tickets.ejs", {
             title: "Tickets page",
-            user: Authorization.getUserFromCookie("auth", req),
+            user: await Authorization.getUserFromCookie("auth", req),
             tickets: await ticketController.getTicketsByFilter(req.query),
         })
     })
 
     // Ovo se poziva localhost:5000/tickets/t/1 ; localhost:5000/tickets/t/2
-    app.get("/tickets/t/:id", logger.logRoute("viewTicket"), (req: Request, res: Response) => {
-        res.send("Specific ticket page")
+    app.get("/tickets/t/:id", logger.logRoute("viewTicket"), async (req: Request, res: Response) => {
+        // Render specific ticket view
+        
+        var ticket = await ticketController.getTicketById(req.params.id)
 
-        // render the specific ticket page
+        // If ticket is null, redirect to tickets page
+        if(ticket == null) {
+            res.redirect("/tickets")
+            return
+        }
+        
+        res.render("ticket_view.ejs", {
+            title: "Ticket view",
+            user: await Authorization.getUserFromCookie("auth", req),
+            ticket: ticket,
+        }) 
     })
     
     app.get("/login", logger.logRoute("login"), async (req: Request, res: Response) => {
+        // Render login page
+        
         res.render("login_page.ejs", {
             title: "Login page",
             user: await Authorization.getUserFromCookie("auth", req),
@@ -65,6 +79,8 @@ module.exports = function(app: Application) {
     })
 
     app.get("/register", logger.logRoute("register"), async (req: Request, res: Response) => {
+        // Render register page
+        
         res.render("register_page.ejs", {
             title: "Register page",
             user: await Authorization.getUserFromCookie("auth", req),
@@ -75,22 +91,17 @@ module.exports = function(app: Application) {
     // ! =================== POST ROUTES =================== //
 
     app.post("/login", logger.logRoute("login") , async (req: Request, res: Response) => {
-        var username = req.body.username;
-        var password = req.body.password;
-
-        var result = await userController.login(username,password, req, res)
+        var result = await userController.login(req.body.username,req.body.password, req, res)
 
         if(result.status == "loginComplete"){
             res.redirect("/")
         }
 
-        if(result.status == "loginFailed"){
-            res.render("login_page.ejs", {
-                title: "Login page",
-                user: Authorization.getUserFromCookie("auth", req),
-                status: "loginFailed"
-            })
-        }
+        res.render("login_page.ejs", {
+            title: "Login page",
+            user: Authorization.getUserFromCookie("auth", req),
+            status: result.status
+        })
     })
 
     app.post("/register", logger.logRoute("register"), async (req: Request, res: Response) => {

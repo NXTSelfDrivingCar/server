@@ -1,12 +1,14 @@
 import { Application, Request, Response } from "express";
 import { LogHandler } from "../logging/logHandler";
 import { User } from "../user/userModel";
+import { TicketComment } from "../tickets/commentModel";
 
 
 import { UserController } from "../user/userController";
 import { TicketController } from "../tickets/ticketController";
 import { LogController } from "../logging/logController";
 import { Authorization } from "../cookie/authorization";
+import { Ticket } from "../tickets/ticketModel";
 
 const logger = new LogHandler();
 
@@ -53,32 +55,44 @@ module.exports = function(app: Application) {
         console.log(ticketByUser);
     })
 
-    // app.get("/user/login/debug", logger.logRoute("debugLogin"), async (req: Request, res: Response) => {
-    //     var user = await userController.login("AnTas", "1234");
+    app.get("/tickets/t/close/:id", logger.logRoute("closeTicket"), async (req: Request, res: Response) => {
+        var ticket = await ticketController.getTicketById(req.params.id);
+        var author = await Authorization.getUserFromCookie("auth", req);
 
-    //     console.log(user);
-    // })
+        if(!author) return res.redirect("/login");
+        if(!ticket) return res.redirect("/tickets");
 
-    app.get("/user/register/debug", logger.logRoute("debugRegister"), async (req: Request, res: Response) => {
-        var user = await userController.register(new User("AnTas", "1234", "akitasevski112@gmail.com", "admin" ,"apikey"));
+        if(ticket.author.id !== author.id) return res.redirect("/tickets");
 
-        console.log(user);
+        await ticketController.updateTicket(ticket.id, {status: "Finished"});
+
+        res.redirect("/tickets");
     })
 
     // ! =================== POST ROUTES =================== //
     
-    app.post("/tickets/t/close", logger.logRoute("closeTicket"), (req: Request, res: Response) => {
-        res.send("Close ticket")
 
-        // Close ticket
-        // Redirect to /tickets/t:id=ticket_id if success
+    app.post("/tickets/t/comment", logger.logRoute("addTicketComment"), async (req: Request, res: Response) => {
+        var author = await Authorization.getUserFromCookie("auth", req);
+
+        if (req.body.content < 1 || req.body.content > 2000) return res.redirect("/tickets/t/" + req.body.ticketId);
+        if (!author) return res.redirect("/login");
+
+        await ticketController.addCommentToTicket(req.body.ticketId, new TicketComment(author, req.body.content));
+
+        res.redirect("/tickets/t/" + req.body.ticketId);
     })
 
-    app.post("/tickets/t/comment", logger.logRoute("addTicketComment"), (req: Request, res: Response) => {
-        res.send("Comment ticket")
+    app.post("/tickets/t/add", logger.logRoute("assignTicket"), async (req: Request, res: Response) => {
+        var author = await Authorization.getUserFromCookie("auth", req);
 
-        // Comment ticket
-        // Redirect to /tickets/t:id=ticket_id if success
+        if (!author) return res.redirect("/login");
+
+        var newTicket = new Ticket(author, req.body.title, req.body.category, req.body.description, "Low", "Open");
+        
+        await ticketController.insertTicket(newTicket);
+
+        res.redirect("/tickets");
     })
 
     // ! =================== IGNORE ROUTES =================== //

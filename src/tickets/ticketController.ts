@@ -1,9 +1,12 @@
 import { TicketRepository } from "./ticketRepository";
 import { Ticket } from "./ticketModel";
 import { LogHandler } from "../logging/logHandler";
+import { TicketComment } from "./commentModel";
+import { UserController } from "../user/userController";
 
 const logger = new LogHandler();
 const TICKETS_COLLECTION = "userTickets";
+const userController = new UserController();
 
 export class TicketController {
     private _ticketRepository: TicketRepository;
@@ -14,10 +17,6 @@ export class TicketController {
 
     async getAllTickets(): Promise<any> {
         return await this._ticketRepository.findAll();
-    }
-
-    async getTicketById(id: string): Promise<any> {
-        return await this._ticketRepository.findTicketById(id);
     }
 
     async getTicketsByFilter(filter: any): Promise<any> {
@@ -40,11 +39,38 @@ export class TicketController {
         return await this._ticketRepository.insert(document);
     }
 
-    async updateTicket(id: string, document: Ticket): Promise<any> {
+    async updateTicket(id: string, document: any): Promise<any> {
         return await this._ticketRepository.updateTicket(id, document);
     }
 
-    async addCommentToTicket(id: string, comment: Comment): Promise<any> {
+    async addCommentToTicket(id: string, comment: TicketComment): Promise<any> {
         return await this._ticketRepository.addComment(id, comment);
     }
+
+    async getTicketById(id: string): Promise<any> {
+        var ticket = await this._ticketRepository.findTicketById(id);
+
+        if(!ticket) return null;
+        
+        try{
+            for (var comment of ticket.comments) {
+                var commentAuthor = await userController.findUserById(comment.author.id);
+    
+                if(!commentAuthor) continue;
+    
+                comment.author = {
+                    username: commentAuthor.username,
+                    role: commentAuthor.role,
+                }
+            }
+        }catch(err){
+            logger.error(err);
+            return null;
+        }
+
+        this.updateTicket(id, ticket);
+
+        return ticket;
+    }
+
 }

@@ -70,9 +70,18 @@
 	}
 	
 	%>
-  <br>
 
   <div class="container">
+    <div class="container">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="/tickets">Propusnice</a>
+        </li>
+        <li class="breadcrumb-item active">
+          Propusnica: <%= ticket.id.substring(0,6) %>
+        </li>
+      </ol>
+    </div>
     <div class="card shadow">
       <div class="jumbotron jumbotron-fluid">
         <div class="container">
@@ -85,7 +94,7 @@
             <div class="row">
               <div class="col-7">
                 <% if (user.role === 'admin' && user.id === ticket.author.id && ticket.status != 'Finished') { %>
-                <a href="/tickets/t/close?id=<%=ticket.id%>" class="btn btn-outline-danger">Close ticket</a>
+                <a href="/tickets/t/close/<%=ticket.id%>" class="btn btn-outline-danger">Close ticket</a>
                 <% } %>
               </div>
               <div class="col">
@@ -98,7 +107,7 @@
               <form method="post" action="/admin/tickets/t/update" enctype="application/x-www-form-urlencoded">
                 <div class="row">
                   <div class="col">
-                    <select class="form-control form-select <%= (ticket.priority==='Low') ? 'low' : ticket.priority==='High' ? 'high' : 'medium' %>" name="inputPriority">
+                    <select class="form-control form-select <%= (ticket.priority==='Low') ? 'low' : ticket.priority==='High' ? 'high' : 'medium' %>" name="priority">
                       <option <% if (ticket.priority ==="Low") { %> selected <% } %> value="Low">Low</option>
                       <option <% if (ticket.priority ==="Medium") { %> selected <% } %> value="Medium">Medium</option>
                       <option <% if (ticket.priority ==="High") { %> selected <% } %> value="High">High</option>
@@ -106,7 +115,7 @@
                   </div>
                   <div class="col">
                     <div>
-                      <select class="form-control form-select <%= (ticket.status==='Open') ? 'open' : ticket.status==='Finished' ? 'finished' : 'inprogress' %>" name="inputStatus">
+                      <select class="form-control form-select <%= (ticket.status==='Open') ? 'open' : ticket.status==='Finished' ? 'finished' : 'inprogress' %>" name="status">
                         <option <% if (ticket.status ==="Open") { %> selected <% } %> value="Open">Open</option>
                         <option <% if (ticket.status ==="In progress") { %> selected <% } %> value="In progress">In progress</option>
                         <option <% if (ticket.status ==="Finished") { %> selected <% } %> value="Finished">Finished</option>
@@ -122,7 +131,10 @@
               <% } %>
             </div>
             <hr class="my-4">
-            <p>Description: <%= ticket.description %></p>
+            <p class="lead">Description:</p>
+            <div style="white-space: pre-line">
+              <%= ticket.description %>
+            </div>
             <hr class="my-4">
             <div class="mb-3">
               <p class="display-6">Comments:</p>
@@ -130,10 +142,10 @@
               <% for (let comment of ticket.comments) { %>
               <div class="card p-2 mb-2 cust-bg">
                 <div>
-                  <span class="<%= (comment.role == 'admin') ? 'admin-comment' : 'user-comment' %>">Author: <%= comment.author %> | Date: <%= new Date(comment.date).toLocaleTimeString('en-UK') %> - <%= new Date(comment.date).toLocaleDateString('en-UK') %></span>
+                  <span class="<%= (comment.author.role == 'admin') ? 'admin-comment' : 'user-comment' %>">Author: <%= comment.author.username %> | Date: <%= new Date(comment.date).toLocaleTimeString('en-UK') %> - <%= new Date(comment.date).toLocaleDateString('en-UK') %></span>
                 </div>
                 <hr class="my-1">
-                <div style="white-space: pre-line"><%= comment.text %></div>
+                <div style="white-space: pre-line"><%= comment.content %></div>
               </div>
               <% } %>
               <% if (ticket.status != 'Finished') { %>
@@ -158,7 +170,7 @@
               <div class="modal-body">
                 <input type="hidden" name="ticketId" value="<%= ticket.id %>">
                 <input type="hidden" name="userId" value="<%= user.id %>">
-                <textarea class="form-control mb-2" onkeyup="updateLength()" name="inputComment" id="commentTextArea" rows="8" placeholder="Enter your comment here..." style="resize: none" maxlength="2000" required></textarea>
+                <textarea class="form-control mb-2" onkeyup="updateLength()" name="content" id="commentTextArea" rows="8" placeholder="Enter your comment here..." style="resize: none" maxlength="2000" required></textarea>
                 <div id="count">
                   <span id="current_count">0</span>
                   <span id="maximum_count">/ 2000</span>

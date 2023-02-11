@@ -7,15 +7,15 @@ Routes:
     Functional:
         Admin:
             GET:
-                ☐ Dashboard
-                ☐ User list
-                ☐ User update
-                ☐ Log files list
-                ☐ Log file detailed view
-                ☐ Log file filter
+                ✔ Dashboard @done(23-02-11 18:29)
+                ✔ User list @done(23-02-11 18:29)
+                ✔ User update @done(23-02-11 18:29)
+                ✔ Log files list @done(23-02-11 18:29)
+                ✔ Log file detailed view @done(23-02-11 18:29)
+                ✔ Log file filter @done(23-02-11 18:29)
                 ☐ Changelog add
             POST:
-                ☐ User update
+                ✔ User update @done(23-02-11 18:29)
                 ☐ Changelog add
                 ☐ Ticket update
             DELETE:
@@ -32,8 +32,8 @@ Routes:
         Guest:
             GET:
                 ✔ Main page @done(23-02-11 13:39)
-                ☐ Ticket list
-                ☐ Ticket detailed view
+                ✔ Ticket list @done(23-02-11 18:28)
+                ✔ Ticket detailed view @done(23-02-11 18:29)
                 ✔ Login @done(23-02-11 13:39)
                 ✔ Register @done(23-02-11 13:39)
             POST:
@@ -41,22 +41,24 @@ Routes:
                 ✔ Register @done(23-02-11 13:39)
         Shared:
             POST:
-                ☐ Ticket close
-                ☐ Ticket comment
+                ✔ Ticket close @done(23-02-11 18:29)
+                ✔ Ticket comment @done(23-02-11 18:29)
+                ✔ Ticket add @started(23-02-11 16:49) @done(23-02-11 18:29) @lasted(1h40m5s)
             INGORE:
                 ✔ Favicon.ico @done(23-02-06 23:37)
                 ✔ * @done(23-02-06 23:37)
 
 
 Authorization:
-    ☐ Authorization class
-    ☐ Admin authorization
+    ✔ Authorization class @done(23-02-11 16:11)
+    ✔ Admin authorization @done(23-02-11 16:11)
     ☐ User authorization
     ☐ Guest authorization
+    ☐ POST/GET query verification
 
 MVC:
     User:
-        ✔ Model @done(23-01-21 21:57)
+        ✔ Model @done(23-02-11 16:11)
         ✔ View @done(23-01-20 21:56)
         ✔ Controller @done(23-02-06 23:28)
     Changelog:
@@ -90,5 +92,6 @@ Logs:
     ☐ Dodati route origin za logovanje ruta (Radi lakseg pretrazivanja)
 
 Other:
+    ☐ Prikazati autora tiketa
     ☐ Srediti util.js
     ☐ Nrapraviti funkciju koja cisti request.query, kako i mogao da ostavim filter na strani

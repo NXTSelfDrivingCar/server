@@ -127,19 +127,19 @@
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Create ticket</h5>
+          <h5 class="modal-title">Create propusnica</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <form method="post" action="/tickets/t/add" enctype="application/x-www-form-urlencoded">
             <div class="form-group">
-              <label for="formGroupExampleInput">Naslov:</label>
-              <input type="text" class="form-control" id="title" name="inputTitle" placeholder="Unesite naslov..." required>
+              <label for="formGroupExampleInput">Title:</label>
+              <input type="text" class="form-control" id="title" name="title" placeholder="Unesite naslov..." required>
             </div>
             <br>
             <div class="form-group">
-              <label for="exampleFormControlSelect1">Kategorija:</label>
-              <select class="form-control form-select" id="category" name="inputCategory">
+              <label for="exampleFormControlSelect1">Category:</label>
+              <select class="form-control form-select" id="category" name="category">
                 <option>NTX Robot</option>
                 <option>Web Sajt</option>
                 <option>Android Aplikacija</option>
@@ -149,8 +149,8 @@
             </div>
             <br>
             <div class="form-group">
-              <label for="descriptionTextArea">Deskripcija:</label>
-              <textarea class="form-control mb-2" onkeyup="updateLength()" id="descriptionTextArea" name="inputDescription" rows="8" placeholder="Unesite opis ovde..." style="resize: none" maxlength="2000" required></textarea>
+              <label for="descriptionTextArea">Description:</label>
+              <textarea class="form-control mb-2" onkeyup="updateLength()" id="descriptionTextArea" name="description" rows="8" placeholder="Unesite opis ovde..." style="resize: none" maxlength="2000" required></textarea>
               <div id="count">
                 <span id="current_count">0</span>
                 <span id="maximum_count">/ 2000</span>
