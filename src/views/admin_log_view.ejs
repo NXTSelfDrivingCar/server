@@ -33,6 +33,19 @@
     border-color: #494F57;
   }
 
+  /* Fixes filterbar and navbar overlap on sticky */
+  .filterBar {
+    z-index: 3;
+    padding-top: 6vh;
+    margin-top: -7vh;
+  }
+
+  /* Brings breadcrumbs to the front */
+  .bc {
+    position: sticky;
+    z-index: 4;
+  }
+
   button:focus {
     background-color: #0e4c8a;
   }
@@ -55,7 +68,7 @@
   }
   %>
 
-  <div class="container">
+  <div class="container bc">
     <div class="container">
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
@@ -69,7 +82,10 @@
         </li>
       </ol>
     </div>
-    <div class="card mt-3 p-3 shadow">
+  </div>
+
+  <div class="container sticky-top filterBar">
+    <div class="card mt-3 p-3 shadow ">
       <form method="get" action="/admin/logs/l/<%=thisLogName%>" enctype="application/x-www-form-urlencoded">
         <div class="row">
           <div class="col-3">
@@ -98,6 +114,7 @@
       </form>
     </div>
   </div>
+
   <br>
 
   <div class="container">
