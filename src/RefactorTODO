@@ -24,9 +24,9 @@ Routes:
         User:
             GET:
                 ✔ Logout @done(23-02-11 13:39)
-                ☐ Profile
+                ✔ Profile @done(23-02-11 22:22)
             POST:
-                ☐ Profile update
+                ✔ Profile update @done(23-02-11 22:22)
             DELETE:
                 ☐ Profile delete
         Guest:

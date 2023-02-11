@@ -53,28 +53,29 @@ export class Authorization {
     return this._signToken(userId, res, req);
   }
 
-  public static authRole(role: string) {
+  public static authRole(...roles: string[]) {
     return (req: Request, res: Response, next: any) => {
-      this._authRole(role, req, res, next);
+      this._authRole(roles, req, res, next);
     }
   }
   
   // ! =================== PRIVATE FUNCTIONS ===================
 
-  private static async _authRole(role: string, req: Request, res: Response, next: any): Promise<void> {
+  private static async _authRole(roles: string[], req: Request, res: Response, next: any): Promise<void> {
     var user = await Authorization.getUserFromCookie("auth", req);
 
     if(user == null) {
-      res.status(404).send("Not found");
+      res.redirect("/login");
       return;
     }
-
-    if(user.role != role) {
-      res.status(404).send("Not found");
-      return;
+    for (var role in roles){
+      if(user.role == roles[role]) {
+        next();
+        return;
+      }
     }
-
-    next();
+    res.redirect("/login");
+    return;
   }
 
   private static async _getUserFromToken(token: string): Promise<any> {

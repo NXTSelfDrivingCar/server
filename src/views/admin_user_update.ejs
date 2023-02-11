@@ -53,6 +53,7 @@
     </div>
     <div class="form-fluid">
       <form class="form-inline" action="/admin/user/update" method="post">
+        <input type="hidden" name="currentPassword" value="<%=user.password%>">
         <div class="col mb-2">
           <label for="disabledTextInput">User ID</label>
           <input required style="font-style: italic;" name="id" type="text" id="disabledTextInput" class="form-control disabled" value="<%=user.id%>" readonly>

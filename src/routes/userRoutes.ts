@@ -1,8 +1,10 @@
 import { Application, Request, Response } from "express";
 import { Authorization } from "../cookie/authorization";
 import { LogHandler } from "../logging/logHandler";
+import { UserController } from "../user/userController";
 
 const logger = new LogHandler();
+const userController = new UserController();
 
 /*
 *
@@ -24,28 +26,44 @@ module.exports = function(app: Application) {
         res.redirect("/")
     })
 
-    app.get("/user/profile",logger.logRoute("viewUserProfile"), (req: Request, res: Response) => {
-        res.send("Profile page")
-
-        // render the profile page
+    app.get("/user/profile",logger.logRoute("viewUserProfile"), Authorization.authRole('admin', 'user'), async (req: Request, res: Response) => {
+        res.render("user_edit.ejs", {
+            title: "User profile",
+            user: await Authorization.getUserFromCookie("auth", req),
+            status: ""
+        })
     })
 
     // ! =================== POST ROUTES =================== //
 
-    app.post("/user/update", logger.logRoute("udpateUser"), (req: Request, res: Response) => {
-        res.send("Update user")
-
-        // update user
-        // redirect to /user/profile
+    app.post("/user/update", logger.logRoute("updateUser"), Authorization.authRole('admin', 'user'), async (req: Request, res: Response) => {
+        var userId = req.body.userId;
+        delete req.body.userId;
+        var status = await userController.updateUser(userId, req.body);
+        console.log(status);
+        
+        res.render("user_edit.ejs", {
+            title: "User profile",
+            user: await Authorization.getUserFromCookie("auth", req),
+            status: status
+        })
     })
+    
+    app.post("/user/delete", logger.logRoute("deleteUser"), Authorization.authRole('admin', 'user'), async (req: Request, res: Response) => {
+        var status = await userController.deleteUser(req.body.userId, req.body.currentPassword);
+        
+        if (status != "userDeleted"){
+            res.render("user_edit.ejs", {
+                title: "User profile",
+                user: await Authorization.getUserFromCookie("auth", req),
+                status: status
+            })
+            return;
+        }
 
-    // ! =================== DELETE ROUTES =================== //
+        Authorization.clearCookie("auth", res);
 
-    app.delete("/user/delete", logger.logRoute("deleteUser"), (req: Request, res: Response) => {
-        res.send("Delete user")
-
-        // delete user
-        // redirect to /
+        res.redirect("/");
     })
 
     /*

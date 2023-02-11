@@ -52,16 +52,21 @@ export class TicketController {
 
         if(!ticket) return null;
         
+        // Updates thicket comments with author username and role (because users can change their username and role)
         try{
             for (var comment of ticket.comments) {
                 var commentAuthor = await userController.findUserById(comment.author.id);
-    
-                if(!commentAuthor) continue;
-    
-                comment.author = {
-                    username: commentAuthor.username,
-                    role: commentAuthor.role,
+
+                // If user is deleted, set username and role to "Deleted User" and "deleted"
+                if(commentAuthor == null){
+                    comment.author.username = "Deleted User";
+                    comment.author.role = "deleted";
                 }
+                else{
+                    comment.author.username = commentAuthor.username;
+                    comment.author.role = commentAuthor.role;
+                }
+    
             }
         }catch(err){
             logger.error(err);

@@ -18,20 +18,20 @@ export class UserController {
         this._userRepository = new UserRepository(USERS_COLLECTION);
     }
 
+    public async adminUpdateUser(id: string, updates: any): Promise<any> {
+        return await this._userRepository.updateUser(id, updates);
+    }
+
+    public async adminDeleteUser(id: string): Promise<any> {
+        return await this._userRepository.delete(id);
+    }
+
     public async insertUser(user: User): Promise<any> {
         return await this._userRepository.insert(user);
     }
 
     public async findAllUsers(): Promise<any> {
         return await this._userRepository.findAll();
-    }
-
-    public async deleteUser(id: string): Promise<any> {
-        return await this._userRepository.delete(id);
-    }
-
-    public async updateUser(id: string, updates: any): Promise<any> {
-        return await this._userRepository.updateUser(id, updates);
     }
 
     public async findUserById(id: string): Promise<any> {
@@ -79,5 +79,61 @@ export class UserController {
         }
 
         return {status: "registrationFailed", user: null};
+    }
+
+    public async updateUser(id: string, updates: any): Promise<any> {
+        // If current password is not provided, return error
+        if(!updates.currentPassword) { return {status: "passwordRequired", user: null}; }
+
+        var currentUser = await this._userRepository.findUserById(id);
+
+        // If user is not found, return error
+        if(!currentUser){
+            return {status: "userNotFound", user: null};
+        }
+
+        // If current password is incorrect, return error
+        if(!await compareSync(updates.currentPassword, currentUser.password)){
+            return {status: "passwordIncorrect", user: null};
+        }
+
+        delete updates.currentPassword;
+
+        // If new username is taken, return error
+        if(updates.username){
+            var existing: User = await this._userRepository.findUserByUsername(updates.username);
+
+            if(existing){
+                return {status: "usernameTaken", user: null};
+            }
+        }
+
+        // If new password is provided, hash it
+        if(updates.password){
+            updates.password = await hashSync(updates.password, BCryptConfig.SALT);
+        }
+
+        var updatedUser = await this._userRepository.updateUser(id, updates);
+
+        return {status: "updateComplete", user: updatedUser}
+    }
+
+    public async deleteUser(id: string, password: string): Promise<any> {
+        var user = await this._userRepository.findUserById(id);
+
+        // If user is not found, return error
+        if(!user){ return {status: "userNotFound"}; }
+
+        // If password is incorrect, return error
+        if(! await compareSync(password, user.password)){ return {status: "passwordIncorrect"}; }
+
+        // Delete user
+        try{
+            await this._userRepository.delete(id);
+            return {status: "userDeleted"};
+        }
+        catch(err){
+            return {status: "userDeleteFailed"};
+        }
     }
 }

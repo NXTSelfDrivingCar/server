@@ -95,11 +95,12 @@ module.exports = function(app: Application) {
 
         if(result.status == "loginComplete"){
             res.redirect("/")
+            return;
         }
 
         res.render("login_page.ejs", {
             title: "Login page",
-            user: Authorization.getUserFromCookie("auth", req),
+            user: await Authorization.getUserFromCookie("auth", req),
             status: result.status
         })
     })
@@ -111,6 +112,7 @@ module.exports = function(app: Application) {
         if(result.status == "registrationComplete"){
             // TODO: Add email verification
             res.redirect("/login")
+            return;
         }
 
         res.render("register_page.ejs", {
