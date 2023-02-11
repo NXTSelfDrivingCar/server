@@ -1,0 +1,30 @@
+{
+  "id": "<id>",
+  "author": "<author>",
+  "title": "<title>",
+  "description": "<description>",
+  "status": "<Open|InProgress|Finished>",
+  "category": "<category>",
+  "priority": "<Low|Medium|High>",
+  "comments": [
+    {
+      "author": {
+        "id": "<id>",
+        "username": "<username>",
+        "role": "<role>"
+      },
+      "content": "<content>",
+      "date": "<date>"
+    },
+    {
+      "author": {
+        "id": "<id>",
+        "username": "<username>",
+        "role": "<role>"
+      },
+      "content": "<content>",
+      "date": "<date>"
+    }
+  ],
+  "date": "<date>"
+}

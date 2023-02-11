@@ -22,6 +22,7 @@ export class LogRepository {
     }
 
     async findLogValueByFilter(name: string, filter: any){
+        // Await for log file to be read
         var log = await this.findLogValueByFileName(name);
 
         return _.filter(log, filter);

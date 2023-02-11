@@ -1,0 +1,9 @@
+{
+  "_id": "<ObjectId>",
+  "id": "<String>",
+  "role": "<String>",
+  "username": "<String>",
+  "password": "<String/BCrypt>",
+  "email": "<String>",
+  "apitoken": "<String>"
+}
