@@ -7,10 +7,13 @@ const logger = new LogHandler()
 import { UserController } from "../user/userController"
 import { LogController } from "../logging/logController"
 import { TicketController } from "../tickets/ticketController"
+import { ChangelogController } from "../changelog/changelogController"
+import { Changelog } from "../changelog/changelogModel"
 
 const userController = new UserController()
 const logController = new LogController()
 const ticketController = new TicketController()
+const changelogController = new ChangelogController()
 
 /*
 *
@@ -73,10 +76,12 @@ module.exports = function(app: Application) {
         })
     })
 
-    app.get("/admin/changelog/add", logger.logRoute("addChangelog"), Authorization.authRole("admin"), (req: Request, res: Response) => {
-        res.send("Admin changelog add")
-
-        // render the add changelog page
+    app.get("/admin/changelog/add", logger.logRoute("addChangelog"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
+        res.render("admin_changelog.ejs", {
+            title: "Admin changelog",
+            user: await Authorization.getUserFromCookie("auth", req),
+            latestChangelog: (await changelogController.getLatestChangelogs(1))[0],
+        })
     })
 
     app.get("/admin/user/delete/:id", logger.logRoute("deleteUser"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
@@ -85,13 +90,24 @@ module.exports = function(app: Application) {
         res.redirect("/admin/users/list")
     })
 
+    app.get("/admin/log/delete/:name", logger.logRoute("deleteLog"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
+        console.log(req.params.name);
+        
+        await logController.deleteLogByName(req.params.name)
+
+        res.redirect("/admin/logs")
+    })
+
     // ! =================== POST ROUTES =================== //
 
-    app.post("/admin/changelog/add", logger.logRoute("addChangelog"), Authorization.authRole("admin"), (req: Request, res: Response) => {
-        res.send("Admin changelog add")
+    app.post("/admin/changelog/add", logger.logRoute("addChangelog"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
+        var isBeta = req.body.isBeta === "on" ? true : false
+        
+        var changelog = new Changelog(req.body.title, req.body.version, isBeta, req.body.description);
 
-        // Add changelog
-        // Redirect to /admin/changelog/add
+        await changelogController.createChangelog(changelog)
+
+        res.redirect("/")
     })
 
     app.post("/admin/user/update", logger.logRoute("updateUser"), Authorization.authRole("admin"), (req: Request, res: Response) => {
@@ -109,15 +125,5 @@ module.exports = function(app: Application) {
 
         res.redirect("/tickets/t/" + req.body.ticketId)
     })
-
-    // ! =================== DELETE ROUTES =================== //
-
-
-
-    app.delete("/admin/log/delete", logger.logRoute("deleteLog"), Authorization.authRole("admin"), (req: Request, res: Response) => {
-        res.send("Admin logs delete")
-
-        // Delete log by id
-        // Redirect to /admin/logs
-    })
+    
 }

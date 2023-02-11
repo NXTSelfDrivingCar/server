@@ -13,14 +13,14 @@ Routes:
                 ✔ Log files list @done(23-02-11 18:29)
                 ✔ Log file detailed view @done(23-02-11 18:29)
                 ✔ Log file filter @done(23-02-11 18:29)
-                ☐ Changelog add
+                ✔ Changelog add @done(23-02-11 23:21)
             POST:
                 ✔ User update @done(23-02-11 18:29)
-                ☐ Changelog add
-                ☐ Ticket update
+                ✔ Changelog add @done(23-02-11 23:21)
+                ✔ Ticket update @done(23-02-11 23:21)
             DELETE:
                 ☐ User delete
-                ☐ Log file delete
+                ✔ Log file delete @done(23-02-11 23:33)
         User:
             GET:
                 ✔ Logout @done(23-02-11 13:39)
@@ -28,7 +28,7 @@ Routes:
             POST:
                 ✔ Profile update @done(23-02-11 22:22)
             DELETE:
-                ☐ Profile delete
+                ✔ Profile delete @done(23-02-11 23:02)
         Guest:
             GET:
                 ✔ Main page @done(23-02-11 13:39)
@@ -52,7 +52,7 @@ Routes:
 Authorization:
     ✔ Authorization class @done(23-02-11 16:11)
     ✔ Admin authorization @done(23-02-11 16:11)
-    ☐ User authorization
+    ✔ User authorization @done(23-02-11 23:02)
     ☐ Guest authorization
     ☐ POST/GET query verification
 
@@ -70,9 +70,9 @@ MVC:
         ✔ View @done(23-01-20 21:56)
         ✔ Controller @done(23-02-06 23:28)
         Comment:
-            ☐ Model
+            ✔ Model @done(23-02-11 23:02)
             ✔ View @done(23-01-20 21:56)
-            ☐ Controller
+            ✘ Controller @cancelled(23-02-11 23:02)
     Log:
         ✔ Model @done(23-01-21 21:58)
         ✔ View @done(23-01-20 21:56)
@@ -89,7 +89,7 @@ WebSocket:
 
 Logs:
     ✔ Log @done(23-01-20 21:45)
-    ☐ Dodati route origin za logovanje ruta (Radi lakseg pretrazivanja)
+    ✘ Dodati route origin za logovanje ruta (Radi lakseg pretrazivanja) @cancelled(23-02-11 23:02)
 
 Other:
     ☐ Prikazati autora tiketa
