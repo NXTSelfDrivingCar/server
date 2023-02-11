@@ -1,4 +1,5 @@
 import { Application, Request, Response } from "express";
+import { Authorization } from "../cookie/authorization";
 import { LogHandler } from "../logging/logHandler";
 
 const logger = new LogHandler();
@@ -17,11 +18,10 @@ module.exports = function(app: Application) {
 
     // ! =================== GET ROUTES =================== //
 
-    app.get("/user/logout", logger.logRoute("logout"), (req: Request, res: Response) => {
-        res.send("Logout page")
-
-        // clear token from cookies
-        // redirect to /
+    app.get("/logout", logger.logRoute("logout"), (req: Request, res: Response) => {
+        Authorization.clearCookie("auth", res);
+        
+        res.redirect("/")
     })
 
     app.get("/user/profile",logger.logRoute("viewUserProfile"), (req: Request, res: Response) => {

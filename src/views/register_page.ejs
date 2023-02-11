@@ -12,7 +12,29 @@
 
   <%- include('../resources/components/new_navbar.ejs') %>
 
-  <form method="post" action="/user/register" enctype="application/x-www-form-urlencoded">
+  <script>
+    function checkPassword() {
+      var oPass = document.getElementById('password');
+      var oCpass = document.getElementById('password2');
+      var pMissmatchDiv = document.getElementById('passwordMissmatch');
+
+      if (oPass.value != oCpass.value) {
+        pMissmatchDiv.style.display = "block";
+        pMissmatchDiv.hidden = false;
+
+        oCpass.value = "";
+        oCpass.focus();
+        return false;
+      }
+
+      pMissmatchDiv.style.display = "none";
+      pMissmatchDiv.hidden = true;
+
+      return true;
+    }
+  </script>
+
+  <form method="post" action="/register" enctype="application/x-www-form-urlencoded">
     <div class="container mt-4">
       <div class="card shadow p-4" style="width: 600px; margin: auto;">
         <div class="row align-items-center">
@@ -23,42 +45,40 @@
 
             <div class="p-2 mt-3">
               <lead>Username:</lead>
-              <input type="text" name="username" id="username" class="form-control" placeholder="Username" />
+              <input type="text" name="username" id="username" class="form-control" placeholder="Username" required />
             </div>
 
             <div class="p-2">
               <lead>E-mail:</h4>
-                <input type="email" name="email" id="email" class="form-control" placeholder="E-mail" />
+                <input type="email" name="email" id="email" class="form-control" placeholder="E-mail" required />
             </div>
 
             <div class="p-2">
               <lead>Password:</h4>
-                <input type="password" name="password" id="password" class="form-control" placeholder="Password" />
+                <input type="password" name="password" id="password" class="form-control" placeholder="Password" required />
             </div>
 
             <div class="p-2">
               <lead>Repeat Password:</h4>
-                <input type="password" name="password2" id="password2" class="form-control" placeholder="Repat password" />
+                <input type="password" name="password2" id="password2" class="form-control" placeholder="Repat password" required />
             </div>
 
-            <input type="submit" class="btn btn-success mt-3" style="width:100%" value="Register"></input>
+            <input type="submit" onclick="return checkPassword()" class="btn btn-success mt-3" style="width:100%" value="Register"></input>
 
-            
 
-            <% if(result===false) { %>
-              <br><br>
-              <div class="alert alert-danger" role="alert">
-                ✗ User already exists!
-              </div>
+
+            <% if(status==="usernameTaken") { %>
+            <br><br>
+            <div class="alert alert-danger" role="alert">
+              ✗ User already exists!
+            </div>
             <% } %>
 
 
-            <% if(passResult===false) { %>
-              <br><br>
-              <div class="alert alert-danger" role="alert">
-                ✗ Passwords do not match!
-              </div>
-            <% } %>
+            <br><br>
+            <div id="passwordMissmatch" class="alert alert-danger" hidden="true" role="alert">
+              ✗ Passwords do not match!
+            </div>
           </div>
         </div>
       </div>

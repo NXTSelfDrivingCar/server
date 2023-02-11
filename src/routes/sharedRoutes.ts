@@ -6,6 +6,7 @@ import { User } from "../user/userModel";
 import { UserController } from "../user/userController";
 import { TicketController } from "../tickets/ticketController";
 import { LogController } from "../logging/logController";
+import { Authorization } from "../cookie/authorization";
 
 const logger = new LogHandler();
 
@@ -25,6 +26,13 @@ const logController = new LogController();
 
 module.exports = function(app: Application) {
 
+    app.get("/signToken/debug", logger.logRoute("debugLogin"), async (req: Request, res: Response) => {
+        var token = Authorization.signToken("e3f84020-b3f3-4f7c-8b4a-ceb38b98e167", res, req);
+        var user = await Authorization.getUserFromCookie("auth", req);
+        
+        res.send(user);
+    })
+
     app.get("/user/logByLevel/debug", logger.logRoute("debugLogin"), async (req: Request, res: Response) => {
         var logs = await logController.getLogValueByLevel("log_1675718561886", "INFO");
 
@@ -37,11 +45,11 @@ module.exports = function(app: Application) {
         console.log(ticketByUser);
     })
 
-    app.get("/user/login/debug", logger.logRoute("debugLogin"), async (req: Request, res: Response) => {
-        var user = await userController.login("AnTas", "1234");
+    // app.get("/user/login/debug", logger.logRoute("debugLogin"), async (req: Request, res: Response) => {
+    //     var user = await userController.login("AnTas", "1234");
 
-        console.log(user);
-    })
+    //     console.log(user);
+    // })
 
     app.get("/user/register/debug", logger.logRoute("debugRegister"), async (req: Request, res: Response) => {
         var user = await userController.register(new User("AnTas", "1234", "akitasevski112@gmail.com", "admin" ,"apikey"));

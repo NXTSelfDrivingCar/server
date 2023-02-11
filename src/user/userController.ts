@@ -3,6 +3,8 @@ import { User } from "./userModel";
 import { LogHandler } from "../logging/logHandler";
 import { BCryptConfig } from "../config/shared/bcryptConfig";
 import { compareSync, hashSync } from "bcrypt";
+import { Request, Response } from "express";
+import { Authorization } from "../cookie/authorization";
 
 // import { Authorization } from "../cookie/authorization";
 
@@ -44,7 +46,7 @@ export class UserController {
         return await this._userRepository.findUserByFilter(filter);
     }
 
-    public async login(username: string, password: string): Promise<any>{
+    public async login(username: string, password: string, req: Request, res: Response): Promise<any>{
         var user: User = await this._userRepository.findUserByUsername(username)
         
         if(!user){
@@ -53,15 +55,7 @@ export class UserController {
 
         if(await compareSync(password, user.password)){
 
-            // TODO: Remove this block of code
-            // Authorization.logInCookie(user.id);
-            
-            // var decoded = Authorization.getDecodedFromToken();
-
-            // console.log("Decoded: ");
-            // console.log(decoded);
-            // TODO: Remove this block of code
-            
+            var token = Authorization.signToken(user.id, res, req);
 
             return {status: "loginComplete", user: user};
         }

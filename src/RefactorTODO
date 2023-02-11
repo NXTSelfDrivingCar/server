@@ -23,7 +23,7 @@ Routes:
                 ☐ Log file delete
         User:
             GET:
-                ☐ Logout
+                ✔ Logout @done(23-02-11 13:39)
                 ☐ Profile
             POST:
                 ☐ Profile update
@@ -31,14 +31,14 @@ Routes:
                 ☐ Profile delete
         Guest:
             GET:
-                ☐ Main page
+                ✔ Main page @done(23-02-11 13:39)
                 ☐ Ticket list
                 ☐ Ticket detailed view
-                ☐ Login
-                ☐ Register
+                ✔ Login @done(23-02-11 13:39)
+                ✔ Register @done(23-02-11 13:39)
             POST:
-                ☐ Login
-                ☐ Register
+                ✔ Login @done(23-02-11 13:39)
+                ✔ Register @done(23-02-11 13:39)
         Shared:
             POST:
                 ☐ Ticket close

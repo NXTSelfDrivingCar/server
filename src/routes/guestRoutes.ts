@@ -1,13 +1,15 @@
 import { Application, Request, Response } from "express";
 import { LogHandler } from "../logging/logHandler";
 
-// TODO: Skloniti ove importe odavde
 import { ChangelogController } from "../changelog/changelogController";
 import { Changelog } from "../changelog/changelogModel";
+import { Authorization } from "../cookie/authorization";
+import { UserController } from "../user/userController";
+import { User } from "../user/userModel";
 
 const logger = new LogHandler();
 const changelogController = new ChangelogController();
-
+const userController = new UserController();
 /*
 *
 *==========================================================================
@@ -26,7 +28,8 @@ module.exports = function(app: Application) {
         // res.send("Main page")
         res.render("main_page_index.ejs", {
             title: "Main page",
-            changelog: await changelogController.getChangelogs()
+            changelog: await changelogController.getChangelogs(),
+            user: await Authorization.getUserFromCookie("auth", req)
         })
         // render the index page
     });
@@ -44,32 +47,57 @@ module.exports = function(app: Application) {
         // render the specific ticket page
     })
     
-    app.get("/login", logger.logRoute("login"), (req: Request, res: Response) => {
-        res.send("Login page")
-
-        // render the login page
+    app.get("/login", logger.logRoute("login"), async (req: Request, res: Response) => {
+        res.render("login_page.ejs", {
+            title: "Login page",
+            user: await Authorization.getUserFromCookie("auth", req),
+            status: ""
+        })
     })
 
-    app.get("/register", logger.logRoute("register"), (req: Request, res: Response) => {
-        res.send("Register page")
-
-        // render the register page
+    app.get("/register", logger.logRoute("register"), async (req: Request, res: Response) => {
+        res.render("register_page.ejs", {
+            title: "Register page",
+            user: await Authorization.getUserFromCookie("auth", req),
+            status: ""
+        })
     })
 
     // ! =================== POST ROUTES =================== //
 
-    app.post("/login", logger.logRoute("login") , (req: Request, res: Response) => {
-        res.send("Login page")
+    app.post("/login", logger.logRoute("login") , async (req: Request, res: Response) => {
+        var username = req.body.username;
+        var password = req.body.password;
 
-        // render the login page if login failed
-        // redirect to / if login success
+        var result = await userController.login(username,password, req, res)
+
+        if(result.status == "loginComplete"){
+            res.redirect("/")
+        }
+
+        if(result.status == "loginFailed"){
+            res.render("login_page.ejs", {
+                title: "Login page",
+                user: Authorization.getUserFromCookie("auth", req),
+                status: "loginFailed"
+            })
+        }
     })
 
-    app.post("/register", logger.logRoute("register"), (req: Request, res: Response) => {
-        res.send("Register page")
+    app.post("/register", logger.logRoute("register"), async (req: Request, res: Response) => {
+        var user = new User(req.body.username, req.body.password, req.body.email, "user", "apitoken")
+        var result = await userController.register(user)
 
-        // render the register page if register failed
-        // redirect to / if register success
+        if(result.status == "registrationComplete"){
+            // TODO: Add email verification
+            res.redirect("/login")
+        }
+
+        res.render("register_page.ejs", {
+            title: "Register page",
+            user: await Authorization.getUserFromCookie("auth", req),
+            status: result.status
+        })
     })
 
 }
