@@ -11,9 +11,8 @@
 <body>
   <%- include('../resources/components/new_navbar_admin.ejs') %>
 
-  <br>
   <style>
-    .container {
+    .form {
       width: 50%;
       margin: auto;
       border: 2px solid #16181a;
@@ -34,29 +33,42 @@
   </style>
 
   <div class="container">
+    <div class="container">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="/admin/dashboard">Admin dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="/admin/users/list">User list</a>
+        </li>
+        <li class="breadcrumb-item active">Updating user: <%=user.username%></li>
+      </ol>
+    </div>
+  </div>
+  <div class="container form">
     <div class="title">
       <h1>
         <%= title %>
       </h1>
     </div>
     <div class="form-fluid">
-      <form class="form-inline" action="admin_user_update" method="post">
+      <form class="form-inline" action="/admin/user/update" method="post">
         <div class="col mb-2">
           <label for="disabledTextInput">User ID</label>
-          <input required style="font-style: italic;" name="inputID" type="text" id="disabledTextInput" class="form-control disabled" value="<%=user.id%>" readonly>
+          <input required style="font-style: italic;" name="id" type="text" id="disabledTextInput" class="form-control disabled" value="<%=user.id%>" readonly>
         </div>
         <div class="col mb-2">
           <label for="inputUsername">Username</label>
-          <input required name="inputUsername" type="text" class="form-control" value="<%=user.username%>">
+          <input required name="username" type="text" class="form-control" value="<%=user.username%>">
         </div>
         <div class="col mb-2">
           <label for="inputEmail">Email</label>
-          <input required name="inputEmail" type="email" class="form-control" value="<%=user.email%>">
+          <input required name="email" type="email" class="form-control" value="<%=user.email%>">
         </div>
         <div class="row">
           <label for="inputRole" class="sr-only">Role</label>
           <div class="col-5 mb-2">
-            <select required name="inputRole" class="form-select">
+            <select required name="role" class="form-select">
               <option value="admin" <%if (user.role=='admin' ) {%> selected <%}%>>Admin</option>
                                 <option value="user" <%if (user.role=='user' ) {%> selected <%}%>>User</option>
                             </select>
@@ -64,13 +76,13 @@
                         <div class="col mb-2">
                             <div class="float-end">
                                 <label for="inputStatus"></label>
-                                <a href="/admin/admin_list_users" class="btn btn-danger mb-2">Go back</a>
+                                <a href="/admin/users/list" class="btn btn-danger mb-2">Go back</a>
                             </div>
                         </div>
                         <div class="col mb-2">
                             <div class="float-end">
                                 <label for="inputStatus"></label>
-                                <button type="submit" class="btn btn-success mb-2">Submit changes</button>
+                                <button type="submit" onclick="return confirm('Update user?')" class="btn btn-success mb-2">Submit changes</button>
                             </div>
                         </div>
                     </div>

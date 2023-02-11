@@ -91,3 +91,4 @@ Logs:
 
 Other:
     ☐ Srediti util.js
+    ☐ Nrapraviti funkciju koja cisti request.query, kako i mogao da ostavim filter na strani

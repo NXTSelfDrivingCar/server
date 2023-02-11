@@ -34,7 +34,15 @@ module.exports = function(app: Application) {
     })
 
     app.get("/user/logByLevel/debug", logger.logRoute("debugLogin"), async (req: Request, res: Response) => {
-        var logs = await logController.getLogValueByLevel("log_1675718561886", "INFO");
+        var logs = await logController.getLogByName("log_1676122663840");
+        
+        console.log(logs);
+
+        logs = await logController.getLogValueByLevel("log_1676122663840", "INFO");
+
+        console.log(logs);
+
+        logs = await logController.getLogValueByFilter("log_1676122663840", {method: "GET"});
 
         console.log(logs);
     })

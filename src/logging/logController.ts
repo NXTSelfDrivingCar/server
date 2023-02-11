@@ -1,6 +1,8 @@
 import { LogRepository } from "./logRepository";
 import { LogHandler } from "./logHandler";
 
+const logHandler = new LogHandler();
+
 export class LogController {
     private _repository: LogRepository;
 
@@ -62,5 +64,9 @@ export class LogController {
      */
     getLogValueByFilter(name: string, filter: any){
         return this._repository.findLogValueByFilter(name, filter);
+    }
+
+    getCurrentLogName(){
+        return logHandler.getFileName();
     }
 }

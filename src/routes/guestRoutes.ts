@@ -5,11 +5,14 @@ import { ChangelogController } from "../changelog/changelogController";
 import { Changelog } from "../changelog/changelogModel";
 import { Authorization } from "../cookie/authorization";
 import { UserController } from "../user/userController";
+import { TicketController } from "../tickets/ticketController";
 import { User } from "../user/userModel";
 
 const logger = new LogHandler();
 const changelogController = new ChangelogController();
 const userController = new UserController();
+const ticketController = new TicketController();
+
 /*
 *
 *==========================================================================
@@ -34,10 +37,16 @@ module.exports = function(app: Application) {
         // render the index page
     });
 
-    app.get("/tickets", logger.logRoute("viewTickets"), (req: Request, res: Response) => {
-        res.send("Tickets page")
+    app.get("/tickets", logger.logRoute("viewTickets"), async (req: Request, res: Response) => {
+        for(var key in req.query) {
+            if(req.query[key] === "") delete req.query[key]
+        }
 
-        // render the tickets page
+        res.render("tickets.ejs", {
+            title: "Tickets page",
+            user: Authorization.getUserFromCookie("auth", req),
+            tickets: await ticketController.getTicketsByFilter(req.query),
+        })
     })
 
     // Ovo se poziva localhost:5000/tickets/t/1 ; localhost:5000/tickets/t/2

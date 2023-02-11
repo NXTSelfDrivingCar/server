@@ -21,8 +21,8 @@ export class LogRepository {
         return this.findLogValueByFilter(name, {action: action});
     }
 
-    findLogValueByFilter(name: string, filter: any){
-        var log = this.findLogValueByFileName(name);
+    async findLogValueByFilter(name: string, filter: any){
+        var log = await this.findLogValueByFileName(name);
 
         return _.filter(log, filter);
     }
@@ -37,9 +37,10 @@ export class LogRepository {
         }
     }
 
-    findLogValueByFileName(name: string){
+    async findLogValueByFileName(name: string){
         try{
-            return fs.readFileSync(path.join(this.filePath.toString(), this._parseName(name)));
+            var data = fs.readFileSync(path.join(this.filePath.toString(), this._parseName(name)));
+            return JSON.parse(data.toString());
         }catch(err){
             console.log(err);
 

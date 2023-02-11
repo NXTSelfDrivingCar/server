@@ -53,7 +53,15 @@ export class Authorization {
     return this._signToken(userId, res, req);
   }
 
-  public static async authRole(role: string, req: Request, res: Response, next: any): Promise<void> {
+  public static authRole(role: string) {
+    return (req: Request, res: Response, next: any) => {
+      this._authRole(role, req, res, next);
+    }
+  }
+  
+  // ! =================== PRIVATE FUNCTIONS ===================
+
+  private static async _authRole(role: string, req: Request, res: Response, next: any): Promise<void> {
     var user = await Authorization.getUserFromCookie("auth", req);
 
     if(user == null) {
@@ -68,8 +76,6 @@ export class Authorization {
 
     next();
   }
-  
-  // ! =================== PRIVATE FUNCTIONS ===================
 
   private static async _getUserFromToken(token: string): Promise<any> {
     var decoded = this._verifyToken(token);
@@ -77,12 +83,8 @@ export class Authorization {
       return new User("guest", "guest", "guest", "guest", "guest", "guest");
     }
 
-    console.log(decoded);
-
     try{
       var user = await userController.findUserById(decoded.userId);
-
-      console.log(user);
 
       if(user == null) {
         return new User("guest", "guest", "guest", "guest", "guest", "guest");
@@ -99,7 +101,12 @@ export class Authorization {
 
 
   private static _verifyToken(token: string): any {
-    return jwt.verify(token, secret);
+    try{
+      return jwt.verify(token, secret);
+    }
+    catch (err) {
+      return null;
+    }
   }
 
   private static _signToken(userId: string, res: Response, req: Request): any {

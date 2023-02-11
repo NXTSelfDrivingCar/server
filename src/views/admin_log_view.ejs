@@ -54,6 +54,50 @@
     return JSON.stringify(jsonData, undefined, 2);
   }
   %>
+
+  <div class="container">
+    <div class="container">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="/admin/dashboard">Admin dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="/admin/logs">Debla</a>
+        </li>
+        <li class="breadcrumb-item active">
+          <%=thisLogName%>
+        </li>
+      </ol>
+    </div>
+    <div class="card mt-3 p-3 shadow">
+      <form method="get" action="/admin/logs/l/<%=thisLogName%>" enctype="application/x-www-form-urlencoded">
+        <div class="row">
+          <div class="col-3">
+            <label for="inputTitle">Level</label>
+            <select name="level" class="form-control form-select">
+              <option value="">All</option>
+              <option value="INFO">Info</option>
+              <option value="WARN">Warning</option>
+              <option value="ERROR">Error</option>
+            </select>
+          </div>
+          <div class="col-4">
+            <label for="inputTitle">Origin</label>
+            <input type="text" class="form-control" name="origin" placeholder="Origin">
+          </div>
+          <div class="col-4">
+            <label for="inputTitle">Action</label>
+            <input type="text" class="form-control" name="action" placeholder="Action">
+          </div>
+          <div class="col-1">
+            <div class="d-flex justify-content-end mb-3">
+              <button type="submit" class="btn btn-primary mt-4">Filter</i></button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
   <br>
 
   <div class="container">
@@ -68,7 +112,7 @@
         <div class="container">
           <div class="row text-center">
             <div class="col">
-              Tag
+              Level
             </div>
             <div class="col">
               Origin
@@ -90,8 +134,8 @@
         <div class="container">
           <div class="row">
             <div class="col d-flex justify-content-center mt-1">
-              <div class="p-1 text-center <%= (item.tag==='INFO') ? 'info' : 'error' %>">
-                <%= item.tag %>
+              <div class="p-1 text-center <%= (item.level==='INFO') ? 'info' : 'error' %>">
+                <%= item.level %>
               </div>
             </div>
             <div class="col d-flex justify-content-center mt-1">
@@ -120,7 +164,7 @@
 
 
   <br>
-  <%if(currentLog !== log[0].logName){%>
+  <%if(activeLogName != thisLogName){%>
   <div class="text-center">
     <a href="/admin/logs/delete/log?id=<%= log[0].logName%>" class="btn btn-danger">Delete log</a>
   </div>
