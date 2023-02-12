@@ -13,6 +13,11 @@ import { HttpServerConfig } from "./config/server/httpServerConfig";
 import { LogHandler } from "./logging/logHandler";
 const logger = new LogHandler();
 
+// Import WebSocket server
+import { WebSocketServer } from "./webSocket/WebSocketServer";
+import { WSSConfig } from "./config/server/wsServerConfig";
+import { createServer } from "http";
+
 // Express server setup
 const PORT = process.env.HTTP_SERVER_PORT;
 
@@ -37,3 +42,11 @@ app.listen(HttpServerConfig.PORT, () => {
       });
     console.log(`HTTP Server listening on port ${HttpServerConfig.PORT}`);
 });
+
+// Start WebSocket server
+const httpServer = createServer(app);
+const wss = new WebSocketServer(httpServer);
+wss.init(WSSConfig.PORT);
+
+const connectionHandler = require("./webSocket/WebSocketConnectionHandler")(wss.getIO());
+const adminHandler = require("./webSocket/WebSocketAdminHandler")(wss.getIO());

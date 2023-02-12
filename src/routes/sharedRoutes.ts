@@ -9,6 +9,7 @@ import { TicketController } from "../tickets/ticketController";
 import { LogController } from "../logging/logController";
 import { Authorization } from "../cookie/authorization";
 import { Ticket } from "../tickets/ticketModel";
+import path from "path";
 
 const logger = new LogHandler();
 
@@ -27,6 +28,11 @@ const logController = new LogController();
  */
 
 module.exports = function(app: Application) {
+
+    app.get("/user/debug", function (req, res) {
+        // open html file
+        res.sendFile(path.join(__dirname, "../views/client_page.html"));
+      });
 
     app.get("/signToken/debug", logger.logRoute("debugLogin"), async (req: Request, res: Response) => {
         var token = Authorization.signToken("e3f84020-b3f3-4f7c-8b4a-ceb38b98e167", res, req);

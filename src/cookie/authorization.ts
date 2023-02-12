@@ -108,6 +108,28 @@ export class Authorization {
       this._authRole(roles, req, res, next);
     }
   }
+
+  public static getTokenFromWS(socket: any, cookieName: string): string {
+    var cookies = socket.request.headers.cookie.split("; ");
+    console.log(cookies);
+    
+    for (var cookie in cookies){
+      if(cookies[cookie].startsWith(cookieName)){
+        return cookies[cookie].split("=")[1];
+      }
+    }
+    return "";
+  }
+
+  public static getTokenFromCookieString(cookieString: string, cookieName: string): string{
+    var cookies = cookieString.split("; ");
+    for (var cookie in cookies){
+      if(cookies[cookie].startsWith(cookieName)){
+        return cookies[cookie].split("=")[1];
+      }
+    }
+    return "";
+  }
   
   // ! =================== PRIVATE FUNCTIONS ===================
 
