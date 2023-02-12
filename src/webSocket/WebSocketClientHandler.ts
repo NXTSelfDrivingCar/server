@@ -26,6 +26,16 @@ export class WSClientHandler{
         return WSClientHandler.instance;
     }
 
+    public resolved(socketId: any){
+        if(this.getTmpCliet(socketId)){
+            return false;
+        }
+        if(this.getConnectedClient(socketId)){
+            return true;
+        }
+        return true
+    }
+
     public getIO(): any{
         return WSClientHandler.io;
     }
@@ -36,6 +46,10 @@ export class WSClientHandler{
     
     public getConnectedClient(id: string): any{
         return WSClientHandler.connectedClients[id];
+    }
+
+    public getSocketRooms(id: string): any{
+        return this.getConnectedClient(id).rooms;
     }
 
     public addClient(id: string, client: any){
@@ -66,6 +80,10 @@ export class WSClientHandler{
 
     // ! =================== PRIVATE FUNCTIONS ===================
 
+    private getTmpCliet(id: string): any{
+        return WSClientHandler.tmpClients[id];
+    }
+
     private addTmpClient(id: string, client: any){
         WSClientHandler.tmpClients[id] = client;
     }
@@ -80,7 +98,7 @@ export class WSClientHandler{
 
             console.log("WebSocketClientHandler. Client connected: " + socket.id);
 
-            WSClientHandler.tmpClients[socket.id] = socket;
+            this.addTmpClient(socket.id, socket);
 
             var intervalID = setInterval(() => {
                 this._handleRoomConnection(socket, intervalID, intervalCounter);
@@ -89,6 +107,8 @@ export class WSClientHandler{
 
             socket.on("disconnect", () => {
                 console.log("WebSocketClientHandler. Client disconnected: " + socket.id);
+                this.removeClient(socket.id);
+                this.removeTmpClient(socket.id);
             });
         });
     }
@@ -100,8 +120,10 @@ export class WSClientHandler{
             
             this.addClient(socket.id, socket);
             this.removeTmpClient(socket.id);
-            
+
             clearInterval(intervalID);
+
+            WSClientHandler.io.to("admin").emit("roomJoined", {socketId: socket.id, rooms: socket.rooms});
             return;
         }
 

@@ -148,7 +148,7 @@
                 <div style="white-space: pre-line"><%= comment.content %></div>
               </div>
               <% } %>
-              <% if (ticket.status != 'Finished') { %>
+              <% if (ticket.status != 'Finished' && user.role != 'guest') { %>
               <div class="d-flex justify-content-end mt-3">
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#commentModal">Reply</button>
               </div>

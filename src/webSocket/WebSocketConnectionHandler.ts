@@ -1,3 +1,4 @@
+import { Authorization } from "../cookie/authorization";
 import { LogHandler } from "../logging/logHandler";
 import { WebSocket } from "./WebSocket";
 import { WSClientHandler } from "./WebSocketClientHandler";
@@ -11,11 +12,18 @@ const rooms = new Map<string, string>()
     .set("stream", "stream");
 
 
-function joinRoom(socket: any, data: any){
+async function joinRoom(socket: any, data: any){
     // Set(2) { 'fXILzhQj0lYh09gvAAAB', 'user' }
 
     if(!data.room || !rooms.has(data.room)){
         socket.join(rooms.get("default"));
+    }
+
+    if(data.room === "admin"){
+        if(! await Authorization.authorizeSocket(socket, "auth", true, "admin")){
+            socket.disconnect();
+            return;    
+        }
     }
 
     socket.join(rooms.get(data.room));
@@ -48,12 +56,6 @@ module.exports = function(io: WebSocket){
             console.log(socket.rooms);
 
         }, 5000);
-
-        setInterval(() => {
-            var client = clientHandler.getConnectedClient(socket.id);
-            clientHandler.getClientIdFromSocket(socket.id);
-        }, 1000);
-
     });
 
     io.on("message", (message: any) => {

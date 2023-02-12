@@ -35,7 +35,7 @@ function admConnect() {
       },
     });
 
-    socket.send({ room: "admin" });
+    socket.emit("joinRoom",{ room: "admin" });
   } catch (error) {
     console.log(error);
   }

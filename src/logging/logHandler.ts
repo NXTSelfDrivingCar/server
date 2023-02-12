@@ -263,7 +263,7 @@ class LogHandler{
     // ! =================== PRIVATE METHODS =================== //
     
     private _parseData(level: string, data: any): any{
-        if(!data["level"]) data["level"] = levels.INFO;
+        if(!data["level"]) data["level"] = level;
         if(!data["timestamp"]) data["timestamp"] = new Date().getTime();
 
         data["level"] = data["level"].toUpperCase();

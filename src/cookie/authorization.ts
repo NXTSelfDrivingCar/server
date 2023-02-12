@@ -9,6 +9,7 @@ import { User } from "../user/userModel";
 import { Request, Response } from "express";
 
 const userController = new UserController();
+const logger = new LogHandler();
 
 var secret: string;
 if (!(secret = process.env.JWT_SECRET!!)) { secret = "DobraSifra"; }
@@ -109,8 +110,44 @@ export class Authorization {
     }
   }
 
+
+  public static async authorizeSocket(socket: any, cookieName: string, disconnect: boolean = true, ...roles: string[]): Promise<boolean> {
+    var token = this.getTokenFromWS(socket, cookieName);
+    var user = await this._getUserFromToken(token);
+    console.log(user);
+    
+    if(!user || user.role == "guest") {
+      
+      logger.warn({origin: "WebSocket", action: "authorization", message: "User is not logged in", socket: {id: socket.id, requestUrl: socket.request.url}})
+
+      if(disconnect) { socket.disconnect(); }
+      return false;
+    }
+
+    for (var role in roles){
+      if(user.role == roles[role]) {
+        return true;
+      }
+    }
+
+    logger.warn({origin: "WebSocket", 
+      action: "authorization", 
+      message: "Unauthorized", 
+      roles: roles, 
+      socket: socket.id,
+      user: {id: user.id, username: user.username, role: user.role}})
+
+    return false;
+  }
+
+
   public static getTokenFromWS(socket: any, cookieName: string): string {
-    var cookies = socket.request.headers.cookie.split("; ");
+    try{
+      var cookies = socket.request.headers.cookie.split("; ");
+    }catch(err){
+      return "";
+    }
+
     console.log(cookies);
     
     for (var cookie in cookies){
@@ -120,6 +157,7 @@ export class Authorization {
     }
     return "";
   }
+
 
   public static getTokenFromCookieString(cookieString: string, cookieName: string): string{
     var cookies = cookieString.split("; ");
@@ -139,7 +177,8 @@ export class Authorization {
     var user = await Authorization.getUserFromCookie("auth", req);
 
     // If user is null, redirect to login
-    if(user == null) {
+    if(!user || user.role == "guest") {
+      logger.warn({origin: "HttpServer", action: "authorization", message: "User is not logged in", request: {url: req.url, method: req.method}})
       res.redirect("/login");
       return;
     }
@@ -153,10 +192,18 @@ export class Authorization {
       }
     }
 
+    logger.warn({origin: "HttpServer", 
+      action: "authorization",
+      message: "Unauthorized",
+      roles: roles,
+      user: {id: user.id, username: user.username, role: user.role},
+      request: {url: req.url, method: req.method, ip: req.ip}})
+
     // If user does not have one of the given roles, redirect to login
     res.redirect("/login");
     return;
   }
+
 
   private static async _getUserFromToken(token: string): Promise<any> {
     // Decode token and verify it
@@ -164,6 +211,7 @@ export class Authorization {
 
     // If token is invalid, return guest user
     if (decoded == null) {
+      logger.warn({origin: "Authorization", action: "getUserFromToken", message: "Invalid token", token: token});
       return new User("guest", "guest", "guest", "guest", "guest", "guest");
     }
 
@@ -174,16 +222,17 @@ export class Authorization {
 
       // If user does not exist, return guest user
       if(user == null) {
+        logger.warn({origin: "Authorization", action: "getUserFromToken", message: "User does not exist", token: token});
         return new User("guest", "guest", "guest", "guest", "guest", "guest");
       }
 
       return user;
     }
     catch (err) {
-      // TODO: Log error
-      console.log(err);
+      logger.error({origin: "Authorization", action: "getUserFromToken", message: "Error while getting user from token", token: token})
     }
 
+    logger.warn({origin: "Authorization", action: "getUserFromToken", message: "User does not exist", token: token});
     return new User("guest", "guest", "guest", "guest", "guest", "guest");
   }
 
@@ -197,6 +246,7 @@ export class Authorization {
     }
   }
 
+
   private static _signToken(userId: string, res: Response, req: Request): any {
     // Sign token with given user ID that expires in 1 hour
     const token = jwt.sign({ userId: userId }, secret, {expiresIn: '1h'});
@@ -205,6 +255,7 @@ export class Authorization {
     res.cookie('auth', token, { httpOnly: true, secure: true});
     return token;
   }
+
 
   private static _decodeToken(token: string): any {
     return jwt.decode(token);

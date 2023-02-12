@@ -15,6 +15,12 @@
     color: #ffffff;
   }
 
+  .warning {
+    border-radius: 5px;
+    background-color: #f0ad4e;
+    color: #ffffff;
+  }
+
   .error {
     border-radius: 5px;
     background-color: #cc5441;
@@ -93,7 +99,7 @@
             <select name="level" class="form-control form-select">
               <option value="">All</option>
               <option value="INFO">Info</option>
-              <option value="WARN">Warning</option>
+              <option value="WARNING">Warning</option>
               <option value="ERROR">Error</option>
             </select>
           </div>
@@ -151,7 +157,7 @@
         <div class="container">
           <div class="row">
             <div class="col d-flex justify-content-center mt-1">
-              <div class="p-1 text-center <%= (item.level==='INFO') ? 'info' : 'error' %>">
+              <div class="p-1 text-center <%= (item.level==='INFO') ? 'info' : (item.level==='WARNING') ? 'warning' : 'error' %>">
                 <%= item.level %>
               </div>
             </div>
