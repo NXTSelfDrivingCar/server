@@ -1,4 +1,3 @@
-import { AutoEncryptionLoggerLevel } from "mongodb";
 import { Authorization } from "../cookie/authorization";
 
 export class WSClientHandler{
@@ -18,6 +17,8 @@ export class WSClientHandler{
         this.options = options || this.options;
     }
 
+    // * =================== PUBLIC FUNCTIONS ===================
+
     public static getInstance(io: any): WSClientHandler{
         if(!WSClientHandler.instance){
             WSClientHandler.instance = new WSClientHandler(io);
@@ -27,6 +28,22 @@ export class WSClientHandler{
 
     public getIO(): any{
         return WSClientHandler.io;
+    }
+
+    public getConnectedClients(): any{
+        return WSClientHandler.connectedClients;
+    }   
+    
+    public getConnectedClient(id: string): any{
+        return WSClientHandler.connectedClients[id];
+    }
+
+    public addClient(id: string, client: any){
+        WSClientHandler.connectedClients[id] = client;
+    }
+
+    public removeClient(id: string){
+        delete WSClientHandler.connectedClients[id];
     }
 
     public async getClientIdFromSocket(socketId: any): Promise<any>{
@@ -47,20 +64,14 @@ export class WSClientHandler{
         return user.id;
     }
 
-    public getConnectedClients(): any{
-        return WSClientHandler.connectedClients;
-    }   
-    
-    public getConnectedClient(id: string): any{
-        return WSClientHandler.connectedClients[id];
+    // ! =================== PRIVATE FUNCTIONS ===================
+
+    private addTmpClient(id: string, client: any){
+        WSClientHandler.tmpClients[id] = client;
     }
 
-    public addClient(id: string, client: any){
-        WSClientHandler.connectedClients[id] = client;
-    }
-
-    public removeClient(id: string){
-        delete WSClientHandler.connectedClients[id];
+    private removeTmpClient(id: string){
+        delete WSClientHandler.tmpClients[id];
     }
 
     private init(){
@@ -87,8 +98,9 @@ export class WSClientHandler{
             console.log("Client joined a room: " + socket.id + " -> ");
             console.log(socket.rooms);
             
-            WSClientHandler.connectedClients[socket.id] = socket;
-            delete WSClientHandler.tmpClients[socket.id];
+            this.addClient(socket.id, socket);
+            this.removeTmpClient(socket.id);
+            
             clearInterval(intervalID);
             return;
         }
