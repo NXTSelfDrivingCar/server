@@ -85,7 +85,7 @@ module.exports = function(app: Application) {
     })
 
     app.get("/admin/user/delete/:id", logger.logRoute("deleteUser"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
-        await userController.adminDeleteUser(req.params.id)
+        await userController.deleteUser(req.params.id)
 
         res.redirect("/admin/users/list")
     })
@@ -111,7 +111,7 @@ module.exports = function(app: Application) {
     })
 
     app.post("/admin/user/update", logger.logRoute("updateUser"), Authorization.authRole("admin"), (req: Request, res: Response) => {
-        var result = userController.adminUpdateUser(req.body.id, req.body)
+        var result = userController.updateUser(req.body.id, req.body)
         
         res.redirect("/admin/users/list")
     })

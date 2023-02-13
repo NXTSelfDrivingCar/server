@@ -1,9 +1,51 @@
-{
-  "_id": "<ObjectId>",
-  "id": "<String>",
-  "role": "<String>",
-  "username": "<String>",
-  "password": "<String/BCrypt>",
-  "email": "<String>",
-  "apitoken": "<String>"
-}
+[
+  "user",
+  {
+    "_id": "<ObjectId>",
+    "id": "<String>",
+    "role": "<String>",
+    "username": "<String>",
+    "password": "<String/BCrypt>",
+    "email": "<String>",
+    "apitoken": "<String>"
+  },
+
+  "delete",
+  {
+    "takes": {
+      "id": "<String>",
+      "password": "<String>"
+    },
+    "returns": {
+      "status": [
+        "userNotFound",
+        "passwordIncorrect",
+        "userDeleted",
+        "userDeleteFailed"
+      ]
+    }
+  },
+
+  "update",
+  {
+    "takes": {
+      "id": "<String>",
+      "updates": {
+        "username": "<String>",
+        "password": "<String>",
+        "email": "<String>",
+        "apitoken": "<String>",
+        "currentPassword": "<String>"
+      }
+    },
+    "returns": {
+      "status": [
+        "passwordRequired",
+        "userNotFound",
+        "passwordIncorrect",
+        "updateComplete",
+        "usernameTaken"
+      ]
+    }
+  }
+]

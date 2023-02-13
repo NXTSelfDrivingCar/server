@@ -2,6 +2,7 @@ import { Application, Request, Response } from "express";
 import { Authorization } from "../cookie/authorization";
 import { LogHandler } from "../logging/logHandler";
 import { UserController } from "../user/userController";
+import { User } from "../user/userModel";
 
 const logger = new LogHandler();
 const userController = new UserController();
@@ -14,7 +15,7 @@ const userController = new UserController();
 *==========================================================================
 *==========================================================================
 *
- */
+*/
 
 module.exports = function(app: Application) {
 
@@ -39,7 +40,7 @@ module.exports = function(app: Application) {
     app.post("/user/update", logger.logRoute("updateUser"), Authorization.authRole('admin', 'user'), async (req: Request, res: Response) => {
         var userId = req.body.userId;
         delete req.body.userId;
-        var status = await userController.updateUser(userId, req.body);
+        var status = await userController.updateUserAuth(userId, req.body, req.body.currentPassword);
         console.log(status);
         
         res.render("user_edit.ejs", {
@@ -50,7 +51,7 @@ module.exports = function(app: Application) {
     })
     
     app.post("/user/delete", logger.logRoute("deleteUser"), Authorization.authRole('admin', 'user'), async (req: Request, res: Response) => {
-        var status = await userController.deleteUser(req.body.userId, req.body.currentPassword);
+        var status = await userController.deleteUserAuth(req.body.userId, req.body.currentPassword);
         
         if (status != "userDeleted"){
             res.render("user_edit.ejs", {
@@ -76,8 +77,11 @@ module.exports = function(app: Application) {
 
     // ! =================== POST ROUTES =================== //
 
-    app.post("/user/login/mobile", logger.logRoute("mobileLogin"), (req: Request, res: Response) => {
-        res.send("Login page")
+    app.post("/user/login/mobile", logger.logRoute("mobileLogin"), async (req: Request, res: Response) => {
+        var result = await userController.login(req.body.username, req.body.password, req, res)
+        console.log(result);
+        
+        res.send({status: result.status})
 
         // Login user
         // return status OK if login success and token
@@ -86,8 +90,9 @@ module.exports = function(app: Application) {
         // return status INTERNAL_SERVER_ERROR if something went wrong
     })
 
-    app.post("/user/register/mobile", logger.logRoute("mobileRegister"), (req: Request, res: Response) => {
-        res.send("Register page")
+    app.post("/user/register/mobile", logger.logRoute("mobileRegister"), async (req: Request, res: Response) => {
+        var result = await userController.register(new User(req.body.username, req.body.password, req.body.email, "user", "apimobile"))
+        res.send({status: result.status});
 
         // Register user
         // return status OK if register success
@@ -95,8 +100,14 @@ module.exports = function(app: Application) {
         // return status INTERNAL_SERVER_ERROR if something went wrong
     })
 
-    app.post("/user/update/mobile", logger.logRoute("mobileUpdateUser"), (req: Request, res: Response) => {
-        res.send("Update user")
+    app.post("/user/update/mobile", logger.logRoute("mobileUpdateUser"), async (req: Request, res: Response) => {
+        var user = await Authorization.getUserIDFromToken(req.body.token);
+
+        if(!user.userId){ res.send({status: "Invalid token"}); return; }
+
+        var status = await userController.updateUserAuth(user.userId, req.body, req.body.currentPassword);
+        
+        res.send({status: status})
 
         // Update user
         // return status OK if update success
