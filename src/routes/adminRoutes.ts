@@ -9,6 +9,7 @@ import { LogController } from "../logging/logController"
 import { TicketController } from "../tickets/ticketController"
 import { ChangelogController } from "../changelog/changelogController"
 import { Changelog } from "../changelog/changelogModel"
+import { User } from "../user/userModel"
 
 const userController = new UserController()
 const logController = new LogController()
@@ -44,6 +45,7 @@ module.exports = function(app: Application) {
             title: "Admin users list",
             users: await userController.findUsersByFilter(req.query),
             adminUser: await Authorization.getUserFromCookie("auth", req),
+            status: ""
         })
     })
 
@@ -130,6 +132,23 @@ module.exports = function(app: Application) {
         await ticketController.updateTicket(req.body.ticketId, req.body)
 
         res.redirect("/tickets/t/" + req.body.ticketId)
+    })
+
+    app.post("/admin/user/create", logger.logRoute("createUser"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
+        var result = await userController.register(new User(req.body.username, req.body.password, req.body.email, req.body.role, "api"))
+
+        if(!result) { res.redirect("/admin/users/list") } 
+
+        if(result.status == 'registrationComplete') {
+            res.redirect("/admin/users/list")
+        }
+
+        res.render("admin_list_users.ejs", {
+            title: "Admin users list",
+            users: await userController.findUsersByFilter(req.query),
+            adminUser: await Authorization.getUserFromCookie("auth", req),
+            status: result.status
+        })
     })
     
 }

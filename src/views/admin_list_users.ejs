@@ -30,6 +30,11 @@
       font-size: 16px;
       display: inline;
     }
+
+    .act {
+      border-radius: 10px;
+      height: 95%;
+    }
   </style>
 
   <div class="container">
@@ -82,7 +87,7 @@
         <div class="d-flex justify-content-between">
           <p class="display-6 my-auto">Users:</p>
           <div class="p-2">
-            <a class="btn btn-outline-primary" href="/admin/user/create">Create</a>
+            <a class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newUserModal">Create</a>
           </div>
         </div>
       </div>
@@ -123,15 +128,15 @@
               <div class="col-2 d-flex justify-content-center mt-1">
                 <%= user.email %>
               </div>
-              <div class="col-2 text-center">
+              <div class="col-2 text-center mt-1">
                 <div class="p-1 text-center <%= (user.role==='admin') ? 'ac' : 'uc' %>">
                   <%= user.role %>
                 </div>
               </div>
-              <div class="col text-center">
+              <div class="col text-center ">
                 <% if (adminUser.id!=user.id) { %>
-                <a class="btn btn-primary" href="/admin/user/update/<%=user.id%>"><i class="bi bi-pencil-square"></i></a>
-                <a class="btn btn-danger" href="/admin/user/delete/<%=user.id%>" onclick="return confirm('Are you sure you want to delete user <%=user.username%>?')" )><i class=" bi bi-trash"></i></a>
+                <a class="btn btn-primary act" href="/admin/user/update/<%=user.id%>"><i class="bi bi-pencil-square"></i></a>
+                <a class="btn btn-danger act" href="/admin/user/delete/<%=user.id%>" onclick="return confirm('Are you sure you want to delete user <%=user.username%>?')" )><i class=" bi bi-trash"></i></a>
                 <% } %>
               </div>
             </div>
@@ -146,6 +151,87 @@
     </div>
     <% } %>
   </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="newUserModal" tabindex="-1" aria-labelledby="newUserModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add new user</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="post" action="/admin/user/create" enctype="application/x-www-form-urlencoded">
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-5 mt-2">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" name="username" placeholder="Username" required>
+              </div>
+              <div class="col-3 mt-2">
+                <label for="role">Role</label>
+                <select name="role" class="form-control form-select">
+                  <option value="admin">Admin</option>
+                  <option value="user">User</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-5 mt-2">
+                <label for="email">E-Mail</label>
+                <input type="email" class="form-control" name="email" placeholder="E-Mail" required>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-5 mt-2">
+                <label for="password">Password</label>
+                <input onkeyup="checkPassword()" id="password" type="password" class="form-control" name="password" placeholder="Password" required>
+              </div>
+              <div class="col-5 mt-2">
+                <label for="confirmPassword">Confirm password</label>
+                <input onkeyup="checkPassword()" id="confirmPassword" type="password" class="form-control" name="confirmPassword" placeholder="Confirm password" required>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" onclick="return validatePasswords()" class="btn btn-primary">Create user</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var status = "<%= status %>";
+
+    if (status === "usernameTaken") {
+      alert("User creation failed! Username is already taken!");
+    }
+
+    function checkPassword() {
+      var password = document.getElementById("password").value;
+      var confirmPassword = document.getElementById("confirmPassword").value;
+
+      if (password != confirmPassword) {
+        document.getElementsByName("confirmPassword")[0].style.borderColor = "red";
+        document.getElementsByName("confirmPassword")[0].style.borderWidth = "2px";
+      } else {
+        document.getElementsByName("confirmPassword")[0].style.borderColor = "green";
+        document.getElementsByName("confirmPassword")[0].style.borderWidth = "2px";
+      }
+    }
+
+    function validatePasswords() {
+      var password = document.getElementById("password").value;
+      var confirmPassword = document.getElementById("confirmPassword").value;
+
+      if (password != confirmPassword) {
+        alert("Passwords do not match!");
+        return false;
+      }
+      return true;
+    }
+  </script>
 
 
 
