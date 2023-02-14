@@ -41,6 +41,9 @@
         <li class="breadcrumb-item active">
           User list
         </li>
+        <li class="breadcrumb-item">
+          <a href="/admin/users/live" class="text-decoration-none"> <i class="bi bi-arrow-right"></i> Go live</a>
+        </li>
       </ol>
     </div>
     <div class="card mt-3 p-3 shadow">
@@ -76,7 +79,12 @@
   <div class="container">
     <div class="card shadow">
       <div class="card-header bg-dark text-white">
-        <p class="display-6 my-auto">Users:</p>
+        <div class="d-flex justify-content-between">
+          <p class="display-6 my-auto">Users:</p>
+          <div class="p-2">
+            <a class="btn btn-outline-primary" href="/admin/user/create">Create</a>
+          </div>
+        </div>
       </div>
       <ul class="list-group">
         <div class="list-group-item" style="border-radius: 0;">

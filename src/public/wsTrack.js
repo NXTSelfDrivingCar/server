@@ -51,9 +51,9 @@ function connect() {
       requestClientList();
     }, 1000);
 
-    setInterval(() => {
-      requestClientList();
-    }, 10000);
+    // setInterval(() => {
+    //   requestClientList();
+    // }, 10000);
   } catch (error) {
     console.log(error);
   }
