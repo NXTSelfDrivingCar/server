@@ -43,17 +43,14 @@ module.exports = function(io: WebSocket){
             joinRoom(socket, data);
         });
 
-        console.log("New client connected: " + socket.id);
-        console.log(socket.rooms);
+        // console.log("New client connected: " + socket.id);
+        // console.log(socket.rooms);
         
         // If the client hasnt sent a joinRoom event within 5 seconds, join the default room
         setTimeout(() => {
             if(socket.rooms.size < 2){
                 joinRoom(socket, {room: "default"});
             }
-
-            console.log("After 5 seconds");
-            console.log(socket.rooms);
 
         }, 5000);
     });

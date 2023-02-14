@@ -37,6 +37,7 @@ class LogHandler{
     static status = statuses.CLOSED;
 
     static filePath: PathLike;
+    static currentFileName: string = fileName;
 
     constructor(){
         LogHandler.filePath = path.join(__dirname, "..", "logs");
@@ -52,7 +53,7 @@ class LogHandler{
         }
 
         this._prepareDir();
-
+        
         LogHandler.currentFile = path.join(LogHandler.filePath.toString(), fileName);
         LogHandler.status = statuses.OPEN;
 
@@ -253,8 +254,12 @@ class LogHandler{
     }
 
     getFileName(): string{
-        return LogHandler.currentFile.toString().split("\\")[LogHandler.currentFile.toString().split("\\").length - 1];
+        return LogHandler.currentFileName;
     }
+
+    // getFileName(): string{
+    //     return LogHandler.currentFile.toString().split("\\")[LogHandler.currentFile.toString().split("\\").length - 1];
+    // }
 
     getFilePath(): string{
         return LogHandler.filePath.toString();
@@ -285,7 +290,7 @@ class LogHandler{
     } 
 
     private _prepareDir(){
-        console.log("Checking for log directory...");
+        console.log("Checking for log directory at: " + LogHandler.filePath + " ...");
         if(fs.existsSync(LogHandler.filePath)) return;
 
         console.log("Creating log directory...");

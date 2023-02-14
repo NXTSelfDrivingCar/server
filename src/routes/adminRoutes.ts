@@ -67,7 +67,7 @@ module.exports = function(app: Application) {
         for(var key in req.query) {
             if(req.query[key] === "") delete req.query[key]
         }
-        
+
         res.render("admin_log_view.ejs", {
             title: "Admin log view",
             log: await logController.getLogValueByFilter(req.params.name, req.query),
@@ -96,6 +96,12 @@ module.exports = function(app: Application) {
         await logController.deleteLogByName(req.params.name)
 
         res.redirect("/admin/logs")
+    })
+
+    app.get("/admin/users/live", logger.logRoute("liveUsers"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
+        res.render("admin_users_live.ejs", {
+            title: "Admin live users",
+        })
     })
 
     // ! =================== POST ROUTES =================== //

@@ -52,12 +52,13 @@ export class WSClientHandler{
         return this.getConnectedClient(id).rooms;
     }
 
-    public addClient(id: string, client: any){
-        WSClientHandler.connectedClients[id] = client;
+    public getSocketById(id: string): any{
+        return WSClientHandler.io.sockets.sockets[id];
     }
 
-    public removeClient(id: string){
-        delete WSClientHandler.connectedClients[id];
+    public disconnectClient(id: string){
+        var socket = this.getConnectedClient(id);
+        if(socket){ socket.disconnect(); }
     }
 
     public async getClientIdFromSocket(socketId: any): Promise<any>{
@@ -80,6 +81,14 @@ export class WSClientHandler{
 
     // ! =================== PRIVATE FUNCTIONS ===================
 
+    private addClient(id: string, client: any){
+        WSClientHandler.connectedClients[id] = client;
+    }
+
+    private removeClient(id: string){
+        delete WSClientHandler.connectedClients[id];
+    }
+
     private getTmpCliet(id: string): any{
         return WSClientHandler.tmpClients[id];
     }
@@ -92,11 +101,34 @@ export class WSClientHandler{
         delete WSClientHandler.tmpClients[id];
     }
 
+    private async getSingleMapSocketIdClient(socketId: string): Promise<any> {
+        var map: any = {};
+        var user = await Authorization.getUserFromToken(Authorization.getTokenFromWS(WSClientHandler.connectedClients[socketId], "auth"));
+        var room = await WSClientHandler.connectedClients[socketId].rooms;
+        
+        var rooms = [];
+        for(var roomKey of room){
+            if (roomKey === socketId) continue;                
+            rooms.push(roomKey);
+        }
+        
+        map[socketId] = { socketId: socketId, user: user, rooms: rooms };
+
+        return map;
+    }
+
+    private async getMapSocketIdClient(): Promise<any> {
+        var map: any = {};
+        for(var key in WSClientHandler.connectedClients){
+
+            map[key] = (await this.getSingleMapSocketIdClient(key))[key];
+        }
+        return map;
+    }
+
     private init(){
         WSClientHandler.io.on("connection",(socket: any) => {
             var intervalCounter = 0;
-
-            console.log("WebSocketClientHandler. Client connected: " + socket.id);
 
             this.addTmpClient(socket.id, socket);
 
@@ -105,8 +137,18 @@ export class WSClientHandler{
                 intervalCounter++;
             }, 1000);
 
+            socket.on("requestClientList", async () => {
+                this.getMapSocketIdClient().then((map: any) => {
+
+                    WSClientHandler.io.to(socket.id).emit("userJoined", map);
+                })
+            })
+
             socket.on("disconnect", () => {
                 console.log("WebSocketClientHandler. Client disconnected: " + socket.id);
+
+                WSClientHandler.io.to("admin").emit("userLeft", socket.id);
+
                 this.removeClient(socket.id);
                 this.removeTmpClient(socket.id);
             });
@@ -115,15 +157,18 @@ export class WSClientHandler{
 
     private _handleRoomConnection(socket: any, intervalID: any, intervalCounter: number){
         if(socket.rooms.size > 1){
-            console.log("Client joined a room: " + socket.id + " -> ");
-            console.log(socket.rooms);
+            // console.log("Client joined a room: " + socket.id + " -> ");
+            // console.log(socket.rooms);
             
             this.addClient(socket.id, socket);
             this.removeTmpClient(socket.id);
 
             clearInterval(intervalID);
 
-            WSClientHandler.io.to("admin").emit("roomJoined", {socketId: socket.id, rooms: socket.rooms});
+            this.getSingleMapSocketIdClient(socket.id).then((map: any) => {
+                WSClientHandler.io.to("admin").emit("userJoined", map);
+            })
+            
             return;
         }
 

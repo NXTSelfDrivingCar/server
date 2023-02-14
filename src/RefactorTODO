@@ -92,6 +92,7 @@ Logs:
     ✘ Dodati route origin za logovanje ruta (Radi lakseg pretrazivanja) @cancelled(23-02-11 23:02)
 
 Other:
+    ☐ Napraviti proveru request parametara
     ☐ Prikazati autora tiketa
     ☐ Srediti util.js
     ☐ Nrapraviti funkciju koja cisti request.query, kako i mogao da ostavim filter na strani

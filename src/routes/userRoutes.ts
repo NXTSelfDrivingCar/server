@@ -78,6 +78,15 @@ module.exports = function(app: Application) {
     // ! =================== POST ROUTES =================== //
 
     app.post("/user/login/mobile", logger.logRoute("mobileLogin"), async (req: Request, res: Response) => {
+
+
+        console.log("\n========================================");
+        console.log("[LOGIN] Incoming request: ");
+        console.log(req.body);
+        console.log("Accepted tags: username, password");
+        console.log("Returning status: loginComplete, loginFailed");
+
+
         var result = await userController.login(req.body.username, req.body.password, req, res)
         console.log(result);
         
@@ -91,6 +100,14 @@ module.exports = function(app: Application) {
     })
 
     app.post("/user/register/mobile", logger.logRoute("mobileRegister"), async (req: Request, res: Response) => {
+
+        console.log("\n========================================");
+        console.log("[REGISTER] Incoming request: ");
+        console.log(req.body);
+        console.log("Accepted tags: username, password, email");
+        console.log("Returning status: registrationComplete, usernameTaken, registrationFailed");
+        
+
         var result = await userController.register(new User(req.body.username, req.body.password, req.body.email, "user", "apimobile"))
         res.send({status: result.status});
 
@@ -101,11 +118,23 @@ module.exports = function(app: Application) {
     })
 
     app.post("/user/update/mobile", logger.logRoute("mobileUpdateUser"), async (req: Request, res: Response) => {
+        
+        console.log("\n========================================");
+        console.log("[UPDATE] Incoming request: ");
+        console.log(req.body);
+        console.log("Accepted tags: token, currentPassword, username, password, email");
+        console.log("Returning status: updateComplete, updateFailed, usernameTaken, passwordIncorrect, userNotFound");
+
+        // TODO: Add token check
         var user = await Authorization.getUserIDFromToken(req.body.token);
+        var currentPassword = req.body.currentPassword;
+
+        delete req.body.token;
+        delete req.body.currentPassword;
 
         if(!user.userId){ res.send({status: "Invalid token"}); return; }
 
-        var status = await userController.updateUserAuth(user.userId, req.body, req.body.currentPassword);
+        var status = await userController.updateUserAuth(user.userId, req.body, currentPassword);
         
         res.send({status: status})
 
@@ -116,8 +145,20 @@ module.exports = function(app: Application) {
     })
 
     // TODO: Add mobile route for delete user (DELETE)
-    app.post("/user/delete/mobile", logger.logRoute("mobileDeleteUser"), (req: Request, res: Response) => {
-        res.send("Delete user")
+    app.post("/user/delete/mobile", logger.logRoute("mobileDeleteUser"), async (req: Request, res: Response) => {
+
+        console.log("\n========================================");
+        console.log("[DELETE] Incoming request: ");
+        console.log(req.body);
+        console.log("Accepted tags: token, currentPassword");
+        console.log("Returning status: userDeleted, userNotFound, userDeleteFailed");
+
+        var user = await Authorization.getUserIDFromToken(req.body.token);
+        if(!user.userId){ res.send({status: "Invalid token"}); return; }
+
+        var status = await userController.deleteUserAuth(user.userId, req.body.currentPassword);
+        
+        res.send({status: status})
 
         // Delete user
         // return status OK if delete success

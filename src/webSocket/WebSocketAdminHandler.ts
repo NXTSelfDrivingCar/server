@@ -18,6 +18,11 @@ module.exports = function(io: any){
         socket.on("disconnect", () => {
             console.log("Client disconnected: " + socket.id);
         });
+
+        socket.on("kickUser", (socketId: string) => {
+            console.log("WebSocketAdminHandler. Kicking user: " + socketId);
+            clientHandler.disconnectClient(socketId);
+        })
         
         // Ovo ne treba da se cita server-side, nego client-side
         // socket.on("roomJoined", (data: any) => {

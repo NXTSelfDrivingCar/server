@@ -114,7 +114,6 @@ export class Authorization {
   public static async authorizeSocket(socket: any, cookieName: string, disconnect: boolean = true, ...roles: string[]): Promise<boolean> {
     var token = this.getTokenFromWS(socket, cookieName);
     var user = await this._getUserFromToken(token);
-    console.log(user);
     
     if(!user || user.role == "guest") {
       
@@ -148,8 +147,6 @@ export class Authorization {
       return "";
     }
 
-    console.log(cookies);
-    
     for (var cookie in cookies){
       if(cookies[cookie].startsWith(cookieName)){
         return cookies[cookie].split("=")[1];
