@@ -41,10 +41,10 @@
     <div class="container">
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
-          <a href="/admin/dashboard">Admin dashboard</a>
+          <a href="/admin/dashboard" class="text-decoration-none">Admin dashboard</a>
         </li>
         <li class="breadcrumb-item ">
-          <a href="/admin/users/list">User list</a>
+          <a href="/admin/users/list" class="text-decoration-none">User list</a>
         </li>
         <li class="breadcrumb-item active">
           Live view
@@ -65,6 +65,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js"></script>
   <script type="text/javascript" src="http://localhost:5000/static/wsTrack.js"></script>
   <script>
+    let container = document.getElementById("userList");
+    container.innerHTML = getHeader();
+
     function getHeader() {
       return `<div class="list-group-item" style="border-radius: 0;">
                 <div class="container">

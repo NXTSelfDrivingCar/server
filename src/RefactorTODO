@@ -19,7 +19,7 @@ Routes:
                 ✔ Changelog add @done(23-02-11 23:21)
                 ✔ Ticket update @done(23-02-11 23:21)
             DELETE:
-                ☐ User delete
+                ✔ User delete @done(23-02-15 01:28)
                 ✔ Log file delete @done(23-02-11 23:33)
         User:
             GET:
