@@ -25,7 +25,7 @@ export abstract class MongoRepository<T> {
     // * =================== PROTECTED METHODS =================== //
 
     async _isConnected(): Promise<boolean> {
-        console.log(this.constructor.name + " is connecting to MongoDB...");
+        // console.log(this.constructor.name + " is connecting to MongoDB...");
 
         try
         {

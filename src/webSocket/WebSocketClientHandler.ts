@@ -62,6 +62,12 @@ export class WSClientHandler{
     }
 
     public async getClientIdFromSocket(socketId: any): Promise<any>{
+        var user = await this.getClientFromSocketId(socketId);
+        if(!user){ return null; }
+        return user.id;
+    }
+
+    public async getClientFromSocketId(socketId: any): Promise<any>{
         // Get cookie from socket named 'auth'
         var socket = this.getConnectedClient(socketId);
 
@@ -76,7 +82,7 @@ export class WSClientHandler{
             return null;
         }
 
-        return user.id;
+        return user;
     }
 
     // ! =================== PRIVATE FUNCTIONS ===================
@@ -101,6 +107,8 @@ export class WSClientHandler{
         delete WSClientHandler.tmpClients[id];
     }
 
+    // Gets all clients connected to a room
+    // Returns a map with socketId as key and client as value -> { socketId: socketId, user: user, rooms: rooms }
     private async getSingleMapSocketIdClient(socketId: string): Promise<any> {
         var map: any = {};
         var user = await Authorization.getUserFromToken(Authorization.getTokenFromWS(WSClientHandler.connectedClients[socketId], "auth"));
@@ -130,6 +138,7 @@ export class WSClientHandler{
         WSClientHandler.io.on("connection",(socket: any) => {
             var intervalCounter = 0;
 
+            // Add client to tmpClients (will be removed if client joins a room)
             this.addTmpClient(socket.id, socket);
 
             var intervalID = setInterval(() => {
@@ -137,6 +146,7 @@ export class WSClientHandler{
                 intervalCounter++;
             }, 1000);
 
+            // Admins can request a list of all connected clients and their rooms
             socket.on("requestClientList", async () => {
                 this.getMapSocketIdClient().then((map: any) => {
 
@@ -144,11 +154,14 @@ export class WSClientHandler{
                 })
             })
 
+
             socket.on("disconnect", () => {
                 console.log("WebSocketClientHandler. Client disconnected: " + socket.id);
 
+                // Notify admin that a client has disconnected and send the socketId
                 WSClientHandler.io.to("admin").emit("userLeft", socket.id);
 
+                // Clear client from connectedClients and tmpClients
                 this.removeClient(socket.id);
                 this.removeTmpClient(socket.id);
             });
@@ -157,15 +170,16 @@ export class WSClientHandler{
 
     private _handleRoomConnection(socket: any, intervalID: any, intervalCounter: number){
         if(socket.rooms.size > 1){
-            // console.log("Client joined a room: " + socket.id + " -> ");
-            // console.log(socket.rooms);
             
+            // Add client to connectedClients and remove from tmpClients
             this.addClient(socket.id, socket);
             this.removeTmpClient(socket.id);
 
             clearInterval(intervalID);
 
             this.getSingleMapSocketIdClient(socket.id).then((map: any) => {
+
+                // Notify admin that a client has connected and send the socketId
                 WSClientHandler.io.to("admin").emit("userJoined", map);
             })
             

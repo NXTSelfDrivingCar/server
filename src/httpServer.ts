@@ -37,7 +37,8 @@ const sharedRoutes = require ("./routes/sharedRoutes")(app);
 // Start server
 app.listen(HttpServerConfig.PORT, () => {
     logger.log( {
-        action: "startServer",
+        origin: "HttpServer",
+        action: "init",
         details: { serverType: "HttpServer", port: HttpServerConfig.PORT },
       });
     console.log(`HTTP Server listening on port ${HttpServerConfig.PORT}`);

@@ -13,18 +13,34 @@ const rooms = new Map<string, string>()
 
 
 async function joinRoom(socket: any, data: any){
-    // Set(2) { 'fXILzhQj0lYh09gvAAAB', 'user' }
 
+    // If the room is not defined, join the default room (user)
     if(!data.room || !rooms.has(data.room)){
         socket.join(rooms.get("default"));
     }
 
+    // If the room is admin, check if the user is authorized to join the room
     if(data.room === "admin"){
         if(! await Authorization.authorizeSocket(socket, "auth", true, "admin")){
             socket.disconnect();
             return;    
         }
     }
+
+    // Logs in the backgroud and does not wait for the result
+    var token = Authorization.getTokenFromWS(socket, "auth");
+    Authorization.getUserFromToken(token).then((user) => { 
+        var userData = {}
+
+        if(user) { userData = {id: user.id, username: user.username, role: user.role} }
+
+        logger.info({
+            origin: "WebSocket",
+            action: "joinRoom",
+            details: {room: data.room, socket: socket.id},
+            user: userData
+        })
+    });
 
     socket.join(rooms.get(data.room));
 }

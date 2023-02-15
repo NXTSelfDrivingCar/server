@@ -319,7 +319,7 @@ class LogHandler{
             {
                 timestamp: new Date().getTime(),
                 level: levels.INFO,
-                source: "internal_log",
+                origin: "internal_log",
                 action: "open",
                 message: "Log file opened",
                 logName: this.getFileName(),
@@ -329,9 +329,10 @@ class LogHandler{
         this._writeToFile(starter);
     }
 
-    private _logRoute(req: Request, res: Response, action: string, extra: any = {}){
+    private async _logRoute(req: Request, res: Response, action: string, extra: any = {}){
 
         var logData: any = {
+            origin: "route",
             action: action,
             method: req.method,
             url: req.url,
@@ -346,7 +347,7 @@ class LogHandler{
 
         if (JSON.stringify(req.params) !== "{}") logData["params"] = req.params;
 
-        this.log(logData);
+        this.info(logData);
     }
 }
 

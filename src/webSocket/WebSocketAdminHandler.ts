@@ -1,5 +1,8 @@
 import { Authorization } from "../cookie/authorization";
 import { WSClientHandler } from "./WebSocketClientHandler";
+import { LogHandler } from "../logging/logHandler";
+
+const logger = new LogHandler();
 
 module.exports = function(io: any){
 
@@ -19,27 +22,38 @@ module.exports = function(io: any){
             console.log("Client disconnected: " + socket.id);
         });
 
-        socket.on("kickUser", (socketId: string) => {
-            console.log("WebSocketAdminHandler. Kicking user: " + socketId);
-            clientHandler.disconnectClient(socketId);
-        })
-        
-        // Ovo ne treba da se cita server-side, nego client-side
-        // socket.on("roomJoined", (data: any) => {
-        //     if(data.socketId){
-        //         console.log("WebSocketAdminHandler. Client joined room: " + data.socketId);
-        //     }
+        socket.on("kickUser", (socketId: any) => {
+            console.log("WebSocketAdminHandler. Kicking user: " + socketId.socketId);
 
-        //     if(data.rooms){
-        //         console.log("WebSocketAdminHandler. Client joined rooms: " );
-        //         console.log(data.rooms);
-        //     }
-        // })
+            kickUser(socket, socketId, clientHandler);
+            
+        })
     });
 
     io.on("message", (message: any) => {
         console.log(message);
     });
 
+}
+
+
+function kickUser(socket:any, socketId: any, clientHandler: WSClientHandler){
+    Authorization.getUserFromToken(Authorization.getTokenFromWS(socket, "auth")).then((user) => {
+        var adminData = !user ? {} : {id: user.id, username: user.username, role: user.role};
+
+        clientHandler.getClientFromSocketId(socketId).then((client) => {
+            var clientData = !client ? {} : {id: client.id, username: client.username, role: client.role};
+
+            logger.info({
+                origin: "WebSocket",
+                action: "kickUser",
+                details: {socket: socketId},
+                user: clientData,
+                admin: adminData
+            })
+
+            clientHandler.disconnectClient(socketId);
+        });
+    });
 }
 
