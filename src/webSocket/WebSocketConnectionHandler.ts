@@ -14,52 +14,8 @@ const rooms = new Map<string, string>()
     .set("gps", "gps");
 
 
-async function joinRoom(socket: any, data: any){
-    // If the room is not defined, join the default room (user)
-    if(!data.room || !rooms.has(data.room)){
-        socket.join(rooms.get("default"));
-    }
-    
-    console.log("Joining room: " + data.room);
-    // If the room is admin, check if the user is authorized to join the room
-    if(data.room === "admin"){
-        if(! await Authorization.authorizeSocket(socket, "auth", false, "admin")){
-            socket.disconnect();
-            return;    
-        }
-    }
-
-    // Logs in the backgroud and does not wait for the result
-    var token = Authorization.getTokenFromWS(socket, "auth");
-    Authorization.getUserFromToken(token).then((user) => { 
-        var userData = {}
-
-        if(user) { userData = {id: user.id, username: user.username, role: user.role} }
-
-        logger.info({
-            origin: "WebSocket",
-            action: "joinRoom",
-            details: {room: data.room, socket: socket.id},
-            user: userData
-        })
-    });
-
-    // Join the room
-    socket.join(rooms.get(data.room));
-}
-
-async function atachUserIdToSocket(socket: any){
-    var token = Authorization.getTokenFromWS(socket, "auth");
-    var user = await Authorization.getUserFromToken(token);
-
-    if(!socket["userId"]) socket["userId"] = user?.id;
-
-    socket.join(user?.id)
-}
-
-async function joinRomms(socket: any, data: any){
-    joinRoom(socket, data);
-    atachUserIdToSocket(socket);
+function isConnected(socket: any): boolean{
+    return socket.rooms.size >= 1;
 }
 
 module.exports = function(io: WebSocket){
@@ -91,6 +47,10 @@ module.exports = function(io: WebSocket){
         }
 
         setTimeout(() => {
+            if(!isConnected(socket)) {
+                return;
+            }
+
             if(socket.rooms.size < 2){
                 clientHandler.joinRooms(socket, {room: "default"});
             }

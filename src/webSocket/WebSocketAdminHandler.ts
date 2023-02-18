@@ -9,7 +9,7 @@ module.exports = function(io: any, socket: any){
     const clientHandler = WSClientHandler.getInstance(io);
 
     socket.on("kickUser", (data: any) => {
-        console.log("WebSocketAdminHandler. Kicking user: " + data.socketId);
+        console.log("WebSocketAdminHandler. Kicking user: " + data.SID);
 
         kickUser(socket, data, clientHandler);
     })

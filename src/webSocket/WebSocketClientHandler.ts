@@ -4,7 +4,7 @@ import { Authorization } from "../cookie/authorization";
 // connectedClients[socketId] = {SID: socketId, UID: userId}
 
 // tmpClients: any = {}
-// tmpClients[socketId] = {SID: socketId, UID: userId}
+// tmpClients[socketId] = {socket: socket}
 
 // streamerClients: any = {}
 // streamerClients[socketId] = {SID: socketId, UID: userId}
@@ -74,7 +74,6 @@ export class WSClientHandler{
 
         console.log(" | " + socket.id + " Joining room: " + data.room);
         
-
         this._addToTmpClients(socket);        
 
         // If the room is not defined, join the default room (user)
