@@ -4,56 +4,41 @@ import { LogHandler } from "../logging/logHandler";
 
 const logger = new LogHandler();
 
-module.exports = function(io: any){
+module.exports = function(io: any, socket: any){
 
     const clientHandler = WSClientHandler.getInstance(io);
 
-    io.on("connection", async (socket: any) => {
+    socket.on("kickUser", (data: any) => {
+        console.log("WebSocketAdminHandler. Kicking user: " + data.socketId);
 
-        // If the client doesn't have the admin role, skip the socket
-        if(! await Authorization.authorizeSocket(socket, "auth", true, "admin")){
-            console.log("Client doesn't have admin role: " + socket.id);
-            return;
-        }
+        kickUser(socket, data, clientHandler);
+    })
 
-        console.log("WebSocketAdminHandler. Client connected: " + socket.id);
+    socket.on("requestClientList", () => {
+        console.log("WebSocketAdminHandler. Requesting client list");
 
-        socket.on("disconnect", () => {
-            console.log("Client disconnected: " + socket.id);
-        });
+        clientHandler.requestClientList(socket);
+    })
 
-        socket.on("kickUser", (socketId: any) => {
-            console.log("WebSocketAdminHandler. Kicking user: " + socketId.socketId);
-
-            kickUser(socket, socketId, clientHandler);
-            
-        })
-    });
-
-    io.on("message", (message: any) => {
-        console.log(message);
-    });
 
 }
 
 
-function kickUser(socket:any, socketId: any, clientHandler: WSClientHandler){
-    Authorization.getUserFromToken(Authorization.getTokenFromWS(socket, "auth")).then((user) => {
-        var adminData = !user ? {} : {id: user.id, username: user.username, role: user.role};
+function kickUser(socket:any, data: any, clientHandler: WSClientHandler){
+    var token = Authorization.getTokenFromWS(socket, "auth");
+    Authorization.getUserFromToken(token).then((user) => { 
+        var userData = {}
 
-        clientHandler.getClientFromSocketId(socketId).then((client) => {
-            var clientData = !client ? {} : {id: client.id, username: client.username, role: client.role};
+        if(user) { userData = {id: user.id, username: user.username, role: user.role} }
 
-            logger.info({
-                origin: "WebSocket",
-                action: "kickUser",
-                details: {socket: socketId},
-                user: clientData,
-                admin: adminData
-            })
-
-            clientHandler.disconnectClient(socketId);
-        });
+        logger.info({
+            origin: "WebSocket",
+            action: "kickUser",
+            details: {socket: data.SID},
+            user: userData
+        })
     });
+
+    clientHandler.removeClient(data.SID);
 }
 

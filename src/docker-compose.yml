@@ -4,7 +4,7 @@ services:
   node:
     container_name: node
     image: antasmes/nxt-server:latest
-    # build: .
+    build: .
     volumes:
       - .:/usr/app/
       - /usr/app/node_modules

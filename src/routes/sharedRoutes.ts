@@ -29,6 +29,14 @@ const logController = new LogController();
 
 module.exports = function(app: Application) {
 
+    app.get("/client/debug", function (req, res) {
+        res.sendFile(path.join(__dirname, "../views/test_client.html"));
+    })
+
+    app.get("/video/debug", function (req, res) {
+        res.sendFile(path.join(__dirname, "../views/test_video.html"));
+    })
+
     app.get("/user/debug", function (req, res) {
         // open html file
         res.sendFile(path.join(__dirname, "../views/client_page.html"));

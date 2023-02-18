@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<head>
+  <title>Client</title>
+</head>
+
+<body onload="init()">
+  <img src="" alt="">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js"></script>
+  <script type="text/javascript" src="http://localhost:5000/static/wsClient.js"></script>
+
+  <script>
+    // get img dom element
+    const img = document.querySelector('img');
+    if (socket) {
+      socket.on("message", (data) => {
+        // set the base64 string to the src tag of the image
+        console.log("Video data received");
+        img.src = data;
+      })
+    }
+  </script>
+</body>
+
+</html>

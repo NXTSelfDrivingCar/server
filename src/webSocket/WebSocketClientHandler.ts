@@ -1,11 +1,28 @@
 import { Authorization } from "../cookie/authorization";
 
+// connectedClients: any = {}
+// connectedClients[socketId] = {SID: socketId, UID: userId}
+
+// tmpClients: any = {}
+// tmpClients[socketId] = {SID: socketId, UID: userId}
+
+// streamerClients: any = {}
+// streamerClients[socketId] = {SID: socketId, UID: userId}
+
+const rooms = new Map<string, string>()
+    .set("default", "user")
+    .set("admin", "admin")
+    .set("user", "user")
+    .set("streamer", "streamer")
+    .set("gps", "gps");
+
 export class WSClientHandler{
     private static io: any;
     private static instance: WSClientHandler;
 
     private static connectedClients: any = {};
     private static tmpClients: any = {};
+    private static streamerClients: any = {};
 
     private options: any = {
         connectionTimeout: 10
@@ -13,11 +30,14 @@ export class WSClientHandler{
 
     private constructor(io: any, options = {}){
         WSClientHandler.io = io;
-        this.init()
         this.options = options || this.options;
     }
 
     // * =================== PUBLIC FUNCTIONS ===================
+
+    public init(){
+        this._init()
+    }
 
     public static getInstance(io: any): WSClientHandler{
         if(!WSClientHandler.instance){
@@ -26,172 +46,199 @@ export class WSClientHandler{
         return WSClientHandler.instance;
     }
 
-    public resolved(socketId: any){
-        if(this.getTmpCliet(socketId)){
-            return false;
-        }
-        if(this.getConnectedClient(socketId)){
-            return true;
-        }
-        return true
-    }
-
     public getIO(): any{
         return WSClientHandler.io;
     }
 
     public getConnectedClients(): any{
         return WSClientHandler.connectedClients;
-    }   
-    
-    public getConnectedClient(id: string): any{
-        return WSClientHandler.connectedClients[id];
     }
 
-    public getSocketRooms(id: string): any{
-        return this.getConnectedClient(id).rooms;
+    public getTmpClients(): any{
+        return WSClientHandler.tmpClients;
     }
 
-    public getSocketById(id: string): any{
-        return WSClientHandler.io.sockets.sockets[id];
+    public getStreamerClients(): any{
+        return WSClientHandler.streamerClients;
     }
 
-    public disconnectClient(id: string){
-        var socket = this.getConnectedClient(id);
-        if(socket){ socket.disconnect(); }
+    public removeClient(socketId: any){
+        this._removeFromConnectedClientsBySocketId(socketId);
+        this._removeFromTmpClientsBySocketId(socketId);
+        this._removeFromStreamerClientsBySocketId(socketId);
+
+        WSClientHandler.io.to("admin").emit("clientDisconnected", {SID: socketId});
     }
 
-    public async getClientIdFromSocket(socketId: any): Promise<any>{
-        var user = await this.getClientFromSocketId(socketId);
-        if(!user){ return null; }
-        return user.id;
-    }
+    public async joinRooms(socket: any, data: any){
 
-    public async getClientFromSocketId(socketId: any): Promise<any>{
-        // Get cookie from socket named 'auth'
-        var socket = this.getConnectedClient(socketId);
+        console.log(" | " + socket.id + " Joining room: " + data.room);
+        
 
-        if(!socket){
-            return null;
-        }
-    
-        var token = Authorization.getTokenFromWS(socket, "auth");
-        var user = await Authorization.getUserFromToken(token);
+        this._addToTmpClients(socket);        
 
-        if(!user){
-            return null;
+        // If the room is not defined, join the default room (user)
+        if (!data.room || socket.rooms.has(data.room)) socket.join(rooms.get("default"));
+
+        // If the room is admin, check if the user is authorized to join the room
+        if (data.room === "admin") {
+
+            // If the user is not authorized (or the ticket is invalid), disconnect the socket
+            if (!Authorization.authorizeSocket(socket, "auth", true, "admin")) {
+                socket.disconnect();
+                return;
+            }
         }
 
-        return user;
+        // Joins the room
+        socket.join(rooms.get(data.room));
+        await this.attachUserIdToSocket(socket);
+
+
+        // If the room is user, add the socket to the connected clients
+        this._checkInSocket(socket);
+    }
+
+    public async requestClientList(socket: any){
+
+        // clientData format: {SID: socketId: string, UID: userId: string, Username: username: string, Role: role: string, Rooms: rooms: []}
+        for(var key in WSClientHandler.connectedClients){
+            socket.emit("clientList", await this._getReturnFormat(key));
+        }
     }
 
     // ! =================== PRIVATE FUNCTIONS ===================
 
-    private addClient(id: string, client: any){
-        WSClientHandler.connectedClients[id] = client;
-    }
+    private async _getReturnFormat(key: any): Promise<any>{
 
-    private removeClient(id: string){
-        delete WSClientHandler.connectedClients[id];
-    }
-
-    private getTmpCliet(id: string): any{
-        return WSClientHandler.tmpClients[id];
-    }
-
-    private addTmpClient(id: string, client: any){
-        WSClientHandler.tmpClients[id] = client;
-    }
-
-    private removeTmpClient(id: string){
-        delete WSClientHandler.tmpClients[id];
-    }
-
-    // Gets all clients connected to a room
-    // Returns a map with socketId as key and client as value -> { socketId: socketId, user: user, rooms: rooms }
-    private async getSingleMapSocketIdClient(socketId: string): Promise<any> {
-        var map: any = {};
-        var user = await Authorization.getUserFromToken(Authorization.getTokenFromWS(WSClientHandler.connectedClients[socketId], "auth"));
-        var room = await WSClientHandler.connectedClients[socketId].rooms;
+        // Get the client data
+        var clientData = this._getConnectedClient(key)
         
-        var rooms = [];
-        for(var roomKey of room){
-            if (roomKey === socketId) continue;                
-            rooms.push(roomKey);
-        }
-        
-        map[socketId] = { socketId: socketId, user: user, rooms: rooms };
+        // Get the user from the token
+        var user = await Authorization.getUserFromToken(Authorization.getTokenFromWS(clientData.socket, "auth"));
 
-        return map;
+        // Get all rooms except the socket id room
+        var rooms = [...clientData.socket.rooms]
+            .filter(room => room !== clientData.socket.id) 
+
+        if(user){
+            return {
+                SID: clientData.SID,
+                UID: clientData.UID,
+                user: {
+                    username: user.username,
+                    role: user.role,
+                    id: user.id
+                },
+                rooms: rooms
+            }
+        }
+
+        return { SID: null, UID: null, Username: null, Role: null, Rooms: null };
     }
 
-    private async getMapSocketIdClient(): Promise<any> {
-        var map: any = {};
-        for(var key in WSClientHandler.connectedClients){
-
-            map[key] = (await this.getSingleMapSocketIdClient(key))[key];
-        }
-        return map;
+    private _getConnectedClient(socketId: string): any{
+        return WSClientHandler.connectedClients[socketId];
     }
 
-    private init(){
-        WSClientHandler.io.on("connection",(socket: any) => {
-            var intervalCounter = 0;
+    private _getStreamerClient(socketId: string): any{
+        return WSClientHandler.streamerClients[socketId];
+    }
 
-            // Add client to tmpClients (will be removed if client joins a room)
-            this.addTmpClient(socket.id, socket);
+    private _addToConnectedClients(socket: any){
+        WSClientHandler.connectedClients[socket.id] = {
+            SID: socket.id,
+            UID: socket["userId"],
+            socket: socket
+        }
+    }
 
-            var intervalID = setInterval(() => {
-                this._handleRoomConnection(socket, intervalID, intervalCounter);
-                intervalCounter++;
-            }, 1000);
+    private _addToTmpClients(socket: any){
+        WSClientHandler.tmpClients[socket.id] = {
+            SID: socket.id,
+            UID: socket["userId"],
+            socket: socket
+        }
+    }
 
-            // Admins can request a list of all connected clients and their rooms
-            socket.on("requestClientList", async () => {
-                this.getMapSocketIdClient().then((map: any) => {
+    private _addToStreamerClients(socket: any){
+        WSClientHandler.streamerClients[socket.id] = {
+            SID: socket.id,
+            UID: socket["userId"],
+            socket: socket
+        }
+    }
 
-                    WSClientHandler.io.to(socket.id).emit("userJoined", map);
-                })
-            })
+    private _removeFromConnectedClientsBySocketId(socketId: string){
+        delete WSClientHandler.connectedClients[socketId];
+    }
+
+    private _removeFromTmpClientsBySocketId(socketId: string){
+        delete WSClientHandler.tmpClients[socketId];
+    }
+
+    private _removeFromStreamerClientsBySocketId(socketId: string){
+        delete WSClientHandler.streamerClients[socketId];
+    }
+
+    private _removeFromConnectedClients(socket: any){
+        delete WSClientHandler.connectedClients[socket.id];
+    }
+
+    private _removeFromTmpClients(socket: any){
+        delete WSClientHandler.tmpClients[socket.id];
+    }
+
+    private _removeFromStreamerClients(socket: any){
+        delete WSClientHandler.streamerClients[socket.id];
+    }
+
+    private _checkInSocket(socket: any){
+
+        // If the socket is not a user, disconnect it or if it is not in any room
+        if(!socket["userId"] || socket.rooms.length < 2) 
+        {
+            this.removeClient(socket.id);
+            socket.disconnect();
+            return;
+        }
+
+        if(socket.rooms.has("streamer")) this._addToStreamerClients(socket);
 
 
-            socket.on("disconnect", () => {
-                console.log("WebSocketClientHandler. Client disconnected: " + socket.id);
+        // Socket cannot be a guest and not have the gps room (only GPS devices can be guests)
+        if(!socket.rooms.has("gps") && socket["userId"] === "guest") 
+        {
+            this.removeClient(socket.id);
+            socket.disconnect();
+            return;
+        }
 
-                // Notify admin that a client has disconnected and send the socketId
-                WSClientHandler.io.to("admin").emit("userLeft", socket.id);
+        this._addToConnectedClients(socket);
+        this._removeFromTmpClients(socket);
 
-                // Clear client from connectedClients and tmpClients
-                this.removeClient(socket.id);
-                this.removeTmpClient(socket.id);
-            });
+        // Emit the client connected event to the admin room
+        this._getReturnFormat(socket.id).then((data: any) => {
+            WSClientHandler.io.to("admin").emit("clientConnected", data);
         });
     }
 
-    private _handleRoomConnection(socket: any, intervalID: any, intervalCounter: number){
-        if(socket.rooms.size > 1){
-            
-            // Add client to connectedClients and remove from tmpClients
-            this.addClient(socket.id, socket);
-            this.removeTmpClient(socket.id);
+    private async attachUserIdToSocket(socket: any){
+        var token = Authorization.getTokenFromWS(socket, "auth");
+        var user = await Authorization.getUserFromToken(token);
 
-            clearInterval(intervalID);
+        if(!socket["userId"]) socket["userId"] = user?.id;
 
-            this.getSingleMapSocketIdClient(socket.id).then((map: any) => {
+        socket.join(user?.id)
+    }
 
-                // Notify admin that a client has connected and send the socketId
-                WSClientHandler.io.to("admin").emit("userJoined", map);
-            })
-            
-            return;
-        }
+    // ? =================== INIT ===================
 
-        // If the client hasnt sent a joinRoom event within x seconds, join the default room
-        if(intervalCounter > this.options.connectionTimeout){
-            console.log("Client didnt join a room within 5 seconds. Joining default room");
-            socket.disconnect();
-            clearInterval(intervalID);
-            return;
-        }
+    private async _init(){
+        WSClientHandler.io.on("requestClientList", (socket: any) => {
+            console.log("Requesting client list");
+
+            socket.send(WSClientHandler.connectedClients);
+        });
     }
 }

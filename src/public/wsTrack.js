@@ -1,11 +1,12 @@
 var socket = null;
 var hostUrl = null;
 
-var clientMap = new Map();
+var clients = {};
 
 function init() {
   hostUrl = "http://localhost:5001";
 
+  console.log("Connecting to server: " + hostUrl);
   connect();
 }
 
@@ -14,6 +15,7 @@ function isConnected() {
 }
 
 function requestRoom() {
+  console.log("Requesting room...");
   socket.emit("joinRoom", { room: "admin" });
 }
 
@@ -37,6 +39,8 @@ function connect() {
   }
 
   try {
+    console.log("Connecting socket...");
+
     socket = io.connect(hostUrl, {
       transports: ["websocket"],
       cors: {
@@ -49,7 +53,7 @@ function connect() {
 
     setTimeout(() => {
       requestClientList();
-    }, 1000);
+    }, 3000);
 
     // setInterval(() => {
     //   requestClientList();
@@ -58,23 +62,21 @@ function connect() {
     console.log(error);
   }
 
-  socket.on("userJoined", (data) => {
-    for (var key in data) {
-      clientMap.set(key, data[key]);
-    }
-
-    updateFront(clientMap);
+  socket.on("clientList", (data) => {
+    addClient(data);
+    updateFront(clients);
   });
 
-  socket.on("userLeft", (socketId) => {
-    clientMap.delete(socketId);
+  socket.on("clientDisconnected", (data) => {
+    console.log("Client disconnected: " + data.SID);
+    delete clients[data.SID];
 
-    updateFront(clientMap);
+    updateFront(clients);
   });
 
-  socket.on("message", (data) => {
-    console.log("message");
-    console.log(data);
+  socket.on("clientConnected", (data) => {
+    addClient(data);
+    updateFront(clients);
   });
 }
 
@@ -83,9 +85,15 @@ function kickUser(socketId) {
     return;
   }
 
-  socket.emit("kickUser", socketId);
+  socket.emit("kickUser", { SID: socketId });
 }
 
 function requestClientList() {
   socket.emit("requestClientList");
+}
+
+function addClient(clientData) {
+  if (clients[clientData.SID] === undefined) {
+    clients[clientData.SID] = clientData;
+  }
 }

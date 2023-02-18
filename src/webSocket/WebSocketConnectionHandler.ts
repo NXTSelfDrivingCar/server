@@ -5,23 +5,25 @@ import { WSClientHandler } from "./WebSocketClientHandler";
 
 const logger = new LogHandler();
 
+// List of role rooms
 const rooms = new Map<string, string>()
     .set("default", "user")
     .set("admin", "admin")
     .set("user", "user")
-    .set("stream", "stream");
+    .set("streamer", "streamer")
+    .set("gps", "gps");
 
 
 async function joinRoom(socket: any, data: any){
-
     // If the room is not defined, join the default room (user)
     if(!data.room || !rooms.has(data.room)){
         socket.join(rooms.get("default"));
     }
-
+    
+    console.log("Joining room: " + data.room);
     // If the room is admin, check if the user is authorized to join the room
     if(data.room === "admin"){
-        if(! await Authorization.authorizeSocket(socket, "auth", true, "admin")){
+        if(! await Authorization.authorizeSocket(socket, "auth", false, "admin")){
             socket.disconnect();
             return;    
         }
@@ -42,36 +44,61 @@ async function joinRoom(socket: any, data: any){
         })
     });
 
+    // Join the room
     socket.join(rooms.get(data.room));
+}
+
+async function atachUserIdToSocket(socket: any){
+    var token = Authorization.getTokenFromWS(socket, "auth");
+    var user = await Authorization.getUserFromToken(token);
+
+    if(!socket["userId"]) socket["userId"] = user?.id;
+
+    socket.join(user?.id)
+}
+
+async function joinRomms(socket: any, data: any){
+    joinRoom(socket, data);
+    atachUserIdToSocket(socket);
 }
 
 module.exports = function(io: WebSocket){
 
     const clientHandler = WSClientHandler.getInstance(io.getIO());
 
-    io.on("connection",(socket: any) => {
+    clientHandler.init();
+
+    io.on("connection", async(socket: any) => {
+
+        console.log("WebSocketConnectionHandler. Client " + socket.id + " connecting to server ..."); 
+
         socket.on("disconnect", () => {
-            console.log("Client disconnected: " + socket.id);
+            console.log("WebSocketConnectionHandler. Client " + socket.id + " disconnected");
+
+            clientHandler.removeClient(socket.id);
         });
 
-        // Join a room 
         socket.on("joinRoom", (data: any) => {
-            joinRoom(socket, data);
-        });
+            console.log("Joining room: " + data.room);
+            
+            clientHandler.joinRooms(socket, data); 
+        })
 
-        // console.log("New client connected: " + socket.id);
-        // console.log(socket.rooms);
-        
-        // If the client hasnt sent a joinRoom event within 5 seconds, join the default room
+        var streamHandler = require("./WebSocketStreamHandler")(io, socket);
+
+        if(await Authorization.authorizeSocket(socket, "auth", false, "admin")){
+            var adminHandler = require("./WebSocketAdminHandler")(io, socket);
+        }
+
         setTimeout(() => {
             if(socket.rooms.size < 2){
-                joinRoom(socket, {room: "default"});
+                clientHandler.joinRooms(socket, {room: "default"});
             }
-
         }, 5000);
     });
 
     io.on("message", (message: any) => {
-        console.log(message);
+        io.send(message)
     });
+
 }

@@ -134,9 +134,9 @@ module.exports = function(app: Application) {
 
         if(!user.userId){ res.send({status: "Invalid token"}); return; }
 
-        var status = await userController.updateUserAuth(user.userId, req.body, currentPassword);
+        var result = await userController.updateUserAuth(user.userId, req.body, currentPassword);
         
-        res.send({status: status})
+        res.send({status: result.status})
 
         // Update user
         // return status OK if update success

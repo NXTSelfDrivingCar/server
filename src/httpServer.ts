@@ -41,6 +41,8 @@ app.listen(HttpServerConfig.PORT, () => {
         action: "init",
         details: { serverType: "HttpServer", port: HttpServerConfig.PORT },
       });
+      console.log("Running server on version: 1.1.2");
+      
     console.log(`HTTP Server listening on port ${HttpServerConfig.PORT}`);
 });
 
@@ -50,4 +52,4 @@ const wss = new WebSocketServer(httpServer);
 wss.init(WSSConfig.PORT);
 
 const connectionHandler = require("./webSocket/WebSocketConnectionHandler")(wss.getIO());
-const adminHandler = require("./webSocket/WebSocketAdminHandler")(wss.getIO());
+//const adminHandler = require("./webSocket/WebSocketAdminHandler")(wss.getIO());

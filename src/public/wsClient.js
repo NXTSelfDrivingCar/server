@@ -5,6 +5,7 @@ function init() {
   hostUrl = "http://localhost:5001";
 
   console.log("Initializing client...");
+  connect();
 }
 
 function disconnect() {
@@ -18,6 +19,17 @@ function disconnect() {
   socket = null;
 
   console.log("Client disconnected!");
+}
+
+function admSendStream() {
+  console.log("Sending stream to admin...");
+
+  if (!isConnected()) {
+    console.log("Client is not connected!");
+    return;
+  }
+
+  socket.emit("stream", "This is some stream data!");
 }
 
 function admConnect() {
@@ -35,7 +47,7 @@ function admConnect() {
       },
     });
 
-    socket.emit("joinRoom",{ room: "admin" });
+    socket.emit("joinRoom", { room: "streamer" });
   } catch (error) {
     console.log(error);
   }
@@ -50,6 +62,7 @@ function admConnect() {
     }
   });
 }
+
 // Povezivanje klijenta na wss
 function connect() {
   console.log("Connecting client...");
@@ -73,12 +86,17 @@ function connect() {
 
   socket.on("connect", function () {
     console.log("Client connected!");
-
-    // console.log(socket);
   });
 
   socket.on("message", function (data) {
     console.log("Client received: " + data);
+
+    const img = document.querySelector("img");
+    img.src = data;
+  });
+
+  socket.on("stream", function (data) {
+    console.log("Stream received: " + data);
   });
 }
 
