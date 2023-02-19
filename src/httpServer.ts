@@ -32,6 +32,7 @@ app.use("/static", express.static(path.join(__dirname, "public")));
 const guestRoutes = require ("./routes/guestRoutes")(app);
 const userRoutes = require ("./routes/userRoutes")(app);
 const adminRoutes = require ("./routes/adminRoutes")(app);
+const ajaxRoutes = require ("./routes/ajaxRoutes")(app);
 const sharedRoutes = require ("./routes/sharedRoutes")(app);
 
 // Start server

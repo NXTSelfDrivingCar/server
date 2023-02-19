@@ -5,14 +5,6 @@ import { WSClientHandler } from "./WebSocketClientHandler";
 
 const logger = new LogHandler();
 
-// List of role rooms
-const rooms = new Map<string, string>()
-    .set("default", "user")
-    .set("admin", "admin")
-    .set("user", "user")
-    .set("streamer", "streamer")
-    .set("gps", "gps");
-
 
 function isConnected(socket: any): boolean{
     return socket.rooms.size >= 1;
@@ -28,11 +20,13 @@ module.exports = function(io: WebSocket){
 
         console.log("WebSocketConnectionHandler. Client " + socket.id + " connecting to server ..."); 
 
+
         socket.on("disconnect", () => {
             console.log("WebSocketConnectionHandler. Client " + socket.id + " disconnected");
 
             clientHandler.removeClient(socket.id);
         });
+
 
         socket.on("joinRoom", (data: any) => {
             console.log("Joining room: " + data.room);
@@ -40,11 +34,14 @@ module.exports = function(io: WebSocket){
             clientHandler.joinRooms(socket, data); 
         })
 
+
         var streamHandler = require("./WebSocketStreamHandler")(io, socket);
 
+        // If the user is authorized as an admin, create an admin handler for the socket
         if(await Authorization.authorizeSocket(socket, "auth", false, "admin")){
             var adminHandler = require("./WebSocketAdminHandler")(io, socket);
         }
+
 
         setTimeout(() => {
             if(!isConnected(socket)) {

@@ -6,7 +6,6 @@ var clients = {};
 function init() {
   hostUrl = "http://localhost:5001";
 
-  console.log("Connecting to server: " + hostUrl);
   connect();
 }
 
@@ -55,9 +54,9 @@ function connect() {
       requestClientList();
     }, 3000);
 
-    // setInterval(() => {
-    //   requestClientList();
-    // }, 10000);
+    setInterval(() => {
+      requestClientList();
+    }, 15000);
   } catch (error) {
     console.log(error);
   }

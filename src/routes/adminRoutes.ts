@@ -141,6 +141,7 @@ module.exports = function(app: Application) {
 
         if(result.status == 'registrationComplete') {
             res.redirect("/admin/users/list")
+            return;
         }
 
         res.render("admin_list_users.ejs", {

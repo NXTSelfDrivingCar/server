@@ -9,10 +9,13 @@ import { TicketController } from "../tickets/ticketController";
 import { LogController } from "../logging/logController";
 import { Authorization } from "../cookie/authorization";
 import { Ticket } from "../tickets/ticketModel";
+import { ChangelogController } from "../changelog/changelogController";
+
 import path from "path";
 
 const logger = new LogHandler();
 
+const changelogController = new ChangelogController();
 const userController = new UserController();
 const ticketController = new TicketController();
 const logController = new LogController();
