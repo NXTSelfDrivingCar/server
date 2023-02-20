@@ -39,7 +39,7 @@ class LogHandler {
   _writeOpener() {
     var starter = [
       {
-        timestamp: fomratTimestampToWrite(new Date().getTime()),
+        timestamp: new Date().getTime(),
         tag: tags.INFO,
         source: "internal_log",
         action: "open",
@@ -57,9 +57,7 @@ class LogHandler {
     this._prepareDir();
 
     LogHandler.status = statuses.OPEN;
-    LogHandler.currentFIle = `log_${formatTimestamp(
-      new Date().getTime()
-    )}.json`;
+    LogHandler.currentFIle = `log_${new Date().getTime()}.json`;
 
     this._writeOpener();
 
@@ -79,9 +77,8 @@ class LogHandler {
     return this;
   }
 
-  // TODO: Dodati da se umesto message, tavlja objekat koji se pretvara u JSON ili parmas objekata
   log(tag = tags.INFO, data) {
-    const timestamp = fomratTimestampToWrite(new Date().getTime());
+    const timestamp = new Date().getTime();
     if (!data["tag"]) data["tag"] = tag;
 
     if (!data["timestamp"]) data["timestamp"] = timestamp;

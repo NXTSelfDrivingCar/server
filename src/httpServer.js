@@ -9,7 +9,8 @@ var jwt = require("jsonwebtoken");
 var wildcard = require("socketio-wildcard")();
 
 const { Server } = require("socket.io");
-const serverConfig = require("./config/serverConfig");
+const serverConfig = require("./config/httpServerConfig");
+const changeLogController = require("./changelog/changeLogController");
 
 var httpServerPort = serverConfig.HTTP_PORT;
 var wsServerPort = serverConfig.WS_PORT;
@@ -26,8 +27,8 @@ server.use(express.urlencoded({ extended: true }));
 
 var wsServer = require("./wsServer")(server);
 
-var admin_routes = require("./routes/admin_routes")(server);
-var guest_routes = require("./routes/guest_routes")(server);
+var admin_routes = require("./routes/old/admin_routes")(server);
+var guest_routes = require("./routes/guest_routes")(server, getUserWithToken);
 var user_routes = require("./routes/user_routes")(server, getUserWithToken); // TODO: Skloniti getUserWithToken jer se sada nalazi u util.js
 
 // END OF GETTING ROUTES FROM OTHER FILES
@@ -41,7 +42,7 @@ server.get("/", async (req, res) => {
     action: "getMainPage",
     url: req.url,
     method: "GET",
-    serverOrigin: "HttpServer",
+    origin: "HttpServer",
     user: {
       username: user.username,
       role: user.role,
@@ -53,6 +54,7 @@ server.get("/", async (req, res) => {
   res.render("main_page_index.ejs", {
     title: "Main page",
     user: user, // Passes user for navbar and access control
+    changelog: await changeLogController.getAllChangelogs(),
     session: req.session,
   });
 });
@@ -65,6 +67,7 @@ server.listen(httpServerPort, function (err) {
   if (err) {
     logger.logError({
       action: "startServer",
+      origin: "HttpServer",
       details: { serverType: "HttpServer", port: wsServerPort },
       error: err,
     });
@@ -82,6 +85,7 @@ wsServer.listen(wsServerPort, function (err) {
   if (err) {
     logger.logError({
       action: "startServer",
+      origin: "WebSocket",
       details: { serverType: "WebSocket", port: wsServerPort },
       error: err,
     });
@@ -90,6 +94,7 @@ wsServer.listen(wsServerPort, function (err) {
 
   logger.log("info", {
     action: "startServer",
+    origin: "WebSocket",
     details: { serverType: "WebSocket", port: wsServerPort },
   });
   console.log("Node.js WebSocket server at port 5001 is running.");

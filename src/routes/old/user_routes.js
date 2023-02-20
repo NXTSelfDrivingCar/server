@@ -1,15 +1,19 @@
-var userController = require("../user/userController");
-var User = require("../user/userModel");
-var { LogHandler } = require("../logging/logHandler");
+var userController = require("../../user/userController");
+var User = require("../../user/userModel");
+var { LogHandler } = require("../../logging/logHandler");
 var logger = new LogHandler().open();
 var jwt = require("jsonwebtoken");
-const { checkJsonFormat } = require("../public/util");
-require("dotenv").config();
+
+const {
+  checkJsonFormat,
+  getUserWithToken,
+  jsonFromKeys,
+} = require("../../public/util");
+const dotenv = require("dotenv").config({ path: ".env" });
 
 const registerFormat = {
   username: "string",
   password: "string",
-  password2: "string",
   email: "string",
 };
 
@@ -17,14 +21,6 @@ const loginFormat = {
   username: "string",
   password: "string",
 };
-
-async function checkPasswords(req, res) {
-  if (req.body.password == req.body.password2) {
-    return true;
-  } else {
-    return false;
-  }
-}
 
 async function loginUser(req, res, next) {
   var username = req.body.username;
@@ -36,26 +32,43 @@ async function loginUser(req, res, next) {
   else {
     // if user is found, create a token and send it to the client
     // Token is created with the user object as payload and the secret key from .env
+
     const token = jwt.sign({ user: foundUser }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
     // send token to client
-    res.cookie("auth", token, { httpOnly: false });
+    res.cookie("auth", token, { httpOnly: true, secure: false });
 
     return true;
   }
 }
 
+async function updateUserPassword(req, res, verified) {
+  var oldUser = jsonFromKeys(verified.user, true, "_id");
+
+  oldUser.password = req.body.newPassword;
+
+  console.log("New password is: " + oldUser.password);
+
+  var updated = await userController.updateUser(oldUser.id, oldUser);
+
+  if (updated == null) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
 async function registerUser(req, res) {
+  var username = req.body.username;
+  var password = req.body.password;
+  var email = req.body.email;
+  var apiKey = "apikey";
+  var role = "user";
+
   // make a new user
-  var newUser = new User(
-    req.body.username,
-    req.body.password,
-    req.body.email,
-    "apikey",
-    "user"
-  );
+  var newUser = new User(username, password, email, apiKey, role);
 
   // register user
   var registered = await userController.registerUser(newUser);
@@ -125,7 +138,73 @@ module.exports = function (server, getUserWithToken) {
     });
   });
 
+  server.get("/user/settings", async (req, res) => {
+    res.render("user_edit.ejs", {
+      title: "Edit user",
+      user: await getUserWithToken(req, res),
+    });
+  });
+
   //* =================== POST ROUTES =================== *//
+
+  server.post("/user/remove", async (req, res) => {
+    var user = await getUserWithToken(req, res);
+
+    if (!user) {
+      return res.redirect("/user/login");
+    }
+
+    var removed = await userController.removeUser(user.id);
+
+    res.clearCookie("auth");
+
+    if (removed == null) {
+      return res.status(500).send("Internal server error (500)");
+    } else {
+      return res.redirect("/");
+    }
+  });
+
+  server.post("/user/edit", async (req, res) => {
+    var user = await getUserWithToken(req, res);
+
+    if (!user) {
+      return res.redirect("/user/login");
+    }
+
+    // TODO: Ovo treba refaktorirati do maksimuma jer je krs
+    console.log("Body:");
+    console.log(req.body);
+
+    console.log("Verified: ");
+    console.log(user);
+
+    var key = req.body.type;
+    var value = req.body.value;
+
+    var oldUser = jsonFromKeys(user, true, "_id");
+
+    console.log("Old user: ");
+    console.log(oldUser);
+
+    oldUser[key] = value;
+
+    var updated = await userController.updateUser(oldUser.id, oldUser, key);
+
+    res.clearCookie("auth");
+
+    var token = jwt.sign({ user: oldUser }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.cookie("auth", token, { httpOnly: true, secure: false });
+
+    if (updated == null) {
+      return res.status(500).send("Internal server error (500)");
+    } else {
+      return res.redirect("/user/settings");
+    }
+  });
 
   server.post("/user/login", async (req, res, next) => {
     if (checkJsonFormat(req.body, loginFormat) == false) {
@@ -163,8 +242,6 @@ module.exports = function (server, getUserWithToken) {
       return res.status(400).send("Bad request (400) - Invalid JSON format");
     }
 
-    var passResult = await checkPasswords(req, res);
-
     logger.log("info", {
       action: "registerUser",
       url: req.url,
@@ -179,7 +256,7 @@ module.exports = function (server, getUserWithToken) {
     });
 
     // If passwords don't match, render page again with error message
-    if (!passResult) {
+    if (req.body.password != req.body.password2) {
       res.render("register_page.ejs", {
         title: "Register page",
         user: await getUserWithToken(req, res), // Gets user for navbar
@@ -217,9 +294,13 @@ module.exports = function (server, getUserWithToken) {
    */
 
   server.post("/user/login/mobile", async (req, res, next) => {
+    // Check if JSON format is valid
+    console.log(req.body);
+
     if (checkJsonFormat(req.body, loginFormat) == false)
       return res.send({ status: "invalidFormat" });
 
+    // Gets true or false if user is logged in
     var result = await loginUser(req, res, next);
 
     logger.log("info", {
@@ -235,19 +316,21 @@ module.exports = function (server, getUserWithToken) {
       },
     });
 
+    // If user is logged in, send OK
     if (result) {
-      return res.send({ status: "OK", token: req.cookies });
+      return res.send({ status: "OK" });
     } else {
       return res.send({ status: "Unauthorized" });
     }
   });
 
   server.post("/user/register/mobile", async (req, res, next) => {
+    // Check if JSON format is valid
+    console.log(req.body);
+
     if (checkJsonFormat(req.body, registerFormat) == false) {
       return res.send({ status: "invalidFormat" });
     }
-
-    var passResult = await checkPasswords(req, res);
 
     logger.log("info", {
       action: "registerUser",
@@ -263,10 +346,7 @@ module.exports = function (server, getUserWithToken) {
       },
     });
 
-    if (!passResult) {
-      return res.send({ status: "passwordMismatch" });
-    }
-
+    // Gets true or false if user is logged in
     var result = await registerUser(req, res);
 
     if (result) {
@@ -280,9 +360,34 @@ module.exports = function (server, getUserWithToken) {
     return res.send({ status: "error" });
   });
 
-  server.post("/user/mobile/update", async (req, res, next) => {
+  server.post("/user/update/mobile", async (req, res, next) => {
     var token = req.body.token;
+
+    if (token == undefined) {
+      return res.send({
+        status: "invalidToken",
+        message: "Token is undefined",
+      });
+    }
+
+    var verified = jwt.verify(token, process.env.JWT_SECRET);
+
+    var result = updateUserPassword(req, res, verified);
+
+    if (!result) {
+      return res.send({ status: "Failed update" });
+    } else {
+      return res.send({ status: "OK" });
+    }
+  });
+
+  server.post("/user/remove/mobile", async (req, res, next) => {
+    // var token = req.body.token;
     // Ako ne postoji vrati
+    console.log("Remove user mobile: ");
+    console.log(req.body);
+
+    var token = req.body.tkn;
 
     if (token == undefined) {
       return res.send({ status: "invalidToken" });
@@ -290,12 +395,23 @@ module.exports = function (server, getUserWithToken) {
 
     var verified = jwt.verify(token, process.env.JWT_SECRET);
 
+    console.log("Verified token:");
+    console.log(verified);
+
     var decoded = jwt.decode(token, { complete: true });
 
-    if (decoded.user.id != req.body.userId) {
+    console.log("Decoded token:");
+    console.log(decoded);
+
+    if (decoded.payload.user.id != verified.user.id) {
       return res.send({ status: "invalidToken" });
     }
 
-    // TODO: Update user
+    var result = userController.removeUser(verified.user.id);
+    if (!result) {
+      return res.send({ status: "Failed remove" });
+    } else {
+      return res.send({ status: "OK" });
+    }
   });
 };

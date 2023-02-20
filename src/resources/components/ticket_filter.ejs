@@ -1,0 +1,42 @@
+<div class="container">
+  <div class="card mt-3 p-3 shadow">
+    <form method="get" action="/tickets" enctype="application/x-www-form-urlencoded">
+      <div class="row">
+        <div class="col-4">
+          <label for="inputTitle">Priority</label>
+          <select name="priority" class="form-control form-select">
+            <option value="">All</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+        </div>
+        <div class="col-4">
+          <label for="inputTitle">Status</label>
+          <select name="status" class="form-control form-select">
+            <option value="">All</option>
+            <option value="Open">Open</option>
+            <option value="In progress">In progress</option>
+            <option value="Finished">Finished</option>
+          </select>
+        </div>
+        <div class="col-3">
+          <label for="inputTitle">Category</label>
+          <select name="category" class="form-control form-select">
+            <option value="">All</option>
+            <option>NTX Robot</option>
+            <option>Web Sajt</option>
+            <option>Android Aplikacija</option>
+            <option>Android GPS</option>
+            <option>Ostalo</option>
+          </select>
+        </div>
+        <div class="col-1">
+          <div class="d-flex justify-content-end mb-3">
+            <button type="submit" class="btn btn-primary mt-4">Filter</i></button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

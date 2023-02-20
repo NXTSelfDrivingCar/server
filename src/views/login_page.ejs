@@ -10,44 +10,44 @@
 
 <body>
 
-  <%- include('../resources/components/user_navbar.ejs') %>
+  <%- include('../resources/components/new_navbar.ejs') %>
 
-  <form method="post" action="/user/login" enctype="application/x-www-form-urlencoded">
+  <form method="post" action="/login" enctype="application/x-www-form-urlencoded">
+    <div class="container mt-4">
+      <div class="card shadow p-4" style="width: 600px; margin: auto;">
+        <div class="row align-items-center">
 
-    <br><br>
-    <div class="container">
-      <div class="row align-items-center" align="center">
-        <div class="col">
-        </div>
-        <div class="col">
+          <div class="col">
 
-          <h4 style="color: whitesmoke">Username:</h4>
-          <input type="text" name="username" id="username" class="form-control" placeholder="Username" />
+            <div class="display-6 text-center">Deblo u</div>
 
-          <br>
+            <div class="p-2 mt-3">
+              <lead>Username:</lead>
+              <input type="text" name="username" id="username" class="form-control" placeholder="Username" required />
+            </div>
 
-          <h4 style="color: whitesmoke">Password:</h4>
-          <input type="password" name="password" id="password" class="form-control" placeholder="Password" />
+            <div class="p-2">
+              <lead>Password:</h4>
+                <input type="password" name="password" id="password" class="form-control" placeholder="Password" required />
+            </div>
 
-          <button type="button" class="btn btn-secondary btn-sm float-start" style="margin-top: 10px">Forgot
-            password?</button>
+            <div class="p-2">
+              <button type="button" class="btn btn-secondary btn-sm float-start">Forgot password?</button>
+            </div>
 
-          <br><br><br>
+            <br><br>
 
-          <a href="/user/register" type="button" class="btn btn-secondary" style="width:49%">Not a member?
-            Register</a>
-          <input type="submit" class="btn btn-success" style="width:49%" value="Sign in"></input>
-
-          <br><br>
-
-          <% if(result===false) { %>
-          <div class="alert alert-danger" role="alert">
-            ✗ Username or password is incorrect!
+            <div class="float-end">
+              <a href="/register" type="button" class="btn btn-secondary">Not a member? Register</a>
+              <input type="submit" class="btn btn-success" value="Sign in"></input>
+            </div>
           </div>
-          <% } %>
         </div>
-        <div class="col">
+        <% if(status==="loginFailed") { %>
+        <div class="alert alert-danger mt-4" role="alert">
+          ✗ Username or password is incorrect!
         </div>
+        <% } %>
       </div>
     </div>
   </form>

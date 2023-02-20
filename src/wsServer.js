@@ -17,13 +17,14 @@ module.exports = (server) => {
     console.log("SID: " + socket.conn["id"]);
 
     logger.log("info", {
-      action: "connection",
+      action: "connect",
       details: {
         sid: socket.id,
         scid: socket.conn["id"],
         ip: socket.handshake.address,
+        on: "connection",
       },
-      serverOrigin: "WebSocket",
+      origin: "WebSocket",
     });
 
     socket.emit("message", "You have been connected");
@@ -38,8 +39,9 @@ module.exports = (server) => {
           sid: socket.id,
           scid: socket.conn["id"],
           ip: socket.handshake.address,
+          on: "disconnect",
         },
-        serverOrigin: "WebSocket",
+        origin: "WebSocket",
       });
       // send message back to this user
       socket.emit("message", "You have been disconnected");
@@ -52,8 +54,9 @@ module.exports = (server) => {
           sid: socket.id,
           scid: socket.conn["id"],
           ip: socket.handshake.address,
+          on: "connect_error",
         },
-        serverOrigin: "WebSocket",
+        origin: "WebSocket",
         error: err,
       });
 
@@ -67,9 +70,10 @@ module.exports = (server) => {
           sid: socket.id,
           scid: socket.conn["id"],
           ip: socket.handshake.address,
+          on: "message",
         },
         message: msg,
-        serverOrigin: "WebSocket",
+        origin: "WebSocket",
       });
 
       console.log("Message recieved: " + msg);
