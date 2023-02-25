@@ -31,6 +31,8 @@ module.exports = function(app: Application) {
     // ! =================== GET ROUTES =================== //
 
     app.get("/admin/dashboard", logger.logRoute("getDashboard"), Authorization.authRole("admin"), (req: Request, res: Response) => {
+        // Open the dashboard page
+
         res.render("admin_dashboard_index.ejs", {
             title: "Admin dashboard",
         })
@@ -118,8 +120,8 @@ module.exports = function(app: Application) {
         res.redirect("/")
     })
 
-    app.post("/admin/user/update", logger.logRoute("updateUser"), Authorization.authRole("admin"), (req: Request, res: Response) => {
-        var result = userController.updateUser(req.body.id, req.body)
+    app.post("/admin/user/update", logger.logRoute("updateUser"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
+        var result = await userController.updateUser(req.body.id, req.body)
         
         res.redirect("/admin/users/list")
     })

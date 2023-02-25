@@ -26,6 +26,7 @@ module.exports = function(app: Application) {
         
         res.redirect("/")
     })
+    
 
     app.get("/user/profile",logger.logRoute("viewUserProfile"), Authorization.authRole('admin', 'user'), async (req: Request, res: Response) => {
         res.render("user_edit.ejs", {
@@ -34,6 +35,7 @@ module.exports = function(app: Application) {
             status: ""
         })
     })
+
 
     // ! =================== POST ROUTES =================== //
 
@@ -49,6 +51,7 @@ module.exports = function(app: Application) {
             status: status
         })
     })
+
     
     app.post("/user/delete", logger.logRoute("deleteUser"), Authorization.authRole('admin', 'user'), async (req: Request, res: Response) => {
         var status = await userController.deleteUserAuth(req.body.userId, req.body.currentPassword);
@@ -99,6 +102,7 @@ module.exports = function(app: Application) {
         // return status INTERNAL_SERVER_ERROR if something went wrong
     })
 
+
     app.post("/user/register/mobile", logger.logRoute("mobileRegister"), async (req: Request, res: Response) => {
 
         console.log("\n========================================");
@@ -116,6 +120,7 @@ module.exports = function(app: Application) {
         // return status BAD_REQUEST if request is invalid
         // return status INTERNAL_SERVER_ERROR if something went wrong
     })
+
 
     app.post("/user/update/mobile", logger.logRoute("mobileUpdateUser"), async (req: Request, res: Response) => {
         
@@ -143,6 +148,7 @@ module.exports = function(app: Application) {
         // return status BAD_REQUEST if request is invalid
         // return status INTERNAL_SERVER_ERROR if something went wrong
     })
+
 
     // TODO: Add mobile route for delete user (DELETE)
     app.post("/user/delete/mobile", logger.logRoute("mobileDeleteUser"), async (req: Request, res: Response) => {
