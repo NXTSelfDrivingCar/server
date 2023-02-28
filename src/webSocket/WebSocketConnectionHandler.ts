@@ -10,6 +10,8 @@ function isConnected(socket: any): boolean{
     return socket.rooms.size >= 1;
 }
 
+// TODO: Return clientHandler after Android testing
+
 module.exports = function(io: WebSocket){
 
     const clientHandler = WSClientHandler.getInstance(io.getIO());
@@ -17,19 +19,34 @@ module.exports = function(io: WebSocket){
     clientHandler.init();
 
     io.on("connection", async(socket: any) => {
-
+        
         console.log("WebSocketConnectionHandler. Client " + socket.id + " connecting to server ..."); 
 
+        // Send to the client the connection has been established
+        socket.send("Server has established connection with socket ID " + socket.id + "");
 
+        // This event is emitted when the user disconnects
         socket.on("disconnect", () => {
             console.log("WebSocketConnectionHandler. Client " + socket.id + " disconnected");
 
+            // Remove the client from the client list 
             clientHandler.removeClient(socket.id);
         });
 
+        // This event is emitted when the user sends a message
+        socket.on("message", (message: any) => {
+            socket.send("Server is returning the message back: " + message);
 
+            console.log("WebSocketConnectionHandler. Message received: " + message);
+        })
+
+        // This event is emitted when the user joins a room
         socket.on("joinRoom", (data: any) => {
-            console.log("Joining room: " + data.room);
+            console.log("WebSocketConnectionHandler. Client joining room: " + data.room);
+
+            socket.send("Server is joining socket to a room: " + data.room);
+            
+            // socket.join(data.room);
             
             clientHandler.joinRooms(socket, data); 
         })
