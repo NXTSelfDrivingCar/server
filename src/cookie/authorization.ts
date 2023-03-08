@@ -112,9 +112,12 @@ export class Authorization {
 
 
   public static async authorizeSocket(socket: any, cookieName: string, disconnect: boolean = true, ...roles: string[]): Promise<boolean> {
+    // Get user from cookie, if user is null, disconnect socket (if disconnect is true)
+
     var token = this.getTokenFromWS(socket, cookieName);
     var user = await this._getUserFromToken(token);
     
+    // If user is null (guest), disconnect socket
     if(!user || user.role == "guest") {
       
       logger.warn({origin: "WebSocket", action: "authorization", message: "User is not logged in", socket: {id: socket.id, requestUrl: socket.request.url}})
@@ -123,6 +126,7 @@ export class Authorization {
       return false;
     }
 
+    // Check if user has one of the given roles
     for (var role in roles){
       if(user.role == roles[role]) {
         return true;
@@ -142,6 +146,7 @@ export class Authorization {
 
   public static getTokenFromWS(socket: any, cookieName: string): string {
     try{
+      // Get cookie from socket request ( "auth=token; ")
       var cookies = socket.request.headers.cookie.split("; ");
     }catch(err){
       return "";

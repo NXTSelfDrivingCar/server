@@ -10,13 +10,16 @@ export class LogController {
         this._repository = new LogRepository(LogHandler.filePath.toString());
     }
 
+
     getAll(){
         return this._repository.findAllLogFiles();
     }
 
+
     getLogByName(name: string){
         return this._repository.findLogValueByFileName(name);
     }
+
 
     /**
      * 
@@ -26,6 +29,7 @@ export class LogController {
     deleteLogByName(name: string){
         return this._repository.deleteLogFileByName(name);
     }
+
 
     /**
      * 
@@ -37,6 +41,7 @@ export class LogController {
         return this._repository.findLogValueByLevel(name, level);
     }
 
+
     /**
      * 
      * @param name Name of the file to search in (with or without .json) -> will be parsed
@@ -47,9 +52,11 @@ export class LogController {
         return this._repository.findLogValueByDate(name, date);
     }
 
+
     getLogValueByAction(name: string, action: string){
         return this._repository.findLogValueByAction(name, action);
     }
+
 
     /**
      * 
@@ -66,7 +73,9 @@ export class LogController {
         return this._repository.findLogValueByFilter(name, filter);
     }
 
+
     getCurrentLogName(){
         return logHandler.getFileName();
     }
+    
 }
