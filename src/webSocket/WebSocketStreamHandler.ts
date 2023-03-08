@@ -9,7 +9,12 @@ module.exports = function(io: any, socket: any){
     socket.on("stream", (data: any) => {
 
         io.to(socket["userId"]).emit("stream", data);
+    })
 
+    socket.on("nxtControl", (data: any) => {
+        console.log("Sending nxtControl to: " + socket["userId"] + " data: " + data);
+        
 
+        io.to(socket["userId"]).emit("nxtControl", data);
     })
 }
