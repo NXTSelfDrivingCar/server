@@ -53,12 +53,12 @@
       <div class="card-header bg-dark text-white">
         <div class="row d-flex justify-content-between">
           <div class="col-3 my-auto">
-            <p class="display-6">Propusnice:</p>
+            <p class="display-6">Tickets:</p>
           </div>
           <div class="col-3 mt-2">
             <% if (user.role != 'guest') { %>
             <div class="d-flex justify-content-end my-auto">
-              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ticketModal">Napravi Propusnicu</button>
+              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#ticketModal"><i class="bi bi-plus-circle"></i> New</button>
             </div>
             <% } %>
           </div>
@@ -93,7 +93,7 @@
           <div class="container">
             <div class="row">
               <div class="col d-flex justify-content-center mt-1">
-                <%= item.title %>
+                <%= item.title.length > 30 ? item.title.substring(0,28) + "..." : item.title %>
               </div>
               <div class="col d-flex justify-content-center mt-1">
                 <%= item.category %>
@@ -127,7 +127,7 @@
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Create propusnica</h5>
+          <h5 class="modal-title">Create ticket</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">

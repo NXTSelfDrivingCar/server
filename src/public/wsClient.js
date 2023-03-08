@@ -47,7 +47,7 @@ function admConnect() {
       },
     });
 
-    socket.emit("joinRoom", { room: "streamer" });
+    socket.emit("joinRoom", { room: "user" });
   } catch (error) {
     console.log(error);
   }
@@ -95,15 +95,13 @@ function connect() {
     img.src = data;
   });
 
-  socket.on("stream", function (data) {
-    console.log("Stream received: " + data);
-  });
+  // socket.on("stream", function (data) {
+  //   console.log("Stream received: " + data);
+  // });
 }
 
 function isConnected() {
-  console.log("\n");
   console.log("Checking if client is connected...");
-  console.log(socket);
   if (socket == null) {
     console.log("Client is not connected!");
     return false;

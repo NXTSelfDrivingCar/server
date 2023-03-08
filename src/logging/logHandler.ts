@@ -60,6 +60,7 @@ class LogHandler{
         this._writeOpener();
     }
 
+
     /**
      * Close the current log file 
      * 
@@ -74,6 +75,7 @@ class LogHandler{
         LogHandler.currentFile = "";
     }
 
+
    /**
     * 
     * @deprecated For info logging, use info(data: any) instead
@@ -81,6 +83,7 @@ class LogHandler{
     log(data: any){
         this._log(levels.INFO, data);
     }
+
 
     /**
      * Logs data to the current log file
@@ -139,6 +142,7 @@ class LogHandler{
     info(data: any){
         this._log(levels.INFO, data);
     }
+
     
     /**
      * 
@@ -197,6 +201,7 @@ class LogHandler{
         this._log(levels.ERROR, data);
     }
 
+
     /**
      * 
      * @param data - The data to log
@@ -226,6 +231,7 @@ class LogHandler{
         this._log(levels.WARN, data);
     }
 
+
     /**
      * 
      * @param action - The action to log
@@ -253,9 +259,11 @@ class LogHandler{
         }
     }
 
+
     getFileName(): string{
         return LogHandler.currentFileName;
     }
+
 
     // getFileName(): string{
     //     return LogHandler.currentFile.toString().split("\\")[LogHandler.currentFile.toString().split("\\").length - 1];
@@ -266,38 +274,53 @@ class LogHandler{
     }
 
     // ! =================== PRIVATE METHODS =================== //
+
     
     private _parseData(level: string, data: any): any{
+        
+        // Adds level and timestamp if not present
         if(!data["level"]) data["level"] = level;
         if(!data["timestamp"]) data["timestamp"] = new Date().getTime();
 
+        // Converts level to uppercase
         data["level"] = data["level"].toUpperCase();
 
         return data;
     }
 
+
     private _log(level: string = levels.INFO, data: any){
+        // Reads current log file, parses it, adds new data and writes it back
 
         data = this._parseData(level, data);
-
+        
+        // Reads current log file
         var currentLog = fs.readFileSync(LogHandler.currentFile, "utf8");
 
+        // Parses current log file
         var currentLogJSON = JSON.parse(currentLog);
 
+        // Adds new data to current log file
         currentLogJSON.push(data);
 
+        // Writes new data to current log file
         this._writeToFile(currentLogJSON);
     } 
 
+
     private _prepareDir(){
         console.log("Checking for log directory at: " + LogHandler.filePath + " ...");
+
+        // Checks if log directory exists
         if(fs.existsSync(LogHandler.filePath)) return;
 
+        // Creates log directory
         console.log("Creating log directory...");
         fs.mkdirSync(LogHandler.filePath);
 
         console.log("Log directory created at: " + LogHandler.filePath);
     }
+
 
     private _writeToFile(data: any){
         if(LogHandler.status == statuses.CLOSED){
@@ -312,6 +335,7 @@ class LogHandler{
     }
 
     // ! =================== LOGGING WRAPPERS =================== //
+
 
     private _writeOpener(){
 
@@ -329,8 +353,10 @@ class LogHandler{
         this._writeToFile(starter);
     }
 
+
     private async _logRoute(req: Request, res: Response, action: string, extra: any = {}){
 
+        // Begins writing log data
         var logData: any = {
             origin: "route",
             action: action,
@@ -338,6 +364,11 @@ class LogHandler{
             url: req.url,
             path: req.path,
         }
+
+        /* 
+            Writes extra data to logData if it is not empty
+            Also writes body, query and params if they are not empty
+        */
 
         if (JSON.stringify(extra) !== "{}") logData["content"] = extra;
 

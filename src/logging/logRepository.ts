@@ -25,10 +25,12 @@ export class LogRepository {
         // Await for log file to be read
         var log = await this.findLogValueByFileName(name);
 
+        // Filter log file like a database
         return _.filter(log, filter);
     }
 
     findAllLogFiles(){
+        // Read all files in the directory
         try{
             return fs.readdirSync(this.filePath);
         }catch(err){
@@ -39,6 +41,7 @@ export class LogRepository {
     }
 
     async findLogValueByFileName(name: string){
+        // Await for log file to be read and parsed to JSON
         try{
             var data = fs.readFileSync(path.join(this.filePath.toString(), this._parseName(name)));
             return JSON.parse(data.toString());
@@ -50,6 +53,7 @@ export class LogRepository {
     }
 
     deleteLogFileByName(name: string){
+        // Delete log file
         try{
             fs.unlinkSync(path.join(this.filePath.toString(), this._parseName(name)));
 

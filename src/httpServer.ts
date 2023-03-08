@@ -21,9 +21,6 @@ import { createServer } from "http";
 import { EmailHandler } from "./emailHandler/emailHandler";
 import { EmailConfig } from "./config/shared/emailConfig";
 
-// Express server setup
-const PORT = process.env.HTTP_SERVER_PORT;
-
 
 var app: Express = express();
 
@@ -46,7 +43,7 @@ app.listen(HttpServerConfig.PORT, () => {
         action: "init",
         details: { serverType: "HttpServer", port: HttpServerConfig.PORT },
       });
-      console.log("Running server on version: 1.1.5 - WebSocket (alpha) / Streamer (alpha)");
+      console.log("Running server on version: 1.1.5.2 - WebSocket (alpha) / Streamer (alpha 2)");
       
     console.log(`HTTP Server listening on port ${HttpServerConfig.PORT}`);
 });

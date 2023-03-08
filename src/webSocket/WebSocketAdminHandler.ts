@@ -14,13 +14,12 @@ module.exports = function(io: any, socket: any){
         kickUser(socket, data, clientHandler);
     })
 
+
     socket.on("requestClientList", () => {
         console.log("WebSocketAdminHandler. Requesting client list");
 
         clientHandler.requestClientList(socket);
     })
-
-
 }
 
 
@@ -39,6 +38,13 @@ function kickUser(socket:any, data: any, clientHandler: WSClientHandler){
         })
     });
 
+    socket.to(data.SID).emit("message", "You have been kicked from the server, please reconnect");
+    
+    var kickedSocket = clientHandler.getConnectedClientsBySocketId(data.SID);
+    
+    if(kickedSocket){
+        kickedSocket.socket.disconnect();
+    }
     clientHandler.removeClient(data.SID);
 }
 
