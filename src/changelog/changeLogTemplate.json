@@ -1,0 +1,9 @@
+{
+  "_id": "<ObjectId>",
+  "id": "<String>",
+  "title": "<String>",
+  "version": "<String>",
+  "description": "<String>",
+  "isBeta": "<Boolean>",
+  "date": "<Date>"
+}

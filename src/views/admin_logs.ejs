@@ -9,17 +9,53 @@
 </head>
 
 <body>
-  <%- include('../resources/components/navbar.ejs') %>
+  <%- include('../resources/components/new_navbar_admin.ejs') %>
+  <% logs.sort(); logs.reverse(); %>
 
-  <br>
+
   <div class="container">
+    <div class="container">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="/admin/dashboard" class="text-decoration-none">Admin dashboard</a>
+        </li>
+        <li class="breadcrumb-item active">
+          Debla
+        </li>
+      </ol>
+    </div>
     <div class="card">
-      <div class="card-header bg-dark text-white">Debla</div>
+      <div class="card-header bg-dark text-white">
+        <p class="display-6 my-auto">Debla:</p>
+      </div>
       <ul class="list-group">
-        <% for (let log of logs) { %>
-            <a href="/admin/logs/view/log?id=<%= log%>" class="list-group-item list-group-item-action">
-              <%= log %>
-            </a>
+        <div class="list-group-item" style="border-radius: 0;">
+          <div class="container">
+            <div class="row text-center">
+              <div class="col">
+                File name
+              </div>
+              <div class="col">
+                Start time
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <% for (var i = 0; i < logs.length; i++) { %>
+        <a href="/admin/logs/l/<%=logs[i]%>" class="list-group-item list-group-item-action">
+          <div class="container">
+            <div class="row">
+              <div class="col d-flex justify-content-center mt-1">
+                <%= logs[i] %>
+              </div>
+              <div class="col d-flex justify-content-center mt-1">
+                <%= new Date(parseInt(logs[i].split('_')[1].split('.')[0])).toLocaleDateString('en-UK') %> - <%= new Date(parseInt(logs[i].split('_')[1].split('.')[0])).toLocaleTimeString('en-UK') %>
+              </div>
+            </div>
+          </div>
+        </a>
         <% } %>
       </ul>
     </div>

@@ -14,8 +14,18 @@ function jsonToString(jsonData, ...keys) {
   return JSON.stringify(jsonData);
 }
 
-function jsonFromKeys(jsonData, ...keys) {
+function jsonFromKeys(jsonData, ommit = false, ...keys) {
   var result = {};
+
+  if (ommit) {
+    for (var key in jsonData) {
+      if (!isInArray(key, keys)) {
+        result[key] = jsonData[key];
+      }
+    }
+    return result;
+  }
+
   for (var i = 0; i < keys.length; i++) {
     result[keys[i]] = jsonData[keys[i]];
   }
@@ -51,7 +61,6 @@ function getUserWithToken(req, res) {
     var decoded = jwt.verify(
       req.cookies.auth,
       process.env.JWT_SECRET,
-
       // Dodata funkcija u slucaju da je token istekao
       // Ako je token istekao, vraca null i to dozvoljava da se vrati guest korisnik
       function (err, decoded) {
@@ -71,7 +80,8 @@ function getUserWithToken(req, res) {
       decoded.user.password,
       decoded.user.email,
       decoded.user.nxt_api_key,
-      decoded.user.role
+      decoded.user.role,
+      decoded.user.id
     );
 
     return newUser;
@@ -96,6 +106,12 @@ function checkJsonFormat(jsonData, jsonFormat) {
   return true;
 }
 
+function isEmpty(dictionary) {
+  return Object.keys(dictionary).length === 0;
+}
+
+function getUserWithTokenMobile(req, res) {}
+
 module.exports = {
   jsonToString: jsonToString,
   objectArrayToString: objectArrayToString,
@@ -104,4 +120,5 @@ module.exports = {
   objectArrayToJSON: objectArrayToJSON,
   jsonFromKeys: jsonFromKeys,
   checkJsonFormat: checkJsonFormat,
+  isEmpty: isEmpty,
 };

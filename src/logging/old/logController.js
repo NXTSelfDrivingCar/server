@@ -1,4 +1,4 @@
-const logRepostiory = require("./logRepository");
+const logRepostiory = require("../old/logRepository");
 
 function getAllLogs() {
   return logRepostiory.getAllLogs();

@@ -1,7 +1,9 @@
-var userController = require("../user/userController");
-var logController = require("../logging/logController");
-var { LogHandler } = require("../logging/logHandler.js");
-var User = require("../user/userModel");
+var userController = require("../../user/userController");
+var changeLogController = require("../../changelog/changeLogController");
+var logController = require("../../logging/old/logController");
+var { LogHandler } = require("../../logging/logHandler.js");
+var User = require("../../user/userModel");
+var ChangeLog = require("../../changelog/changeLogModel");
 
 var logger = new LogHandler().open();
 var {
@@ -9,7 +11,7 @@ var {
   objectArrayToString,
   getUserWithToken,
   objectArrayToJSON,
-} = require("../public/util");
+} = require("../../public/util");
 
 var jwt = require("jsonwebtoken");
 const { json } = require("express");
@@ -94,16 +96,28 @@ async function updateUser(req, res) {
   var email = req.body.inputEmail;
   var role = req.body.inputRole;
 
-  var userContainer = new User(username, null, email, null, role);
+  var oldUser = await userController.findUserById(id);
 
-  var updated = await userController.updateUser(
-    req.body.inputID,
-    userContainer
-  );
+  oldUser.username = username;
+  oldUser.email = email;
+  oldUser.role = role;
+
+  var updated = await userController.updateUser(req.body.inputID, oldUser);
 
   if (updated) console.log("Updated");
   else console.log("Not updated");
   return updated;
+}
+
+async function addChangelog(req, res) {
+  var newChangelog = new ChangeLog(
+    req.body.inputTitle,
+    req.body.inputVersion,
+    req.body.inputIsBeta,
+    req.body.inputDescription
+  );
+
+  return await changeLogController.addChangelog(newChangelog);
 }
 
 /*
@@ -222,11 +236,28 @@ module.exports = function (server) {
     res.redirect("/admin/logs");
   });
 
+  server.get("/admin/changelog/add", checkAuth, async (req, res) => {
+    // TODO: Dodati da se ucita poslednji log kada se otvori stranica i da se renderuje (tipa preko datuma)
+    let lastChangelog = await changeLogController.getLatestChangeLogs();
+    if (lastChangelog == null) lastChangelog = [];
+
+    if (lastChangelog.length > 0) lastChangelog = lastChangelog[0];
+
+    res.render("admin_changelog.ejs", {
+      title: "Adding changelog",
+      latestChangelog: lastChangelog,
+    });
+  });
+
   //* =================== POST ROUTES =================== *//
 
-  // TODO: Proveriti da li tehnicki mora da stoji checkAuth u post rutama
+  server.post("/admin/changelog/add", checkAuth, async (req, res) => {
+    let changeLog = addChangelog(req, res);
+    res.redirect("/admin/changelog/add");
+  });
 
-  server.post("/admin/admin_list_users", async (req, res) => {
+  // TODO: Obrisati svaki post method za ono sto bi trebalo da bude get (tipa ovo ispod)
+  server.post("/admin/admin_list_users", checkAuth, async (req, res) => {
     var users = await filterSeachUsers(req, res); // Ovo je array of users
 
     logger.log("info", {

@@ -1,0 +1,99 @@
+Routes:
+    Base:
+        ✔ Admin routes @done(23-01-20 21:46)
+        ✔ User routes @done(23-01-20 21:46)
+        ✔ Guest routes @done(23-01-20 21:46)
+        ✔ Public routes @done(23-01-20 21:46)
+    Functional:
+        Admin:
+            GET:
+                ✔ Dashboard @done(23-02-11 18:29)
+                ✔ User list @done(23-02-11 18:29)
+                ✔ User update @done(23-02-11 18:29)
+                ✔ Log files list @done(23-02-11 18:29)
+                ✔ Log file detailed view @done(23-02-11 18:29)
+                ✔ Log file filter @done(23-02-11 18:29)
+                ✔ Changelog add @done(23-02-11 23:21)
+            POST:
+                ✔ User update @done(23-02-11 18:29)
+                ✔ Changelog add @done(23-02-11 23:21)
+                ✔ Ticket update @done(23-02-11 23:21)
+            DELETE:
+                ✔ User delete @done(23-02-15 01:28)
+                ✔ Log file delete @done(23-02-11 23:33)
+        User:
+            GET:
+                ✔ Logout @done(23-02-11 13:39)
+                ✔ Profile @done(23-02-11 22:22)
+            POST:
+                ✔ Profile update @done(23-02-11 22:22)
+            DELETE:
+                ✔ Profile delete @done(23-02-11 23:02)
+        Guest:
+            GET:
+                ✔ Main page @done(23-02-11 13:39)
+                ✔ Ticket list @done(23-02-11 18:28)
+                ✔ Ticket detailed view @done(23-02-11 18:29)
+                ✔ Login @done(23-02-11 13:39)
+                ✔ Register @done(23-02-11 13:39)
+            POST:
+                ✔ Login @done(23-02-11 13:39)
+                ✔ Register @done(23-02-11 13:39)
+        Shared:
+            POST:
+                ✔ Ticket close @done(23-02-11 18:29)
+                ✔ Ticket comment @done(23-02-11 18:29)
+                ✔ Ticket add @started(23-02-11 16:49) @done(23-02-11 18:29) @lasted(1h40m5s)
+            INGORE:
+                ✔ Favicon.ico @done(23-02-06 23:37)
+                ✔ * @done(23-02-06 23:37)
+
+
+Authorization:
+    ✔ Authorization class @done(23-02-11 16:11)
+    ✔ Admin authorization @done(23-02-11 16:11)
+    ✔ User authorization @done(23-02-11 23:02)
+    ☐ Guest authorization
+    ☐ POST/GET query verification
+
+MVC:
+    User:
+        ✔ Model @done(23-02-11 16:11)
+        ✔ View @done(23-01-20 21:56)
+        ✔ Controller @done(23-02-06 23:28)
+    Changelog:
+        ✔ Model @done(23-01-21 01:44)
+        ✔ View @done(23-01-20 21:56)
+        ✔ Controller @done(23-02-06 23:28)
+    Ticket:
+        ✔ Model @done(23-02-06 23:28)
+        ✔ View @done(23-01-20 21:56)
+        ✔ Controller @done(23-02-06 23:28)
+        Comment:
+            ✔ Model @done(23-02-11 23:02)
+            ✔ View @done(23-01-20 21:56)
+            ✘ Controller @cancelled(23-02-11 23:02)
+    Log:
+        ✔ Model @done(23-01-21 21:58)
+        ✔ View @done(23-01-20 21:56)
+        ✔ Controller @done(23-02-06 23:28)
+
+View:
+    Podeliti view u delove:
+        ☐ Header
+        ☐ Footer
+        ☐ Content
+
+WebSocket:
+    ☐ WebSocket
+
+Logs:
+    ✔ Log @done(23-01-20 21:45)
+    ✘ Dodati route origin za logovanje ruta (Radi lakseg pretrazivanja) @cancelled(23-02-11 23:02)
+
+Other:
+    ☐ Napraviti proveru request parametara
+    ☐ Prikazati autora tiketa
+    ☐ Srediti util.js
+    ☐ Nrapraviti funkciju koja cisti request.query, kako i mogao da ostavim filter na strani
+    ☐ Prikazati filtere na strani

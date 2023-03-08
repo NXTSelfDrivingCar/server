@@ -1,6 +1,20 @@
 <style>
   body {
-    background-color: #363636;
+    background-color: white;
+  }
+
+  shadow {
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 5px 0 rgba(0, 0, 0, 0.19);
+  }
+  
+
+  @font-face {
+    font-family: hubotSans;
+    src: url('https://fonts.cdnfonts.com/css/hubot-sans');
+  }
+
+  div {
+    font-family: 'Hubot-Sans', sans-serif;
   }
 </style>
 
@@ -16,7 +30,7 @@
           <a class="nav-link active" aria-current="page" href="/">Main page</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Tickets</a>
+          <a class="nav-link" href="/tickets">Tickets</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/admin/admin_list_users">Users</a>
