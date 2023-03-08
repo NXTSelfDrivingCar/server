@@ -34,11 +34,11 @@
       const data = canvas.toDataURL('image/png', 20);
       return data;
     }
-    const FPS = 24;
+    const FPS = 20;
 
     setInterval(() => {
       if (socket) {
-        socket.send(getFrame())
+        socket.emit('stream', getFrame());
       }
     }, 1000 / FPS);
   </script>
