@@ -18,15 +18,38 @@ export class UserController {
         this._userRepository = new UserRepository(USERS_COLLECTION);
     }
 
+
     /**
      * User update function that does not require authentication
      * @param id User ID to update
      * @param updates Object containing updates to user
      * @returns {status: "updateComplete" | "userNotFound", user: User}
      */
-    public async updateUser(id: string, updates: any): Promise<any> {
-        return await this._userRepository.updateUser(id, updates);
+    public async updateUser(id: string, updates: any, forceId: boolean = false): Promise<any> {
+
+         // If new username is taken, return error
+         if(updates.username){
+            var existing: User = await this._userRepository.findUserByUsername(updates.username);
+            var user: User = await this._userRepository.findUserById(id);
+
+            if(existing && user.username !== updates.username){
+                return {status: "usernameTaken", user: null};
+            }
+        }
+
+        // If new password is provided, hash it
+        if(updates.password){
+            updates.password = await hashSync(updates.password, BCryptConfig.SALT);
+        }
+
+        // If forceId is false, remove the ID from the updates
+        if(!forceId){ delete updates.id; }
+
+        var updatedUser = await this._userRepository.updateUser(id, updates);
+
+        return {status: "updateComplete", user: updatedUser}
     }
+
 
     /**
      * Delete user function that does not require authentication
@@ -79,6 +102,7 @@ export class UserController {
         return {status: "loginFailed", user: null};
     }
 
+
     /**
      * User registration function
      * @param user User object to register
@@ -101,6 +125,7 @@ export class UserController {
 
         return {status: "registrationFailed", user: null};
     }
+
 
     /**
      * User update function that requires authentication
@@ -126,27 +151,9 @@ export class UserController {
             return {status: "passwordIncorrect", user: null};
         }
 
-        // If new username is taken, return error
-        if(updates.username){
-            var existing: User = await this._userRepository.findUserByUsername(updates.username);
-
-            if(existing){
-                return {status: "usernameTaken", user: null};
-            }
-        }
-
-        // If new password is provided, hash it
-        if(updates.password){
-            updates.password = await hashSync(updates.password, BCryptConfig.SALT);
-        }
-
-        // If forceId is false, remove the ID from the updates
-        if(!forceId){ delete updates.id; }
-
-        var updatedUser = await this._userRepository.updateUser(id, updates);
-
-        return {status: "updateComplete", user: updatedUser}
+        return await this.updateUser(id, updates, forceId);
     }
+
 
     /**
      * User deletion with password authentication. Returns status of deletion.
@@ -172,4 +179,5 @@ export class UserController {
             return {status: "userDeleteFailed"};
         }
     }
+    
 }

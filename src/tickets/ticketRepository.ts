@@ -27,6 +27,7 @@ export class TicketRepository extends MongoRepository<Ticket> {
         return await this._findTicketsByFilter({ "author.id": userId });
     }
 
+
     async delete(id: string): Promise<any> {
         if(!await this._isConnected()) return null;
 
@@ -44,6 +45,7 @@ export class TicketRepository extends MongoRepository<Ticket> {
             return null;
         }
     }
+
 
     async insert(document: Ticket): Promise<any> {
         if (!await this._isConnected()) return null;
@@ -63,6 +65,7 @@ export class TicketRepository extends MongoRepository<Ticket> {
             return null;
         }
     }
+
 
     async updateTicket(id: string, updates: any): Promise<any> {
         if (!await this._isConnected()) return null;
@@ -85,6 +88,7 @@ export class TicketRepository extends MongoRepository<Ticket> {
         }
     }
 
+
     async addComment(id: string, comment: any): Promise<any> {
         if (!await this._isConnected()) return null;
 
@@ -104,6 +108,7 @@ export class TicketRepository extends MongoRepository<Ticket> {
             return null;
         }
     }
+    
 
     // ! =================== PRIVATE METHODS =================== //
 

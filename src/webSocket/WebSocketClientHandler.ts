@@ -62,6 +62,18 @@ export class WSClientHandler{
         return WSClientHandler.streamerClients;
     }
 
+    public getConnectedClientsBySocketId(socketId: any): any{
+        return WSClientHandler.connectedClients[socketId];
+    }
+
+    public getTmpClientsBySocketId(socketId: any): any{
+        return WSClientHandler.tmpClients[socketId];
+    }
+
+    public getStreamerClientsBySocketId(socketId: any): any{
+        return WSClientHandler.streamerClients[socketId];
+    }
+
     public removeClient(socketId: any){
         this._removeFromConnectedClientsBySocketId(socketId);
         this._removeFromTmpClientsBySocketId(socketId);
@@ -89,10 +101,12 @@ export class WSClientHandler{
             }
         }
 
+        // If token doesn't exist, set it to an empty string (because of streamers that have to send the token in the data)
+        var token = data.token ? data.token : ""
+
         // Joins the room
         socket.join(rooms.get(data.room));
-        await this.attachUserIdToSocket(socket);
-
+        await this.attachUserIdToSocket(socket, token);
 
         // If the room is user, add the socket to the connected clients
         this._checkInSocket(socket);
@@ -107,6 +121,10 @@ export class WSClientHandler{
     }
 
     // ! =================== PRIVATE FUNCTIONS ===================
+
+    private async _handleStreamer(socket: any, data: any){
+        var user = await Authorization.getUserFromToken(data.token);
+    }
 
     private async _getReturnFormat(key: any): Promise<any>{
 
@@ -207,7 +225,7 @@ export class WSClientHandler{
 
         // Socket cannot be a guest and not have the gps room (only GPS devices can be guests)
         if(!socket.rooms.has("gps") && socket["userId"] === "guest") 
-        {
+        {   
             this.removeClient(socket.id);
             socket.disconnect();
             return;
@@ -222,8 +240,15 @@ export class WSClientHandler{
         });
     }
 
-    private async attachUserIdToSocket(socket: any){
-        var token = Authorization.getTokenFromWS(socket, "auth");
+    private async attachUserIdToSocket(socket: any, token: string = ""){
+
+        console.log("Attaching user id to socket" + socket.id + " with token: " + token);
+        
+
+        if(!token){
+            token = Authorization.getTokenFromWS(socket, "auth");
+        }
+
         var user = await Authorization.getUserFromToken(token);
 
         if(!socket["userId"]) socket["userId"] = user?.id;

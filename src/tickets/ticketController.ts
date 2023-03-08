@@ -46,6 +46,7 @@ export class TicketController {
     async addCommentToTicket(id: string, comment: TicketComment): Promise<any> {
         return await this._ticketRepository.addComment(id, comment);
     }
+    
 
     async getTicketById(id: string): Promise<any> {
         var ticket = await this._ticketRepository.findTicketById(id);

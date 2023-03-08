@@ -23,6 +23,8 @@ services:
       - WS_SERVER_HOST=localhost
       - WS_SERVER_PORT=5001
       - B_SALT=9
+      - EMAIL_AUTH_USER = akitasevski112@gmail.com
+      - EMAIL_AUTH_PASS = skofigbukcdratsf
     depends_on:
       - mongo
     networks:

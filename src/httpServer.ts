@@ -18,8 +18,12 @@ import { WebSocketServer } from "./webSocket/WebSocketServer";
 import { WSSConfig } from "./config/server/wsServerConfig";
 import { createServer } from "http";
 
+import { EmailHandler } from "./emailHandler/emailHandler";
+import { EmailConfig } from "./config/shared/emailConfig";
+
 // Express server setup
 const PORT = process.env.HTTP_SERVER_PORT;
+
 
 var app: Express = express();
 
@@ -42,7 +46,7 @@ app.listen(HttpServerConfig.PORT, () => {
         action: "init",
         details: { serverType: "HttpServer", port: HttpServerConfig.PORT },
       });
-      console.log("Running server on version: 1.1.2");
+      console.log("Running server on version: 1.1.5 - WebSocket (alpha) / Streamer (alpha)");
       
     console.log(`HTTP Server listening on port ${HttpServerConfig.PORT}`);
 });
@@ -54,3 +58,6 @@ wss.init(WSSConfig.PORT);
 
 const connectionHandler = require("./webSocket/WebSocketConnectionHandler")(wss.getIO());
 //const adminHandler = require("./webSocket/WebSocketAdminHandler")(wss.getIO());
+
+const emailHandler = new EmailHandler(EmailConfig.USER, EmailConfig.PASS);
+emailHandler.init();
