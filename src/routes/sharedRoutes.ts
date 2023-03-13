@@ -36,8 +36,9 @@ module.exports = function(app: Application) {
         res.sendFile(path.join(__dirname, "../views/android_client.html"));
     })
 
-    app.get("/client/debug", function (req, res) {
-        res.sendFile(path.join(__dirname, "../views/test_client.html"));
+    app.get("/client/debug", async function (req, res) {
+        res.render("test_client.ejs", {user: await Authorization.getUserFromCookie("auth", req)})
+        //res.sendFile(path.join(__dirname, "../views/test_client.html"));
     })
 
 
@@ -55,14 +56,14 @@ module.exports = function(app: Application) {
     app.get("/signToken/debug", logger.logRoute("debugLogin"), async (req: Request, res: Response) => {
         var token = Authorization.signToken("e3f84020-b3f3-4f7c-8b4a-ceb38b98e167", res, req);
         var user = await Authorization.getUserFromCookie("auth", req);
-        
+
         res.send(user);
     })
 
 
     app.get("/user/logByLevel/debug", logger.logRoute("debugLogin"), async (req: Request, res: Response) => {
         var logs = await logController.getLogByName("log_1676122663840");
-        
+
         console.log(logs);
 
         logs = await logController.getLogValueByLevel("log_1676122663840", "INFO");
@@ -97,7 +98,7 @@ module.exports = function(app: Application) {
     })
 
     // ! =================== POST ROUTES =================== //
-    
+
 
     app.post("/tickets/t/comment", logger.logRoute("addTicketComment"), async (req: Request, res: Response) => {
         var author = await Authorization.getUserFromCookie("auth", req);
@@ -117,19 +118,19 @@ module.exports = function(app: Application) {
         if (!author) return res.redirect("/login");
 
         var newTicket = new Ticket(author, req.body.title, req.body.category, req.body.description, "Low", "Open");
-        
+
         await ticketController.insertTicket(newTicket);
 
         res.redirect("/tickets");
     })
-    
+
 
     // ! =================== IGNORE ROUTES =================== //
     // ! =================== IGNORE ROUTES =================== //
     // ! =================== IGNORE ROUTES =================== //
 
     app.get('/favicon.ico', (req, res) => res.status(204).end());
-    
+
     app.get("*", logger.logRoute("get404"), (req: Request, res: Response) => {
 
         if (req.path === "/favicon.ico") return;

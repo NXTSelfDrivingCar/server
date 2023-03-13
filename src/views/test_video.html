@@ -9,39 +9,29 @@
 </head>
 
 <body onload="init()">
-  <video autoplay></video>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js"></script>
-  <script type="text/javascript" src="http://localhost:5000/static/wsClient.js"></script>
 
-  <script>
-    // get video dom element
-    const video = document.querySelector('video');
 
-    // request access to webcam
-    navigator.mediaDevices.getUserMedia({
-      video: {
-        width: 426,
-        height: 240
-      }
-    }).then((stream) => video.srcObject = stream);
+  <%- include('../resources/components/new_navbar.ejs') %>
 
-    // returns a frame encoded in base64
-    const getFrame = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      canvas.getContext('2d').drawImage(video, 0, 0);
-      const data = canvas.toDataURL('image/png', 20);
-      return data;
-    }
-    const FPS = 20;
-
-    setInterval(() => {
-      if (socket) {
-        socket.emit('stream', getFrame());
-      }
-    }, 1000 / FPS);
-  </script>
+  <br><br>
+  <div class="container mt-4">
+    <div class="card shadow p-4" style="width: 800px; margin: auto;">
+      <div class="row align-items-center">
+        <h3>Androdi aplikacija</h3><br>
+        <script type="text/javascript" src="http://localhost:5000/static/stream/wsStreaming.js"></script><br>
+        <button id="connectBtn" onclick="connect()">Konektuj se</button>
+        <h4>Status konekcije: </h4> <!-- Ovde treba dodati da li je klijent konektovan -->
+        <button class="btn btn-primary mt-3" id="goForward" onclick="sendNXTControl('forward')">Idi napred</button>
+        <button class="btn btn-primary mt-3" id="goLeft" onclick="sendNXTControl('left')">Okreni se levo</button>
+        <button class="btn btn-primary mt-3" id="goRight" onclick="sendNXTControl('right')">Okreni se desno</button>
+        <button class="btn btn-primary mt-3" id="goBack" onclick="sendNXTControl('back')">Idi nazad</button>
+        <button class="btn btn-primary mt-3" id="autopilotOn" onclick="">Ukljuci autopilota</button>
+        <button class="btn btn-primary mt-3" id="autopilotOff" onclick="">Iskljuci autopilota</button>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>
