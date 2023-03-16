@@ -36,6 +36,13 @@ module.exports = function(app: Application) {
         })
     })
 
+    app.get("/stream", logger.logRoute("viewStream"), Authorization.authRole('admin', 'user'), async (req: Request, res: Response) => {
+        res.render("stream.ejs", {
+            title: "Stream",
+            user: await Authorization.getUserFromCookie("auth", req),
+        })
+    })
+
 
     // ! =================== POST ROUTES =================== //
 
