@@ -72,10 +72,8 @@ module.exports = function(io: WebSocket){
 
 
         setInterval(() => {
-            if(socket.paused){
-                if(socket.paused == false){
-                    socket.emit("stream", "not paused")
-                }
+            if(socket.paused == false){
+                socket.send("testing paused option -> currently paused: " + socket.paused)
             }
         }, 5000);
     });

@@ -24,8 +24,6 @@ btnPause.addEventListener("click", function () {
     pause();
 });
 
-
-
 document.addEventListener("keydown", function (event) {
     element = keyHandler(event, true);
 
