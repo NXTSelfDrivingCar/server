@@ -1,7 +1,7 @@
-import { Buffer } from "buffer";
-
 
 module.exports = function(io: any, socket: any){
+
+    socket.paused = true;
 
     // Streamer (Android app) emits stream data to the server
     // Server emits stream data to the web client (UserId room) 
@@ -17,4 +17,12 @@ module.exports = function(io: any, socket: any){
 
         io.to(socket["userId"]).emit("nxtControl", data);
     })
+
+    socket.on("pauseStream", () => {
+        console.log("Pausing stream for: " + socket["userId"]);
+        
+        socket.paused = !socket.paused;
+        socket.emit("pauseStream", {paused: socket.paused}) 
+    })
+
 }

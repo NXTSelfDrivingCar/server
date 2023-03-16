@@ -69,6 +69,15 @@ module.exports = function(io: WebSocket){
                 clientHandler.joinRooms(socket, {room: "default"});
             }
         }, 5000);
+
+
+        setInterval(() => {
+            if(socket.paused){
+                if(socket.paused == false){
+                    socket.emit("stream", "not paused")
+                }
+            }
+        }, 5000);
     });
 
     io.on("message", (message: any) => {

@@ -1,7 +1,35 @@
+const btnUp = document.getElementById("up");
+const btnDown = document.getElementById("down");
+const btnLeft = document.getElementById("left");
+const btnRight = document.getElementById("right");
+const btnPause = document.getElementById("pause");
+
+btnDown.addEventListener("click", function () {
+    sendWsControl(btnDown.id, true);
+});
+
+btnUp.addEventListener("click", function () {
+    sendWsControl(btnUp.id, true);
+});
+
+btnLeft.addEventListener("click", function () {
+    sendWsControl(btnLeft.id, true);
+});
+
+btnRight.addEventListener("click", function () {
+    sendWsControl(btnRight.id, true);
+});
+
+btnPause.addEventListener("click", function () {
+    pause();
+});
+
+
+
 document.addEventListener("keydown", function (event) {
     element = keyHandler(event, true);
 
-    if (element != undefined) {
+    if (element != null) {
         chageColor(element, true);
     }
 });
@@ -9,31 +37,28 @@ document.addEventListener("keydown", function (event) {
 document.addEventListener("keyup", function (event) {
     element = keyHandler(event, false);
 
-    if (element != undefined) {
+    if (element != null) {
         chageColor(element, false);
     }
 });
 
 function keyHandler(event, isDown) {
-    var elementName = "";
-
     switch (event.key) {
         case "ArrowUp":
-            elementName = "up";
-            sendWsControl(elementName, isDown);
-            break;
+            sendWsControl(btnUp.id, isDown);
+            return btnUp;
         case "ArrowDown":
-            elementName = "down";
-            sendWsControl(elementName, isDown);
-            break;
+            sendWsControl(btnDown.id, isDown);
+            return btnDown;
         case "ArrowLeft":
-            elementName = "left";
-            sendWsControl(elementName, isDown);
-            break;
+            sendWsControl(btnLeft.id, isDown);
+            return btnLeft;
         case "ArrowRight":
-            elementName = "right";
-            sendWsControl(elementName, isDown);
-            break;
+            sendWsControl(btnRight.id, isDown);
+            return btnRight;
+        case " ":
+            pause();
+            return btnPause;
         default:
             console.log("Key not handled: " + event.key);
             break;
@@ -55,4 +80,30 @@ function sendWsControl(elementName, isDown){
     }
 }
 
-function pause(){}
+var pauseReady = 1
+function pause(){
+    
+    if(socket){
+        
+        if (pauseReady == 1){
+            socket.emit("pauseStream")
+            pauseReady = 0
+
+            // Limit pause to 1 per 150ms
+            setTimeout(function(){
+                pauseReady = 1
+            }, 150)
+        }
+    }
+
+    socket.on("pauseStream", function (data) {
+        console.log("Stream paused: " + data.paused);
+
+        if (data.paused == true){
+            btnPause.innerHTML = "<i class='bi bi-pause-fill'></i>";
+        } else {
+            btnPause.innerHTML = "<i class='bi bi-play-fill'></i>"
+        }
+    })
+}
+
