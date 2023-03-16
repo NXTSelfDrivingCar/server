@@ -24,6 +24,8 @@ function connect() {
         methods: ["GET", "POST"],
       },
     });
+    
+    socket.emit("joinRoom", {room: "user"})
   } catch (error) {
     console.log(error);
   }
@@ -46,7 +48,6 @@ function connect() {
     // console.log("Client received: " + data);
 
     // Convert ArrayBuffer to Base64
-    console.log("Client received: " + data);
     const img = document.querySelector("img");
     img.src = "data:image/jpeg;base64," + data;
   });
