@@ -12,11 +12,10 @@ module.exports = function(io: any, socket: any){
         io.to(socket["userId"]).emit("stream", data);
     })
 
-    socket.on("nxtControl", (data: any) => {
+    socket.on("NXTControl", (data: any) => {
         console.log("Sending nxtControl to: " + socket["userId"] + " data: " + data);
-        
 
-        io.to(socket["userId"]).emit("nxtControl", data);
+        io.to(socket["userId"]).emit("NXTControl", data);
     })
 
     socket.on("pauseStream", () => {

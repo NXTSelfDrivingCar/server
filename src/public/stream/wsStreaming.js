@@ -64,6 +64,7 @@ function isConnected() {
 }
 
 function sendNXTControl(direction){
+  console.log("Sending NXT control: " + direction);
   if (isConnected()) {
     socket.emit("nxtControl", direction);
   }
