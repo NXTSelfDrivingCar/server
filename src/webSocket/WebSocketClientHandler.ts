@@ -120,6 +120,12 @@ export class WSClientHandler{
         }
     }
 
+    public getSocketByUserId(userId: string): any{
+        for(var key in WSClientHandler.connectedClients){
+            if(WSClientHandler.connectedClients[key].UID === userId) return WSClientHandler.connectedClients[key].socket;
+        }
+    }
+
     // ! =================== PRIVATE FUNCTIONS ===================
 
     private async _handleStreamer(socket: any, data: any){

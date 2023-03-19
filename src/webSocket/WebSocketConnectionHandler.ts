@@ -71,11 +71,11 @@ module.exports = function(io: WebSocket){
         }, 5000);
 
 
-        setInterval(() => {
-            if(socket.paused == false){
-                socket.send("testing paused option -> currently paused: " + socket.paused)
-            }
-        }, 5000);
+        // setInterval(() => {
+        //     if(socket.paused == false){
+        //         socket.send("testing paused option -> currently paused: " + socket.paused)
+        //     }
+        // }, 5000);
     });
 
     io.on("message", (message: any) => {

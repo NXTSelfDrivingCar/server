@@ -1,3 +1,4 @@
+import { WSClientHandler } from "./WebSocketClientHandler";
 
 module.exports = function(io: any, socket: any){
 
