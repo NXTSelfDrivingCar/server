@@ -13,6 +13,9 @@ const fileName = `log_${Date.now()}.json`;
  * @property {PathLike} currentFile - The path to the current log file
  * @property {string} status - The status of the log file
  * 
+ * Methods 
+ * -------
+ * 
  * @method open - Opens a new log file
  * @method close - Closes the current log file
  * @method log - Logs data to the current log file
