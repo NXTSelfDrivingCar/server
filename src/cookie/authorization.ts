@@ -8,6 +8,9 @@ import { LogHandler } from "../logging/logHandler";
 import { User } from "../user/userModel";
 import { Request, Response } from "express";
 
+import { BCryptConfig } from "../config/shared/bcryptConfig";
+import { compareSync, hashSync } from "bcrypt";
+
 const userController = new UserController();
 const logger = new LogHandler();
 
@@ -44,7 +47,7 @@ export class Authorization {
    */
   public static getDataFromCookieName(cookieName: string, req: Request): any {
     var token = req.cookies[cookieName];
-    var decoded = Authorization._decodeToken(token);
+    var decoded = Authorization._verifyToken(token);
     return decoded;
   }
 
@@ -170,8 +173,46 @@ export class Authorization {
     }
     return "";
   }
+
+  public static authUser(redirectPage: string = "") {
+    return (req: Request, res: Response, next: any) => { 
+      return this._authUser(redirectPage, req, res, next);
+    }
+   
+}
   
   // ! =================== PRIVATE FUNCTIONS ===================
+
+  private static async _authUser(redirectPage: string, req: Request, res: Response, next: any): Promise<void> {
+      if (!req.body.password) { res.redirect(redirectPage); return; }
+
+      var data = Authorization.getDataFromCookieName("auth", req);
+      
+      if(!data){ 
+        res.redirect((redirectPage == "") ? req.headers.referer || "/" : redirectPage);
+        return;
+       }
+  
+      if(!data.userId){ 
+        res.redirect((redirectPage == "") ? req.headers.referer || "/" : redirectPage);
+        return; 
+      }
+  
+      var user = await userController.findUserById(data.userId);
+      
+      if(!user){ 
+        res.redirect((redirectPage == "") ? req.headers.referer || "/" : redirectPage);
+        return;
+      }
+  
+      if(!await compareSync(req.body.password.toString(), user.password)){ 
+        res.redirect((redirectPage == "") ? req.headers.referer || "/" : redirectPage);
+        return;
+      }
+  
+      next();
+      return;
+  }
 
   private static async _authRole(roles: string[], req: Request, res: Response, next: any): Promise<void> {
 
