@@ -19,6 +19,8 @@ if (!(secret = process.env.JWT_SECRET!!)) { secret = "DobraSifra"; }
 
 export class Authorization {
 
+  private static logData: any = {};
+
   // ! =================== PUBLIC FUNCTIONS ===================
 
   /**
@@ -184,16 +186,30 @@ export class Authorization {
   // ! =================== PRIVATE FUNCTIONS ===================
 
   private static async _authUser(redirectPage: string, req: Request, res: Response, next: any): Promise<void> {
-      if (!req.body.password) { res.redirect(redirectPage); return; }
+    this.logData = {
+      origin: "Authorization",
+      action: "authUser",
+      url: req.url,
+      redirectPage: redirectPage,
+      ip: req.ip,
+      headers: req.headers,
+      body: req.body,
+    }  
+    
+    if (!req.body.password) { res.redirect(redirectPage); return; }
 
       var data = Authorization.getDataFromCookieName("auth", req);
       
       if(!data){ 
+        this.logData.message = "User is not logged in (cookie is null)";
+        logger.warn(this.logData);
         res.redirect((redirectPage == "") ? req.headers.referer || "/" : redirectPage);
         return;
        }
   
       if(!data.userId){ 
+        this.logData.message = "User is not logged in (cookie is null)";
+        logger.warn(this.logData);
         res.redirect((redirectPage == "") ? req.headers.referer || "/" : redirectPage);
         return; 
       }
@@ -201,14 +217,24 @@ export class Authorization {
       var user = await userController.findUserById(data.userId);
       
       if(!user){ 
+        this.logData.message = "User is not logged in (user not found)";
+        this.logData.userId = data.userId;
+        logger.warn(this.logData);
         res.redirect((redirectPage == "") ? req.headers.referer || "/" : redirectPage);
         return;
       }
   
       if(!await compareSync(req.body.password.toString(), user.password)){ 
+        this.logData.message = "User is not logged in (password is incorrect)";
+        this.logData.user = {id: user.id, username: user.username, role: user.role}
+        logger.warn(this.logData);
         res.redirect((redirectPage == "") ? req.headers.referer || "/" : redirectPage);
         return;
       }
+
+      this.logData.message = "User is logged in";
+      this.logData.user = {id: user.id, username: user.username, role: user.role}
+      logger.info(this.logData);
   
       next();
       return;
@@ -221,7 +247,7 @@ export class Authorization {
 
     // If user is null, redirect to login
     if(!user || user.role == "guest") {
-      logger.warn({origin: "HttpServer", action: "authorization", message: "User is not logged in", request: {url: req.url, method: req.method}})
+      logger.warn({origin: "Authorization", action: "authRole", message: "User is not logged in", request: {url: req.url, method: req.method}})
       res.redirect("/login");
       return;
     }
@@ -235,8 +261,8 @@ export class Authorization {
       }
     }
 
-    logger.warn({origin: "HttpServer", 
-      action: "authorization",
+    logger.warn({origin: "Authorization", 
+      action: "authRole",
       message: "Unauthorized",
       roles: roles,
       user: {id: user.id, username: user.username, role: user.role},

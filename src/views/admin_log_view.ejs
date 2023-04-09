@@ -173,10 +173,7 @@
             <div class="p-2">
                 <%if(activeLogName != thisLogName){%>
                     <div class="text-center">
-                      <form action="/admin/log/delete/<%= thisLogName%>" method="post">
-                        <input type="hidden" name="password">
-                        <button onclick="return confirmDelete()" type="submit" class="btn btn-danger">Delete log</button>
-                      </form>
+                      <a class="btn btn-outline-danger" data-bs-target="#deleteLogModal" data-bs-toggle="modal"><i class="bi bi-trash"></i></a>
                     </div>
                 <%}%>
             </div>
@@ -189,18 +186,26 @@
     </div>
   </div>
 
-  <script>
-    function confirmDelete() {
-      var password = prompt("Please enter your password to confirm deletion");
-
-      if (password != null) {
-        $("input[name='password']").val(password);
-        return true;
-      } else {
-        return false;
-      }
-    }
-  </script>
+  <div class="modal fade" id="deleteLogModal" tabindex="-1" aria-labelledby="newUserModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title">Delete log?</h6>
+        </div>
+        
+        <form action="/admin/log/delete/<%= thisLogName%>" method="post">
+          <div class="modal-body">
+            <p>Please enter your password to confirm log deletion.</p>
+            <input type="password" class="form-control" name="password" id="password" placeholder="Password">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <br><br>
 
