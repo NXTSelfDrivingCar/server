@@ -25,7 +25,8 @@ export class LogRepository {
         // Await for log file to be read
         var log = await this.findLogValueByFileName(name);
 
-        // Filter log file like a database
+        // Makes a filter for the log file
+        // Filter is case insensitive, and is a partial match
         var filteredData =  _.filter(log, (item) => {
                                 return Object.keys(filter).every((key) => {
                                     if(item[key])
