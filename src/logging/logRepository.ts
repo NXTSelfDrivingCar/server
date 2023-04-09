@@ -29,7 +29,7 @@ export class LogRepository {
         // Filter is case insensitive, and is a partial match
         var filteredData =  _.filter(log, (item) => {
                                 return Object.keys(filter).every((key) => {
-                                    if(item[key])
+                                    if(item.hasOwnProperty(key))
                                         return item[key].toLowerCase().includes(filter[key].toLowerCase());
                                 });
                             });
