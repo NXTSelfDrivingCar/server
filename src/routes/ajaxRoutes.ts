@@ -1,6 +1,8 @@
 import { Application, Request, Response } from "express";
 
 import { LogHandler } from "../logging/logHandler";
+import { LogController } from "../logging/logController";
+
 import { Authorization } from "../cookie/authorization";
 
 import { ChangelogController } from "../changelog/changelogController";
@@ -16,6 +18,7 @@ const logger = new LogHandler();
 const changelogController = new ChangelogController();
 const userController = new UserController();
 const restartLinkController = new RestartLinkController();
+const logController = new LogController();
 
 module.exports = function(app: Application){
 
@@ -46,6 +49,18 @@ module.exports = function(app: Application){
         }
 
         res.json(await userController.findUsersByFilter(req.query));
+    })
+
+    app.get("/api/admin/logs/l/:name", Authorization.authRole("admin"), async (req: Request, res: Response) => {
+        var name = req.params.name;
+
+        for(var key in req.query) {
+            if(req.query[key] === "") delete req.query[key]
+        }
+
+        if(!name) return res.json({error: "No name provided"});
+        
+        res.json(await logController.getLogValueByFilter(name, req.query));
     })
 
     // ! =================== POST ROUTES =================== //

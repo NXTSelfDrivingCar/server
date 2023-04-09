@@ -43,7 +43,7 @@ module.exports = function(app: Application) {
             if(req.query[key] === "") delete req.query[key]
         }
 
-        res.render("admin_list_users_ajax.ejs", {
+        res.render("admin_list_users.ejs", {
             title: "Admin users list",
             users: await userController.findUsersByFilter(req.query),
             adminUser: await Authorization.getUserFromCookie("auth", req),
@@ -68,13 +68,8 @@ module.exports = function(app: Application) {
     })
 
     app.get("/admin/logs/l/:name",  logger.logRoute("viewLog"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
-        for(var key in req.query) {
-            if(req.query[key] === "") delete req.query[key]
-        }
-
-        res.render("admin_log_view.ejs", {
+        res.render("admin_log_view_ajax.ejs", {
             title: "Admin log view",
-            log: await logController.getLogValueByFilter(req.params.name, req.query),
             thisLogName: req.params.name,
             activeLogName: logController.getCurrentLogName(),
         })

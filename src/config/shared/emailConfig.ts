@@ -3,6 +3,6 @@ dotenv.config({ path: ".env" });
 
 
 export class EmailConfig{
-    public static USER: any = process.env.EMAIL_USER;
-    public static PASS: any = process.env.EMAIL_PASS;
+    public static USER: any = process.env.EMAIL_AUTH_USER;
+    public static PASS: any = process.env.EMAIL_AUTH_PASS;
 }
