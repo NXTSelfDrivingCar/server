@@ -26,7 +26,14 @@ export class LogRepository {
         var log = await this.findLogValueByFileName(name);
 
         // Filter log file like a database
-        return _.filter(log, filter);
+        var filteredData =  _.filter(log, (item) => {
+                                return Object.keys(filter).every((key) => {
+                                    if(item[key])
+                                        return item[key].toLowerCase().includes(filter[key].toLowerCase());
+                                });
+                            });
+
+        return filteredData;
     }
 
     findAllLogFiles(){
