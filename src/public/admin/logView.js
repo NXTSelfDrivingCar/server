@@ -9,8 +9,6 @@ function filterLogs() {
     var origin = $("#origin").val();
     var action = $("#action").val();
 
-    console.log(level, origin, action)
-
     $.ajax({
         url: "/api/admin/logs/l/" + thisLogName,
         type: "GET",
@@ -37,8 +35,6 @@ function updateFront(data) {
         failFront("No logs found!");
         return;
     }
-
-    console.log(data)
 
     var counter = 0
     for (var log of data) {
