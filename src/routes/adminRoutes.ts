@@ -68,7 +68,7 @@ module.exports = function(app: Application) {
     })
 
     app.get("/admin/logs/l/:name",  logger.logRoute("viewLog"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
-        res.render("admin_log_view_ajax.ejs", {
+        res.render("admin_log_view.ejs", {
             title: "Admin log view",
             thisLogName: req.params.name,
             activeLogName: logController.getCurrentLogName(),
