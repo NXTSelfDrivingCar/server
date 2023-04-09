@@ -43,7 +43,7 @@ module.exports = function(app: Application) {
             if(req.query[key] === "") delete req.query[key]
         }
 
-        res.render("admin_list_users.ejs", {
+        res.render("admin_list_users_ajax.ejs", {
             title: "Admin users list",
             users: await userController.findUsersByFilter(req.query),
             adminUser: await Authorization.getUserFromCookie("auth", req),

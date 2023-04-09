@@ -41,6 +41,16 @@
       color: #ffffff;
       border-radius: 10px;
     }
+
+    .del-x{
+      font-size: 14px;
+      display: none;
+    }
+
+    .force-right-border-radius{
+      border-top-right-radius: 5px !important;
+      border-bottom-right-radius: 5px !important;
+    }
   </style>
 
   <div class="container">
@@ -62,11 +72,19 @@
         <div class="row">
           <div class="col-4">
             <label for="inputTitle">E-Mail</label>
-            <input type="text" class="form-control" id="email" name="email" placeholder="E-Mail">
+            <div class="input-group">
+              <input onkeyup="showButton('email')" type="text" class="form-control force-right-border-radius" id="email" name="email" placeholder="E-Mail" aria-describedby="email-x-button">
+                <!-- X button -->
+              <button onclick="clearInput('email')" class="btn btn-outline-danger del-x" type="button" id="email-x-button"><i class="bi bi-trash"></i></button>
+            </div>
           </div>
           <div class="col-4">
             <label for="inputTitle">Username</label>
-            <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+            <div class="input-group">
+              <input onkeyup="showButton('username')" type="text" class="form-control" id="username" name="username" placeholder="Username" aria-describedby="username-x-button">
+              <!-- X button -->
+              <button onclick="clearInput('username')" class="btn btn-outline-danger del-x" type="button" id="username-x-button"><i class="bi bi-trash"></i></button>
+            </div>
           </div>
           <div class="col-3">
             <label for="inputTitle">Role</label>
@@ -184,6 +202,26 @@
       }
       return true;
     }
+
+    function showButton(id) {
+      // use jquery to show the button
+
+      if($("#" + id).val() != "") {
+        $("#" + id + "-x-button").animate({opacity: 'show'}, "fast");
+        $("#" + id).removeClass("force-right-border-radius");
+      }else{
+        $("#" + id + "-x-button").animate({opacity: 'hide'}, "fast");
+        $("#" + id).addClass("force-right-border-radius");
+      }
+      
+    }
+
+    function clearInput(id) {
+      $("#" + id).val("");
+      $("#" + id + "-x-button").animate({opacity: 'hide'}, "fast");
+      $("#" + id).addClass("force-right-border-radius");
+    }
+
   </script>
   <script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
   <script type="text/javascript" src="http://localhost:5000/static/admin/usersList.js"></script>
