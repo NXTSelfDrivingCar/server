@@ -173,7 +173,10 @@
             <div class="p-2">
                 <%if(activeLogName != thisLogName){%>
                     <div class="text-center">
-                      <a onclick="return confirm('Delete ' + thisLogName + '?')" href="/admin/log/delete/<%= thisLogName%>" class="btn btn-danger">Delete log</a>
+                      <form action="/admin/log/delete/<%= thisLogName%>" method="post">
+                        <input type="hidden" name="password">
+                        <button onclick="return confirmDelete()" type="submit" class="btn btn-danger">Delete log</button>
+                      </form>
                     </div>
                 <%}%>
             </div>
@@ -185,6 +188,19 @@
       </ul>
     </div>
   </div>
+
+  <script>
+    function confirmDelete() {
+      var password = prompt("Please enter your password to confirm deletion");
+
+      if (password != null) {
+        $("input[name='password']").val(password);
+        return true;
+      } else {
+        return false;
+      }
+    }
+  </script>
 
   <br><br>
 

@@ -89,14 +89,6 @@ module.exports = function(app: Application) {
         res.redirect("/admin/users/list")
     })
 
-    app.get("/admin/log/delete/:name", logger.logRoute("deleteLog"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
-        console.log(req.params.name);
-        
-        await logController.deleteLogByName(req.params.name)
-
-        res.redirect("/admin/logs")
-    })
-
     app.get("/admin/users/live", logger.logRoute("liveUsers"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
         res.render("admin_users_live.ejs", {
             title: "Admin live users",
@@ -104,6 +96,19 @@ module.exports = function(app: Application) {
     })
 
     // ! =================== POST ROUTES =================== //
+
+    app.post("/admin/log/delete/:name", logger.logRoute("deleteLog"), Authorization.authRole("admin"), Authorization.authUser(), async (req: Request, res: Response) => {
+        var currentLog = logController.getCurrentLogName()
+
+        if(currentLog === req.params.name) { 
+            // If the log is the current log, redirect to the logs page
+            return res.redirect("/")
+        }
+        
+        await logController.deleteLogByName(req.params.name)
+
+        res.redirect("/admin/logs")
+    })
 
     app.post("/admin/changelog/add", logger.logRoute("addChangelog"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
         var isBeta = req.body.isBeta === "on" ? true : false
