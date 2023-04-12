@@ -25,7 +25,7 @@ module.exports = function(app: Application){
     // ! =================== GET ROUTES =================== //
     
 
-    app.get("/api/user/:username", async (req: Request, res: Response) => {
+    app.get("/api/user/:username", Authorization.authApiUser(), async (req: Request, res: Response) => {
         var username = req.params.username;
 
 
@@ -43,7 +43,7 @@ module.exports = function(app: Application){
         res.json(await changelogController.getChangelogs());
     })
 
-    app.get("/api/admin/users", Authorization.authRole("admin"), async (req: Request, res: Response) => {
+    app.get("/api/admin/users", Authorization.authApiUser() ,Authorization.authRole("admin"), async (req: Request, res: Response) => {
         for(var key in req.query) {
             if(req.query[key] === "") delete req.query[key]
         }
@@ -51,7 +51,7 @@ module.exports = function(app: Application){
         res.json(await userController.findUsersByFilter(req.query));
     })
 
-    app.get("/api/admin/logs/l/:name", Authorization.authRole("admin"), async (req: Request, res: Response) => {
+    app.get("/api/admin/logs/l/:name", Authorization.authApiUser(), Authorization.authRole("admin"), async (req: Request, res: Response) => {
         var name = req.params.name;
 
         for(var key in req.query) {

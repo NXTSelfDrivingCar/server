@@ -94,7 +94,7 @@ export class UserController {
 
         if(await compareSync(password, user.password)){
 
-            var token = Authorization.signToken(user.id, res, req);
+            var token = Authorization.signToken("auth", {userId: user.id}, 1, "h", res, req);
 
             return {status: "loginComplete", user: user};
         }
