@@ -53,6 +53,7 @@ function handleData(data) {
     return;
   }
 
+  hideError();
   writeData(data);
   showButton(data.email);
 }
