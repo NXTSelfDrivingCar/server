@@ -284,9 +284,14 @@ export class Authorization {
       return new User("guest", "guest", "guest", "guest", "guest", "guest");
     }
 
+    // If token does not contain userId, return guest user
+    if (!decoded.userId) {
+      logger.warn({origin: "Authorization", action: "getUserFromToken", message: "Invalid token"});
+      return new User("guest", "guest", "guest", "guest", "guest", "guest");
+    }
+
     // Find user with given ID
     try{
-      // TODO: Paziti u slucaju da se doda jos neki token koji ne sadrzi userId
       var user = await userController.findUserById(decoded.userId);
 
       // If user does not exist, return guest user
