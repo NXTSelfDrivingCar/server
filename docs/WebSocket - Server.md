@@ -69,7 +69,7 @@ export class WebSocketServer {
 
 ## Inicijalizacija 
 
-Inicijalizovanje _WebSocketServer-a_ vrsimo u modulu _HTTPServer.js_ (Detaljnija definicija HTTP servera se nalazi [[HTTPServer|ovde]])
+Inicijalizovanje _WebSocketServer-a_ vrsimo u modulu _HTTPServer.js_ (Detaljnija definicija HTTP servera se nalazi [ovde](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/HTTPServer.md))
 
 ```js
 // HTTPServer.js
@@ -85,7 +85,7 @@ Na ovaj nacin pokrenuli smo WebSocket servis koji ce raditi u pozadini.
 ## Socket
 
 - Socket je klijentski objekat koji definise otvorenu komunikaciju sa drugom stranom (serverom)
-- Pri izvrsenoj konekciji, na server se prosledjuje socket objekat koji moze da emituje i slusa za dogadjaje koje emituje taj (ili drugi) socket ili sam WebSocket. (Detaljnija definicija klijentskog WebSocket protokola se nalazi [[WebSocket - Klijent|ovde]])
+- Pri izvrsenoj konekciji, na server se prosledjuje socket objekat koji moze da emituje i slusa za dogadjaje koje emituje taj (ili drugi) socket ili sam WebSocket. (Detaljnija definicija klijentskog WebSocket protokola se nalazi [ovde](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/WebSocket%20-%20Klijent.md))
 	- Identifikacija veze socket-a vrsi se preko parametra `SID` koji sadrzi identifikator sesije.
 
 ```js
