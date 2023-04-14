@@ -36,7 +36,7 @@ const socket = io({
 ```
 
 - Ovaj parametar se moze prihvatiti kroz `socket.handshake.query`, tokom `on("connection", (socket) => { ... })` funckije
-	- Vise o prihvatanju parametara na strani servera se moze naci [[WebSocket - Server#Definicija WebSocketConnectionHandler modula|ovde]]
+	- Vise o prihvatanju parametara na strani servera se moze naci [ovde](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/WebSocket%20-%20Server.md#definicija-websocketconnectionhandler-modula)
 
 ```js
 // Server side
@@ -75,7 +75,7 @@ socket = null
 
 ## Povezivanje sa kanalima
 
-- Kako bi se korisnik registrovao na neki od ponudjenih kanala (user, streamer, admin, gps), potrebno je emitovati `joinRoom` [[WebSocket - Server#Dogadjaji|dogadjaj]] sa nazivom sobe `room:'<roomName>'` i opcionim JWT tokenom `token:'<token>'` koji ce sluziti za autentifikaciju <u>Android</u> korisnika.
+- Kako bi se korisnik registrovao na neki od ponudjenih kanala (user, streamer, admin, gps), potrebno je emitovati `joinRoom` [dogadjaj](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/WebSocket%20-%20Server.md#dogadjaji) sa nazivom sobe `room:'<roomName>'` i opcionim JWT tokenom `token:'<token>'` koji ce sluziti za autentifikaciju <u>Android</u> korisnika.
 
 ```js
 // Emitovanje zahteva za povezivanje sa kanalom
