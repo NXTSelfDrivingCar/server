@@ -19,7 +19,7 @@ Pored http modula, u opticaju su i TCP i UDP protokoli za oogućavanje bezbedne 
 
 #### Dijagram povezivanja servisa HTTP
 
-![[Pasted image 20230414152925.png]]
+![Dijagram komunikacije klijenata (HTTP)](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/images/http-giagram.png)
 
 ##### Proces povezivanja po dijagramu (HTTP):
 
@@ -42,9 +42,9 @@ Pored http modula, u opticaju su i TCP i UDP protokoli za oogućavanje bezbedne 
 
 #### Dijagram povezivanja servisa WebSocket
 
-> Za detalje povezivanja preko WebSocket-a, pogledati [[WebSocket - Klijent]] ili [[WebSocket - Server]]
+> Za detalje povezivanja preko WebSocket-a, pogledati [WebSocket - Klijent](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/WebSocket%20-%20Klijent.md) ili [WebSocket - Server](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/WebSocket%20-%20Server.md)
 
-![[Pasted image 20230414153418.png]]
+![Dijagram komunikacije klijenata (WebSocket)](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/images/web-socket-diagram.png)
 
 Upotrebom WebSocket protokola, omoguceno je nesmetano slanje video stream-a NodeJS serveru, koji vrsi rutiranje tih podataka autorizovanim klijentima na veb pretrazivacima i Python servisu za obradu.
 
@@ -55,11 +55,11 @@ Upotrebom WebSocket protokola, omoguceno je nesmetano slanje video stream-a Node
 	- Server se konsultuje sa kontrolerom i bazom podataka
 	- Server odgovori *pozitivno*
 	- Klijent salje zahtev za povezivanje WebSocket protokola
-	- Server vrsi autorizaciju zahteva ([[WebSocket - Server]])
+	- Server vrsi autorizaciju zahteva ([WebSocket - Server](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/WebSocket%20-%20Server.md))
 	- Klijentu se dodeljuju ogranicena prava za komunikaciju preko *WebSocket*-a
 - Korisnici sa Android aplikacija
 	- Salju WebSocket zahtev
-	- Server vrsi autorizaciju zahteva ([[WebSocket - Server]])
+	- Server vrsi autorizaciju zahteva ([WebSocket - Server](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/WebSocket%20-%20Server.md))
 	- Klijentu se dodeljju ogranicena prava za komunikaciju preko *WebSocket*-a
 
 #### Kreiranje servera:
