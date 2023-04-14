@@ -78,7 +78,7 @@ Pored njih, kljuc `level` se dodaje kao filter nivoa tezine vaznosti loga i `tim
 #### Logovanje ruti
 
 Logovanje zahteva koji su poslati na neku adresu se moze obaviti upotrebom funkcije `logRoute(action: string, extra: any = {})`, koja za parametar `action` uzima naziv akcije koji je uradjen na nekoj adresi (recimo `GET` na adresi `/admin/users/list` bi mogao da bude `action = getUsers`). 
-Upotreba ove funkcije zahteva njeno smestanje kao [[HTTPServer#Rutiranje|middleware]].
+Upotreba ove funkcije zahteva njeno smestanje kao [middleware](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/HTTPServer.md#rutiranje).
 
 > Logovi kreirani u procesu belezenja zahteva se oznacavaju kljucem `origin: route`
 
