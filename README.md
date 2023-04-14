@@ -40,6 +40,6 @@ Pokretanjem **HTTPServer-a**, uporedo se pokrecu svi potrebni servisi:
 - WebSocket server -> Detalje mozete videti [WS - server](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/WebSocket%20-%20Server.md) ili [WS - klijent](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/WebSocket%20-%20Klijent.md)
 - NodeMailer server
 
-U slucaju postojanja gresaka, pogledati [[Logging]].
+U slucaju postojanja gresaka, pogledati [Logging](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/Logging.md).
 
 > Ako imate kakva dodatna pitanja ili predloge (koji su i vise nego dobrodosli), slobodno nas kontaktirajte.
