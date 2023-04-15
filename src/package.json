@@ -1,4 +1,13 @@
 {
+  "scripts": {
+    "start": "nodemon ./httpServer.ts"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "logs",
+      "node_modules"
+    ]
+  },
   "dependencies": {
     "@types/nodemailer": "^6.4.7",
     "bcrypt": "^5.1.0",
