@@ -22,24 +22,24 @@ Klijentima su omogucena dva nacina komunikacije sa servisom.:
 - Kotlin Android aplikacija - Povezivanje sa NXT terminalnom i postavljanje funkcionalnosti kamere
 - Veb pretrazivac - Kontrola NXT terminala i prikazivanje video stream-a sa kamere 
 
-Server je najbolje pokrenuti preko [[Docker|Docker-a]].
+Server je najbolje pokrenuti preko [Docker-a](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/Docker.md).
 
 #### Prikaz komunikacije sa klijentima:
 
-![[Pasted image 20230414150547.png]]
+![General diagram](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/images/general-diagram.png)
 
 # Pokretanje
 
-Ako se za pokretanje programa ne koristi [[Docker]], potrebno je pokrenuti `httpServer.ts`, upotrebom `npx ts-node` komande.
+Ako se za pokretanje programa ne koristi [Docker](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/Docker.md), potrebno je pokrenuti `httpServer.ts`, upotrebom `npx ts-node` komande.
 
 ```ps
 npx ts-node .\httpServer.ts
 ```
 
 Pokretanjem **HTTPServer-a**, uporedo se pokrecu svi potrebni servisi:
-- WebSocket server -> Detalje mozete videti [[WebSocket - Server]] ili [[WebSocket - Klijent]]
+- WebSocket server -> Detalje mozete videti [WS - server](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/WebSocket%20-%20Server.md) ili [WS - klijent](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/WebSocket%20-%20Klijent.md)
 - NodeMailer server
 
-U slucaju postojanja gresaka, pogledati [[Logging]].
+U slucaju postojanja gresaka, pogledati [Logging](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/Logging.md).
 
 > Ako imate kakva dodatna pitanja ili predloge (koji su i vise nego dobrodosli), slobodno nas kontaktirajte.
