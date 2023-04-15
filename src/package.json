@@ -1,5 +1,17 @@
 {
+  "scripts": {
+    "start": "nodemon ./httpServer.ts"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "node_modules",
+      "public",
+      "views",
+      "logs"
+    ]
+  },
   "dependencies": {
+    "@types/agenda": "^4.1.0",
     "@types/nodemailer": "^6.4.7",
     "bcrypt": "^5.1.0",
     "bcrypt-ts": "^3.0.0",
@@ -34,7 +46,7 @@
     "@types/lodash": "^4.14.191",
     "@types/node": "^18.11.18",
     "@types/uuid": "^9.0.0",
-    "nodemon": "^2.0.20",
+    "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4"
   }
