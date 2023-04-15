@@ -8,23 +8,23 @@ export class TicketRepository extends MongoRepository<Ticket> {
 
 
     async findAll(): Promise<any> {
-        return await this._findTicketsByFilter({});
+        return await this._findDocumentsByFilter({});
     }
 
     async findTicketById(id: string): Promise<any> {
-        return (await this._findTicketsByFilter({ id: id }))[0];
+        return (await this._findDocumentsByFilter({ id: id }))[0];
     }
 
     async findTicketsByFilter(filter: any): Promise<any> {
-        return await this._findTicketsByFilter(filter);
+        return await this._findDocumentsByFilter(filter);
     }
 
     async findTicketByFilter(filter: any): Promise<any> {
-        return (await this._findTicketsByFilter(filter))[0];
+        return (await this._findDocumentsByFilter(filter))[0];
     }
 
     async findTicketsByUserId(userId: string): Promise<any> {
-        return await this._findTicketsByFilter({ "author.id": userId });
+        return await this._findDocumentsByFilter({ "author.id": userId });
     }
 
 
@@ -108,38 +108,5 @@ export class TicketRepository extends MongoRepository<Ticket> {
             return null;
         }
     }
-    
-
-    // ! =================== PRIVATE METHODS =================== //
-
-    /**
-     * 
-     * @param filter Filter to use
-     * @returns Users that match the filter or empty array if error
-     */
-    private async _findTicketsByFilter(filter: any, limit: number = 0): Promise<Array<any>> {
-        if(!await this._isConnected()) return [];
-
-        this.logData.method = "_findTicketsByFilter";
-        this.logData.filter = filter;
-
-        try {
-            logger.info(this.logData);
-
-            return await this._collection!!.find(filter as any).limit(limit).toArray();
-        } catch (err) {
-            this.logData.error = err;
-            logger.error(this.logData);
-
-            return [];
-        }
-    }
 }
 
-// var mongoClient = require("mongodb").MongoClient;
-// var { LogHandler } = require("../logging/logHandler");
-// var logger = new LogHandler().open();
-// var Ticket = require("./ticketModel");
-
-// const mongoConfig = require("../config/mongoConfig");
-// const { FindCursor } = require("mongodb");

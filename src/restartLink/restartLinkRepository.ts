@@ -6,6 +6,14 @@ const logger = new LogHandler();
 
 export class RestartLinkRepository extends MongoRepository<RestartLink>{
 
+    public async findLinkById(id: string): Promise<any> {
+        return (await this._findDocumentsByFilter({ id: id }))[0];
+    }
+
+    public async findLinkByObjectId(_id: string): Promise<any> {
+        return (await this._findDocumentsByFilter({ _id: _id }))[0];
+    }
+
     public async insert(document: RestartLink): Promise<any> {
         if(!await this._isConnected()) return null;
 
@@ -50,43 +58,4 @@ export class RestartLinkRepository extends MongoRepository<RestartLink>{
         }
 
     }
-
-    public async findLinkById(id: string): Promise<any> {
-        if(!await this._isConnected()) return null;
-
-        this.logData.method = "findLinkById";
-        this.logData.linkId = id;
-
-        try{
-            logger.info(this.logData);
-
-            return await this._collection?.findOne({ id: id });
-        }
-        catch(err){
-            this.logData.error = err;
-            logger.error(this.logData);
-
-            return null;
-        }
-    }
-
-    public async findLinkByObjectId(_id: string): Promise<any> {
-        if(!await this._isConnected()) return null;
-
-        this.logData.method = "findLinkById";
-        this.logData.linkId = _id;
-
-        try{
-            logger.info(this.logData);
-
-            return await this._collection?.findOne({ _id: _id });
-        }
-        catch(err){
-            this.logData.error = err;
-            logger.error(this.logData);
-
-            return null;
-        }
-    }
-
 }

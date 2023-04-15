@@ -9,32 +9,32 @@ export class UserRepository extends MongoRepository<User> {
     // * =================== PUBLIC METHODS =================== //
 
     public async findAll(): Promise<any> {
-        return await this._findUsersByFilter({});
+        return await this._findDocumentsByFilter({});
     }
     
     
     public async findUserById(id: string): Promise<any> {
-        return (await this._findUsersByFilter({ id: id }))[0];
+        return (await this._findDocumentsByFilter({ id: id }))[0];
     }
 
 
     public async findUserByUsername(username: string): Promise<any> {
-        return (await this._findUsersByFilter({ username: username }))[0];
+        return (await this._findDocumentsByFilter({ username: username }))[0];
     }
 
     
     public async findUsersByEmail(email: string): Promise<any> {
-        return await this._findUsersByFilter({ email: email} );
+        return await this._findDocumentsByFilter({ email: email} );
     }
 
 
     public async findUsersByRole(role: string): Promise<any> {
-        var user = await this._findUsersByFilter({ role: role });
+        var user = await this._findDocumentsByFilter({ role: role });
     }
 
 
     public async findUsersByFilter(filter: any): Promise<any> {
-        return await this._findUsersByFilter(filter);
+        return await this._findDocumentsByFilter(filter);
     }
 
 
@@ -104,32 +104,6 @@ export class UserRepository extends MongoRepository<User> {
             logger.error(this.logData);
 
             return null;
-        }
-    }
-
-
-    // ! =================== PRIVATE METHODS =================== //
-
-    /**
-     * 
-     * @param filter Filter to use
-     * @returns Users that match the filter or empty array if error
-     */
-    private async _findUsersByFilter(filter: any, limit: number = 0): Promise<Array<any>> {
-        if(!await this._isConnected()) return [];
-
-        this.logData.method = "_findUserByFilter";
-        this.logData.filter = filter;
-
-        try {
-            logger.info(this.logData);
-
-            return await this._collection!!.find(filter as any).limit(limit).toArray();
-        } catch (err) {
-            this.logData.error = err;
-            logger.error(this.logData);
-
-            return [];
         }
     }
 }
