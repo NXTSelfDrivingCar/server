@@ -320,6 +320,27 @@ export class Authorization {
       return;
     }
 
+    var authData = this.getDataFromCookieName("auth", req);
+
+    // Check if user is logged in
+    if (!authData){
+      this.logData.message = "User is not logged in (cookie is null)";
+      logger.warn(this.logData);
+      res.status(401).send("Unauthorized");
+      return;
+    }
+
+    // Check if user ID from API token and user ID from cookie match
+    if (authData.userId != apiToken.userId){
+      this.logData.message = "User API token and ID do not match ";
+      this.logData.user = {
+        id: authData.userId,
+      }
+      logger.warn(this.logData);
+      res.status(401).send("Unauthorized");
+      return;
+    }
+
     // Deletes current token from database
     apiTokenController.delete(apiToken.id);
     
