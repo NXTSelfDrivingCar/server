@@ -8,7 +8,6 @@ import { LogHandler } from "../logging/logHandler";
 import { User } from "../user/userModel";
 import { Request, Response } from "express";
 
-import { BCryptConfig } from "../config/shared/bcryptConfig";
 import { compareSync, hashSync } from "bcrypt";
 
 const userController = new UserController();
