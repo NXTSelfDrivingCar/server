@@ -25,11 +25,11 @@ module.exports = function(app: Application){
     // ! =================== GET ROUTES =================== //
     
 
-    app.get("/api/user/:username", Authorization.authApiUser(), async (req: Request, res: Response) => {
+    app.get("/api/user/:username", async (req: Request, res: Response) => {
         var username = req.params.username;
 
 
-        if(!username) return res.json({error: "No ID provided"});
+        if(!username) return res.json({error: "No Username provided"});
 
         var user = await userController.findUserByFilter({username: username});
 
