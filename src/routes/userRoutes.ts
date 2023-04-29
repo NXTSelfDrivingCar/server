@@ -3,6 +3,7 @@ import { Authorization } from "../cookie/authorization";
 import { LogHandler } from "../logging/logHandler";
 import { UserController } from "../user/userController";
 import { User } from "../user/userModel";
+import { RouteWatcher } from "../cookie/routeWatcher";
 
 const logger = new LogHandler();
 const userController = new UserController();
@@ -21,14 +22,14 @@ module.exports = function(app: Application) {
 
     // ! =================== GET ROUTES =================== //
 
-    app.get("/logout", logger.logRoute("logout"), (req: Request, res: Response) => {
+    app.get("/logout", RouteWatcher.logRoute("logout"), (req: Request, res: Response) => {
         Authorization.clearCookie("auth", res);
         
         res.redirect("/")
     })
     
 
-    app.get("/user/profile",logger.logRoute("viewUserProfile"), Authorization.authRole('admin', 'user'), async (req: Request, res: Response) => {
+    app.get("/user/profile", RouteWatcher.logRoute("viewUserProfile"), Authorization.authRole('admin', 'user'), async (req: Request, res: Response) => {
         res.render("user_edit.ejs", {
             title: "User profile",
             user: await Authorization.getUserFromCookie("auth", req),
@@ -36,7 +37,7 @@ module.exports = function(app: Application) {
         })
     })
 
-    app.get("/stream", logger.logRoute("viewStream"), Authorization.authRole('admin', 'user'), async (req: Request, res: Response) => {
+    app.get("/stream", RouteWatcher.logRoute("viewStream"), Authorization.authRole('admin', 'user'), async (req: Request, res: Response) => {
         res.render("stream.ejs", {
             title: "Stream",
             user: await Authorization.getUserFromCookie("auth", req),
@@ -46,7 +47,7 @@ module.exports = function(app: Application) {
 
     // ! =================== POST ROUTES =================== //
 
-    app.post("/user/update", logger.logRoute("updateUser"), Authorization.authRole('admin', 'user'), async (req: Request, res: Response) => {
+    app.post("/user/update", RouteWatcher.logRoute("updateUser"), Authorization.authRole('admin', 'user'), async (req: Request, res: Response) => {
         var userId = req.body.userId;
         delete req.body.userId;
         var status = await userController.updateUserAuth(userId, req.body, req.body.currentPassword);
@@ -60,7 +61,7 @@ module.exports = function(app: Application) {
     })
 
     
-    app.post("/user/delete", logger.logRoute("deleteUser"), Authorization.authRole('admin', 'user'), async (req: Request, res: Response) => {
+    app.post("/user/delete", RouteWatcher.logRoute("deleteUser"), Authorization.authRole('admin', 'user'), async (req: Request, res: Response) => {
         var status = await userController.deleteUserAuth(req.body.userId, req.body.currentPassword);
         
         if (status != "userDeleted"){
@@ -87,7 +88,7 @@ module.exports = function(app: Application) {
 
     // ! =================== POST ROUTES =================== //
 
-    app.post("/user/login/mobile", logger.logRoute("mobileLogin"), async (req: Request, res: Response) => {
+    app.post("/user/login/mobile", RouteWatcher.logRoute("mobileLogin"), async (req: Request, res: Response) => {
 
 
         console.log("\n========================================");
@@ -110,7 +111,7 @@ module.exports = function(app: Application) {
     })
 
 
-    app.post("/user/register/mobile", logger.logRoute("mobileRegister"), async (req: Request, res: Response) => {
+    app.post("/user/register/mobile", RouteWatcher.logRoute("mobileRegister"), async (req: Request, res: Response) => {
 
         console.log("\n========================================");
         console.log("[REGISTER] Incoming request: ");
@@ -129,7 +130,7 @@ module.exports = function(app: Application) {
     })
 
 
-    app.post("/user/update/mobile", logger.logRoute("mobileUpdateUser"), async (req: Request, res: Response) => {
+    app.post("/user/update/mobile", RouteWatcher.logRoute("mobileUpdateUser"), async (req: Request, res: Response) => {
         
         console.log("\n========================================");
         console.log("[UPDATE] Incoming request: ");
@@ -158,7 +159,7 @@ module.exports = function(app: Application) {
 
 
     // TODO: Add mobile route for delete user (DELETE)
-    app.post("/user/delete/mobile", logger.logRoute("mobileDeleteUser"), async (req: Request, res: Response) => {
+    app.post("/user/delete/mobile", RouteWatcher.logRoute("mobileDeleteUser"), async (req: Request, res: Response) => {
 
         console.log("\n========================================");
         console.log("[DELETE] Incoming request: ");

@@ -236,7 +236,7 @@ class LogHandler{
 
 
     /**
-     * 
+     * @depricated - User RouteWatcher.logRoute instead
      * @param action - The action to log
      * @returns {Function} - The middleware function
      * 
@@ -356,7 +356,13 @@ class LogHandler{
         this._writeToFile(starter);
     }
 
-
+    /**
+     * @depricated - Use RouteWatcher.logRoute instead
+     * @param req 
+     * @param res 
+     * @param action 
+     * @param extra 
+     */
     private async _logRoute(req: Request, res: Response, action: string, extra: any = {}){
 
         // Begins writing log data
