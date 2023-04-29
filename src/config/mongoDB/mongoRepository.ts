@@ -24,7 +24,7 @@ export abstract class MongoRepository<T> {
 
     // * =================== PROTECTED METHODS =================== //
 
-    async _isConnected(): Promise<boolean> {
+    protected async _isConnected(): Promise<boolean> {
         // console.log(this.constructor.name + " is connecting to MongoDB...");
 
         try
@@ -42,6 +42,29 @@ export abstract class MongoRepository<T> {
             logger.error(this.logData)
 
             return false;
+        }
+    }
+
+     /**
+     * 
+     * @param filter Filter to use
+     * @returns Users that match the filter or empty array if error
+     */
+    protected async _findDocumentsByFilter(filter: any, limit: number = 0): Promise<Array<any>> {
+        if(!await this._isConnected()) return [];
+        
+        this.logData.method = "_findDocumentsByFilter";
+        this.logData.filter = filter;
+
+        try {
+            logger.info(this.logData);
+
+            return await this._collection!!.find(filter as any).limit(limit).toArray();
+        } catch (err) {
+            this.logData.error = err;
+            logger.error(this.logData);
+
+            return [];
         }
     }
 

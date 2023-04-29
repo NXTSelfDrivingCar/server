@@ -1,4 +1,6 @@
 import { Authorization } from "../cookie/authorization";
+import axios from "axios";
+
 
 // connectedClients: any = {}
 // connectedClients[socketId] = {SID: socketId, UID: userId}
@@ -14,7 +16,8 @@ const rooms = new Map<string, string>()
     .set("admin", "admin")
     .set("user", "user")
     .set("streamer", "streamer")
-    .set("gps", "gps");
+    .set("gps", "gps")
+    .set("ai", "ai");
 
 export class WSClientHandler{
     private static io: any;
@@ -109,7 +112,7 @@ export class WSClientHandler{
         await this.attachUserIdToSocket(socket, token);
 
         // If the room is user, add the socket to the connected clients
-        this._checkInSocket(socket);
+        this._checkInSocket(socket, token);
     }
 
     public async requestClientList(socket: any){
@@ -216,7 +219,7 @@ export class WSClientHandler{
         delete WSClientHandler.streamerClients[socket.id];
     }
 
-    private _checkInSocket(socket: any){
+    private _checkInSocket(socket: any, token: any){
 
         // If the socket is not a user, disconnect it or if it is not in any room
         if(!socket["userId"] || socket.rooms.length < 2) 
@@ -226,7 +229,11 @@ export class WSClientHandler{
             return;
         }
 
-        if(socket.rooms.has("streamer")) this._addToStreamerClients(socket);
+        if(socket.rooms.has("streamer")){
+            this._addToStreamerClients(socket);
+            console.log("Streamer connected: " + socket.id);
+            this._sendPythonRequest(token, rooms.get("ai"))
+        } 
 
 
         // Socket cannot be a guest and not have the gps room (only GPS devices can be guests)
@@ -261,6 +268,33 @@ export class WSClientHandler{
 
         socket.join(user?.id)
     }
+
+    private async _sendPythonRequest(token: string, room: any){
+        console.log("Sending python request: " + token + " " + room)
+        var data = {
+            token: token,
+            room: room
+        }
+
+        var options = {
+            method: 'POST',
+            port: 5003,
+            path: '/api/join/client',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+
+        axios.post("http://localhost:5003/api/join/client", data, options)
+            .then((res: any) => {
+                console.log(res.data);
+            }
+            ).catch((err: any) => {
+                console.log(err);
+            })
+
+    }
+        
 
     // ? =================== INIT ===================
 
