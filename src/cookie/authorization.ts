@@ -10,6 +10,10 @@ import { Request, Response } from "express";
 
 import { compareSync, hashSync } from "bcrypt";
 
+import { ApitokenController } from "./apiVerifier/apiTokenController";
+import { ApiToken } from "./apiVerifier/apiTokenModel";
+
+const apiTokenController = new ApitokenController();
 const userController = new UserController();
 const logger = new LogHandler();
 
@@ -96,8 +100,8 @@ export class Authorization {
    * @param req  Request object
    * @returns  JWT Token
    */
-  public static signToken(userId: string, res: Response, req: Request): any  {
-    return this._signToken(userId, res, req);
+  public static signToken(key: string, data: any, exp: number, unit: string, res: Response, req: Request): any  {
+    return this._signToken(key, data, exp, unit, res, req);
   }
 
   /**
@@ -180,9 +184,169 @@ export class Authorization {
       return this._authUser(redirectPage, req, res, next);
     }
    
-}
+  }
+  /**
+   * This function is used to generate API Token and set it as cookie
+   * API token will be deleted after 1 hour
+   * API token will be overwritten if it already exists
+   * @param referer If true, use the url from the referer page, if false, use the url from the request (target)
+   * @param req 
+   * @param res 
+   * @returns ApiToken object
+   */
+  public static async generateApiToken(referer: Boolean, req: Request, res: Response): Promise<any> {
+    var token = await this._generateApiToken(referer, req, res);
+    var data = {id: token.id, userId: token.userId, expirationDate: token.expirationDate, page: token.pageKey};
+
+    await this.signToken("api", data, 1, "h", res, req);
+
+    return token;
+  }
+
+  /**
+   * 
+   * Middleware function that checks if user is logged in and has API Token
+   * It checks if the token is valid and if the user has access to the api
+   */
+  public static authApiUser() {
+    return (req: Request, res: Response, next: any) => { 
+      return this._authApiUser(req, res, next);
+    }
+  }
   
   // ! =================== PRIVATE FUNCTIONS ===================
+
+  private static async _generateApiToken(referer: Boolean, req: Request, res: Response): Promise<ApiToken> {
+    return new Promise(async (resolve, reject) => {
+      // Get user from cookie
+      var user = await this.getUserFromCookie("auth", req);
+      
+      // If user is null (guest), disconnect socket
+      if(!user){
+        res.status(401).send("Unauthorized");
+        return;
+      }
+
+      // Check if user has already generated token
+      var existingToken = await apiTokenController.findTokenByUserId(user.id);
+      
+      // If user has already generated token, delete it
+      if(existingToken){
+        await apiTokenController.delete(existingToken.id);
+      }
+
+      var userId = user.id;
+      var page = referer ? req.headers.referer : req.originalUrl;
+      var expirationDate = new Date();
+      expirationDate.setHours(expirationDate.getHours() + 1);
+
+      // If page is null, return bad request
+      if (!page){
+        res.status(400).send("Bad request");
+        return;
+      }
+
+      // If page contains query string, remove it
+      if (page.includes("?")){
+        page = page.split("?")[0];
+      }
+      
+      var newToken = new ApiToken(userId, expirationDate, page);
+  
+      await apiTokenController.insert(newToken);
+      
+      resolve(newToken);
+    })
+    
+  }
+
+  private static async _authApiUser(req: Request, res: Response, next: any): Promise<void> {
+    // Check if key apitoken exists per possible request method (POST, GET)
+    this.logData = {
+      origin: "Authorization",
+      action: "authApiUser",
+      message: "Checking if user is authorized",
+      url: req.originalUrl,
+      method: req.method,
+      ip: req.ip,
+      headers: req.headers
+    }
+
+    // Check if request is an XMLHttpRequest (AJAX)
+    var isXMLHttpRequest = req.headers["x-requested-with"] == "XMLHttpRequest";
+
+    if(!isXMLHttpRequest){
+      this.logData.message = "Request is not an XMLHttpRequest";
+      logger.warn(this.logData);
+      
+      res.status(401).send("Unauthorized");
+      return;
+    }
+
+    var token = this.getDataFromCookieName("api", req);
+
+    // Check if API token exists in cookie
+    if(!token){
+      
+      this.logData.message = "No token found";
+      logger.warn(this.logData);
+
+      res.status(401).send("Unauthorized");
+      return;
+    }
+
+    var apiToken = await apiTokenController.findTokenById(token.id);
+
+    // Check if API token exists in database
+    if(!apiToken){
+      
+      this.logData.message = "API Token not found";
+      this.logData.userId = token.userId;
+      logger.warn(this.logData);
+
+      res.status(401).send("Unauthorized");
+      return;
+    }
+
+    // Check if token is expired
+    if(apiToken.expirationDate < new Date()){
+
+      this.logData.message = "API Token expired";
+      this.logData.userId = token.userId;
+      logger.warn(this.logData);
+
+      res.status(401).send("Unauthorized");
+      return;
+    }
+
+    var authData = this.getDataFromCookieName("auth", req);
+
+    // Check if user is logged in
+    if (!authData){
+      this.logData.message = "User is not logged in (cookie is null)";
+      logger.warn(this.logData);
+      res.status(401).send("Unauthorized");
+      return;
+    }
+
+    // Check if user ID from API token and user ID from cookie match
+    if (authData.userId != apiToken.userId){
+      this.logData.message = "User API token and ID do not match ";
+      this.logData.user = {
+        id: authData.userId,
+      }
+      logger.warn(this.logData);
+      res.status(401).send("Unauthorized");
+      return;
+    }
+
+    // Deletes current token from database
+    apiTokenController.delete(apiToken.id);
+    
+    await this.generateApiToken(true, req, res);
+
+    next();
+  }
 
   private static async _authUser(redirectPage: string, req: Request, res: Response, next: any): Promise<void> {
     this.logData = {
@@ -319,15 +483,24 @@ export class Authorization {
     }
   }
 
-
-  private static _signToken(userId: string, res: Response, req: Request): any {
-    // Sign token with given user ID that expires in 1 hour
-    const token = jwt.sign({ userId: userId }, secret, {expiresIn: '1h'});
+  private static _signToken(key: string, data: any, exp: number, unit: string, response: Response, request: Request): any {
+    // Sign token with given data that expires in 1 hour
+    const token = jwt.sign(data, secret, {expiresIn: exp + unit});
 
     // Set cookie with given token
-    res.cookie('auth', token, { httpOnly: true, secure: true});
+    response.cookie(key, token, { httpOnly: true, secure: true});
     return token;
   }
+
+
+  // private static _signToken(userId: string, res: Response, req: Request): any {
+  //   // Sign token with given user ID that expires in 1 hour
+  //   const token = jwt.sign({ userId: userId }, secret, {expiresIn: '1h'});
+
+  //   // Set cookie with given token
+  //   res.cookie('auth', token, { httpOnly: true, secure: true});
+  //   return token;
+  // }
 
 
   private static _decodeToken(token: string): any {

@@ -114,6 +114,9 @@ module.exports = function(app: Application) {
     })
 
     app.get("/password-reset", logger.logRoute("passwordReset"), async (req: Request, res: Response) => {
+        
+        await Authorization.generateApiToken(false, req, res)
+        
         res.render("reset_password_creds.ejs", {
             title: "Password reset",
             user: await Authorization.getUserFromCookie("auth", req),
