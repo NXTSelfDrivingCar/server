@@ -31,6 +31,7 @@ module.exports = function(io: WebSocket){
 
             // Remove the client from the client list 
             clientHandler.removeClient(socket.id);
+
         });
 
         // This event is emitted when the user sends a message
@@ -51,6 +52,10 @@ module.exports = function(io: WebSocket){
             clientHandler.joinRooms(socket, data); 
         })
 
+        socket.on("ping", (data: any, callback: any) => {
+            callback({time: Date.now(), message: "pong"});
+        });
+
 
         var streamHandler = require("./WebSocketStreamHandler")(io, socket);
 
@@ -63,10 +68,6 @@ module.exports = function(io: WebSocket){
         setTimeout(() => {
             if(!isConnected(socket)) {
                 return;
-            }
-
-            if(socket.rooms.size < 2){
-                clientHandler.joinRooms(socket, {room: "default"});
             }
         }, 5000);
 

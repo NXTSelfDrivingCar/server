@@ -26,6 +26,7 @@ export class WSClientHandler{
     private static connectedClients: any = {};
     private static tmpClients: any = {};
     private static streamerClients: any = {};
+    private static aiClients: any = {};
 
     private options: any = {
         connectionTimeout: 10
@@ -73,11 +74,31 @@ export class WSClientHandler{
         return WSClientHandler.tmpClients[socketId];
     }
 
+    public getAiClientsBySocketId(socketId: any): any{
+        return WSClientHandler.aiClients[socketId];
+    }
+
+    public getAiClientsByUserId(userId: any): any{
+        return Object.values(WSClientHandler.aiClients).filter((client: any) => client.UID === userId);
+    }
+
     public getStreamerClientsBySocketId(socketId: any): any{
         return WSClientHandler.streamerClients[socketId];
     }
 
+    public getConnectedClientsByUserId(userId: any): any{
+        return Object.values(WSClientHandler.connectedClients).filter((client: any) => client.UID === userId);
+    }
+
     public removeClient(socketId: any){
+
+        var socket = WSClientHandler.connectedClients[socketId];
+
+        if(!socket){
+            return;
+        }
+
+        
         this._removeFromConnectedClientsBySocketId(socketId);
         this._removeFromTmpClientsBySocketId(socketId);
         this._removeFromStreamerClientsBySocketId(socketId);
@@ -91,8 +112,11 @@ export class WSClientHandler{
         
         this._addToTmpClients(socket);        
 
-        // If the room is not defined, join the default room (user)
-        if (!data.room || socket.rooms.has(data.room)) socket.join(rooms.get("default"));
+        // If the room is not defined, disconnect the socket
+        if (!data.room || socket.rooms.has(data.room)) {
+            socket.disconnect();
+            return;
+        }
 
         // If the room is admin, check if the user is authorized to join the room
         if (data.room === "admin") {
@@ -141,7 +165,7 @@ export class WSClientHandler{
         var clientData = this._getConnectedClient(key)
         
         // Get the user from the token
-        var user = await Authorization.getUserFromToken(Authorization.getTokenFromWS(clientData.socket, "auth"));
+        var user = await Authorization.getUserFromToken(clientData.socket.token);
 
         // Get all rooms except the socket id room
         var rooms = [...clientData.socket.rooms]
@@ -195,6 +219,14 @@ export class WSClientHandler{
         }
     }
 
+    private _addToAiClients(socket: any){
+        WSClientHandler.aiClients[socket.id] = {
+            SID: socket.id,
+            UID: socket["userId"],
+            socket: socket
+        }
+    }
+
     private _removeFromConnectedClientsBySocketId(socketId: string){
         delete WSClientHandler.connectedClients[socketId];
     }
@@ -219,6 +251,10 @@ export class WSClientHandler{
         delete WSClientHandler.streamerClients[socket.id];
     }
 
+    private _removeFromAiClients(socket: any){
+        delete WSClientHandler.aiClients[socket.id];
+    }
+
     private _checkInSocket(socket: any, token: any){
 
         // If the socket is not a user, disconnect it or if it is not in any room
@@ -232,8 +268,18 @@ export class WSClientHandler{
         if(socket.rooms.has("streamer")){
             this._addToStreamerClients(socket);
             console.log("Streamer connected: " + socket.id);
-            this._sendPythonRequest(token, rooms.get("ai"))
+
+            var userAiSockets = this.getAiClientsByUserId(socket["userId"]);
+
+            if(userAiSockets.length <= 0){
+                this._sendPythonRequest(token, rooms.get("ai"))
+            }
         } 
+
+        if(socket.rooms.has("ai")){
+            this._addToAiClients(socket);
+            console.log("AI connected: " + socket.id);
+        }
 
 
         // Socket cannot be a guest and not have the gps room (only GPS devices can be guests)
@@ -262,6 +308,8 @@ export class WSClientHandler{
             token = Authorization.getTokenFromWS(socket, "auth");
         }
 
+        socket["token"] = token;
+
         var user = await Authorization.getUserFromToken(token);
 
         if(!socket["userId"]) socket["userId"] = user?.id;
@@ -287,10 +335,10 @@ export class WSClientHandler{
 
         axios.post("http://localhost:5003/api/join/client", data, options)
             .then((res: any) => {
-                console.log(res.data);
+                console.log("Python service connected!");
             }
             ).catch((err: any) => {
-                console.log(err);
+                console.log("Error connecting Python service!");
             })
 
     }
