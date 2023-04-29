@@ -79,13 +79,23 @@ function sendWsControl(elementName, isDown){
 }
 
 var pauseReady = 1
+var paused = true
 function pause(){
     
     if(socket){
-        
         if (pauseReady == 1){
-            socket.emit("pauseStream")
-            pauseReady = 0
+            if (paused){
+                socket.disconnect()
+                paused = false
+                pauseReady = 0
+                btnPause.innerHTML = "<i class='bi bi-play-fill'></i>"
+                img.src = "https://i.imgur.com/IfCXico.jpg"
+            }else{
+                connect()
+                paused = true
+                pauseReady = 0
+                btnPause.innerHTML = "<i class='bi bi-pause-fill'></i>";
+            }
 
             // Limit pause to 1 per 150ms
             setTimeout(function(){
@@ -93,15 +103,5 @@ function pause(){
             }, 150)
         }
     }
-
-    socket.on("pauseStream", function (data) {
-        console.log("Stream paused: " + data.paused);
-
-        if (data.paused == true){
-            btnPause.innerHTML = "<i class='bi bi-pause-fill'></i>";
-        } else {
-            btnPause.innerHTML = "<i class='bi bi-play-fill'></i>"
-        }
-    })
 }
 
