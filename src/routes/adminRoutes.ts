@@ -39,6 +39,9 @@ module.exports = function(app: Application) {
     })
 
     app.get("/admin/users/list", logger.logRoute("listUsers"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
+        
+        await Authorization.generateApiToken(false, req, res);
+        
         for(var key in req.query) {
             if(req.query[key] === "") delete req.query[key]
         }
@@ -68,6 +71,9 @@ module.exports = function(app: Application) {
     })
 
     app.get("/admin/logs/l/:name",  logger.logRoute("viewLog"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
+        
+        await Authorization.generateApiToken(false, req, res);
+        
         res.render("admin_log_view.ejs", {
             title: "Admin log view",
             thisLogName: req.params.name,

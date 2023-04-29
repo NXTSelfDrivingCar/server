@@ -53,7 +53,7 @@ module.exports = function(app: Application) {
 
 
     app.get("/signToken/debug", logger.logRoute("debugLogin"), async (req: Request, res: Response) => {
-        var token = Authorization.signToken("e3f84020-b3f3-4f7c-8b4a-ceb38b98e167", res, req);
+        //var token = Authorization.signToken("e3f84020-b3f3-4f7c-8b4a-ceb38b98e167", res, req);
         var user = await Authorization.getUserFromCookie("auth", req);
         
         res.send(user);
