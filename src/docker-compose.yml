@@ -29,6 +29,25 @@ services:
       - mongo
     networks:
       - nodeNetwork
+  python:
+    container_name: python
+    image: python
+    build: ../pysrc
+    command:
+      - pip install numpy
+      - pip install socketio-python
+      - pip install asyncio
+      - pip install flask
+      - pip install opencv-python
+      - pip install matplotlib
+      - pip install imageio
+      - pip install flask[async]
+    ports:
+      - "5003:5003"
+    networks:
+      - nodeNetwork
+    depends_on:
+      - mongo
   mongo:
     container_name: mongo
     image: mongo:latest

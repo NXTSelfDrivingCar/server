@@ -43,7 +43,7 @@ app.listen(HttpServerConfig.PORT, () => {
         action: "init",
         details: { serverType: "HttpServer", port: HttpServerConfig.PORT },
       });
-      console.log("Running server on version: 1.1.5.3.1 - WebSocket (alpha) / Streamer (alpha 3)");
+      console.log("Running server on version: 1.1.6.1 - Multi service");
       
     console.log(`HTTP Server listening on port ${HttpServerConfig.PORT}`);
 });
