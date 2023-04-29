@@ -11,6 +11,7 @@ import { RestartLinkController } from "../restartLink/restartLinkController";
 
 import { EmailHandler } from "../emailHandler/emailHandler";
 import { EmailMessage } from "../emailHandler/messageModel";
+import { RouteWatcher } from "../cookie/routeWatcher";
 
 
 const logger = new LogHandler();
@@ -63,7 +64,27 @@ module.exports = function(app: Application){
         res.json(await logController.getLogValueByFilter(name, req.query));
     })
 
+    app.get("/api/admin/emailservice/verify", RouteWatcher.logRoute("emailServiceVerification"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
+        EmailHandler.getInstance().init().then((data) => {
+            res.json({status: "OK"});
+        }).catch((err) => {
+            res.json({status: "ERROR"});
+        })
+    });
+
     // ! =================== POST ROUTES =================== //
+
+    app.post("/api/admin/emailservice/update", RouteWatcher.logRoute("emailServiceUpdate"), Authorization.authRole("admin"), Authorization.authUser(), async (req: Request, res: Response) => {
+        var username = req.body.emailUsername;
+        var password = req.body.emailPassword;
+
+        if(!username || !password) return res.json({error: "No username or password provided"});
+
+        EmailHandler.getInstance().setUser(username);
+        EmailHandler.getInstance().setPass(password);
+
+        res.json({success: "Email service updated"});
+    });
 
     app.post("/api/user/password/reset/", async (req: Request, res: Response) => {
 
@@ -73,7 +94,7 @@ module.exports = function(app: Application){
             if(data.acknowledged){
                 var link = await restartLinkController.getRestartLinkByObjectId(data.insertedId);
 
-                EmailHandler.sendEmail(new EmailMessage(to, "Password reset", "Click the link to reset your password: " + link.link));
+                EmailHandler.getInstance().sendEmail(new EmailMessage(to, "Password reset", "Click the link to reset your password: " + link.link));
             }
         });
 

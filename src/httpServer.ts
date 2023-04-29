@@ -56,5 +56,12 @@ wss.init(WSSConfig.PORT);
 const connectionHandler = require("./webSocket/WebSocketConnectionHandler")(wss.getIO());
 //const adminHandler = require("./webSocket/WebSocketAdminHandler")(wss.getIO());
 
-const emailHandler = new EmailHandler(EmailConfig.USER, EmailConfig.PASS);
-emailHandler.init();
+const emailHandler = EmailHandler.getInstance();
+emailHandler.setUser(EmailConfig.USER);
+emailHandler.setPass(EmailConfig.PASS);
+
+emailHandler.init().then((result) => {
+    console.log("EmailHandler initialized");
+}).catch((error) => {
+    console.log("Error while initializing emailHandler: " + error);
+})
