@@ -27,7 +27,7 @@ jobs:
         docker save -o tmp_mage.tar antasmes/nxt-server:latest
       continue-on-error: true
     - name: Upload image artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: image
         path: tmp_image.tar
@@ -37,7 +37,7 @@ jobs:
       needs: [build, login]
       steps:
       - name: Download image artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: image
       - name: Load image
@@ -51,7 +51,7 @@ jobs:
       needs: [build, login]
       steps:
       - name: Download image artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: image
       - name: Load image
