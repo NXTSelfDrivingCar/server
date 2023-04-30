@@ -127,6 +127,7 @@ function processResult(result){
         emailCard.classList.remove('service-card-off');
         emailCard.classList.add('service-card-on');
     }else{
+        updateEmailTitle('Email service -> Offline')
         emailCard.classList.remove('service-card-on');
         emailCard.classList.add('service-card-off');
     }
