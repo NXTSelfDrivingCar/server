@@ -7,22 +7,39 @@ on:
       - dev
       
 jobs:
+  login:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: docker-login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER_ANTASMES }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD_ANTASMES }}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
   build:
     runs-on: ubuntu-latest
-    
     steps:
     - uses: actions/checkout@v2
-    - name: docker-login
-      env:
-        DOCKER_USER: ${{ secrets.DOCKER_USER_ANTASMES }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD_ANTASMES }}
-      run: |
-        docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     - name: docker build nodeJS
       run: |
         docker build ./src -t antasmes/nxt-server:latest
-    - name: docker-push
-      run: |
-        docker push antasmes/nxt-server:latest
-      
+  publish-main:
+      if: github.ref == 'refs/heads/main'
+      runs-on: ubuntu-latest
+      needs: [build, login]
+      steps:
+      - name: docker-push
+        run: |
+          docker push antasmes/nxt-server:latest
+  publish-dev:
+      if: github.ref == 'refs/heads/dev'
+      runs-on: ubuntu-latest
+      needs: [build, login]
+      steps:
+      - name: docker-push
+        run: |
+          docker push antasmes/nxt-server:dev  
+        
+    
     
