@@ -1,0 +1,19 @@
+name: Docker Build CI
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: docker build nodeJS
+      run: |
+        docker build ./src -t antasmes/nxt-server:latest
+      
+    
