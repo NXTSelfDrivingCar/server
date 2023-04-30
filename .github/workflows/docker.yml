@@ -30,7 +30,7 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: image
-        path: tmp_image.tar
+        path: ./tmp_image.tar
   publish-main:
       if: github.ref == 'refs/heads/main'
       runs-on: ubuntu-latest
