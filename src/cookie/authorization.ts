@@ -358,6 +358,8 @@ export class Authorization {
       headers: req.headers,
       body: req.body,
     }  
+
+    var isAjax = req.headers["x-requested-with"] == "XMLHttpRequest";
     
     if (!req.body.password) { res.redirect(redirectPage); return; }
 
@@ -366,15 +368,25 @@ export class Authorization {
       if(!data){ 
         this.logData.message = "User is not logged in (cookie is null)";
         logger.warn(this.logData);
-        res.redirect((redirectPage == "") ? req.headers.referer || "/" : redirectPage);
-        return;
+        if (isAjax) {
+           res.status(401).send("Unauthorized"); return;
+        }
+        else { 
+          res.redirect((redirectPage == "") ? req.headers.referer || "/" : redirectPage); 
+          return;
+        }
        }
   
       if(!data.userId){ 
         this.logData.message = "User is not logged in (cookie is null)";
         logger.warn(this.logData);
-        res.redirect((redirectPage == "") ? req.headers.referer || "/" : redirectPage);
-        return; 
+        if (isAjax) {
+          res.status(401).send("Unauthorized"); return;
+        }
+        else {
+          res.redirect((redirectPage == "") ? req.headers.referer || "/" : redirectPage);
+          return; 
+        }
       }
   
       var user = await userController.findUserById(data.userId);
@@ -383,16 +395,26 @@ export class Authorization {
         this.logData.message = "User is not logged in (user not found)";
         this.logData.userId = data.userId;
         logger.warn(this.logData);
-        res.redirect((redirectPage == "") ? req.headers.referer || "/" : redirectPage);
-        return;
+        if (isAjax) {
+          res.status(401).send("Unauthorized"); return;
+        }
+        else {
+          res.redirect((redirectPage == "") ? req.headers.referer || "/" : redirectPage);
+          return; 
+        }
       }
   
       if(!await compareSync(req.body.password.toString(), user.password)){ 
         this.logData.message = "User is not logged in (password is incorrect)";
         this.logData.user = {id: user.id, username: user.username, role: user.role}
         logger.warn(this.logData);
-        res.redirect((redirectPage == "") ? req.headers.referer || "/" : redirectPage);
-        return;
+        if (isAjax) {
+          res.status(401).send("Unauthorized"); return;
+        }
+        else {
+          res.redirect((redirectPage == "") ? req.headers.referer || "/" : redirectPage);
+          return; 
+        }
       }
 
       this.logData.message = "User is logged in";
