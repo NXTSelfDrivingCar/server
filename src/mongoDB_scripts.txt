@@ -1,0 +1,7 @@
+-- Brisemo sve api tokene koji nisu validini
+-- Ovo bi moglo da se stavi na drugi servis, da se okida svako malo (postoji NodeJS Agenda modul)
+db.apiTokens.deleteMany({expirationDate:{$lt: new Date()}})
+
+
+-- Ovo se takodje korisi za to. Moramo da proverimo koji restart link nije vise validan i da ga obrisemo
+db.restartLinks.deleteMany({date: {$lt: new Date()}})

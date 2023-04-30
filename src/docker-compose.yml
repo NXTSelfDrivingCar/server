@@ -1,0 +1,63 @@
+version: '3.0'
+
+services:
+  node:
+    container_name: node
+    image: antasmes/nxt-server:latest
+    build: .
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    working_dir: /app
+    command: bash -c "npm install && npx ts-node httpServer.ts"
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    environment:
+      - MONGODB_URL=mongodb://host.docker.internal
+      - MONGODB_PORT=27017
+      - MONGODB_DBATABASE=testDB
+      - JWT_SECRET=hocuNoviFont
+      - HTTP_SERVER_HOST:localhost
+      - HTTP_SERVER_PORT=5000
+      - WS_SERVER_HOST=localhost
+      - WS_SERVER_PORT=5001
+      - B_SALT=9
+      - EMAIL_AUTH_USER = akitasevski113@gmail.com
+      - EMAIL_AUTH_PASS = skofigbukcdratsf
+    depends_on:
+      - mongo
+    networks:
+      - nodeNetwork
+  python:
+    container_name: python
+    image: python
+    build: ../pysrc
+    command:
+      - pip install numpy
+      - pip install socketio-python
+      - pip install asyncio
+      - pip install flask
+      - pip install opencv-python
+      - pip install matplotlib
+      - pip install imageio
+      - pip install flask[async]
+    ports:
+      - "5003:5003"
+    networks:
+      - nodeNetwork
+    depends_on:
+      - mongo
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - c:/mongo/data:/data/db
+    networks:
+      - nodeNetwork
+      
+networks:
+  nodeNetwork:
+    driver: bridge

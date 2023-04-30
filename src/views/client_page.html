@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    .block {
+      display: block;
+      margin-top: 10px;
+    }
+  </style>
+  <title>Document</title>
+</head>
+
+<body onload="init()">
+  <h3>Html5 WebSockets Example.</h3>
+  <div id="message" class="block"></div>
+  <button id="connectBtn" onclick="connect()">Connect</button>
+  <button id="disconnectBtn" onclick="disconnect()">Disconnect</button>
+
+  <label for="text">Send something</label>
+  <input type="text" id="text" onfocus="selectAll()" />
+  <!-- ... -->
+  <button id="sendTextBtn" onclick="sendMessage()">Send Message</button>
+
+  <br>
+  <button id="admConnectBtn" onclick="admConnect()">Connect as streamer</button>
+  <button id="admSendStreamBtn" onclick="admSendStream()">Send stream data</button>
+
+  <p id="numberOfClients" style="display: none;">Number of connected users users: </p>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js"></script>
+
+  <script type="text/javascript" src="http://localhost:5000/static/wsClient.js"></script>
+
+  <script>
+    function sendMessage() {
+      if (!isConnected())
+        return alert("Not connected to server yet." + JSON.stringify(socket));
+
+      const text = document.getElementById("text").value;
+      socket.emit("message", text);
+    }
+  </script>
+</body>
+
+</html>

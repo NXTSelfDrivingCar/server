@@ -1,0 +1,53 @@
+Baza podataka:
+  ✔ Omoguciti brisanje korisnika sa mobilnog @done(23-01-12 16:48)
+  ✔ Omoguciti promenu korisnickog profila sa mobilnog @done(23-01-12 16:37)
+  ✔ Da vidi sve korisnike @done(22-12-24 01:27)
+  ✔ Da moze da ih promeni, brise, doda role @done(22-12-24 01:28)
+  ✔ Dodati da admin moze da upisuje changelog @done(23-01-10 12:23)
+  ✘ Da procita trenutne logove @cancelled(22-12-24 17:22) @logovi se ne cuvaju u bazi podataka, vec u fajlovima)
+
+Lista korisnickih pregleda:
+  ✔ Changelog @done(23-01-11 01:46)
+  ✔ Tickets @done(23-01-11 01:46)
+  ✔ Dodavanje ticket-a @done(23-01-11 01:46)
+
+Lista admin pregleda:
+  ✔ Tickets @done(23-01-11 01:46)
+  ✔ Odgovaranje na ticket @done(23-01-11 01:46)
+  ☐ Ptetrazivanje logova (Filter)
+  ☐ Pretrazivanje ticket-a (Filter)
+  ✔ Korisnici @done(22-12-24 01:31)
+  ✔ Log @started(22-12-27 18:38) @done(22-12-27 21:35) @lasted(2h57m38s)
+
+Konekcija:
+  ✔ HTTP Request sa Android aplikacijom @done(23-01-10 17:57)
+  ✔ Websocket Veza (Za prenos stream-a) @started(22-12-24 18:28) @done(22-12-24 19:33) @lasted(1h5m42s)
+  ✔ Websocket srediti preko html stranice da se otvara @done(22-12-27 18:11)
+  ✘ UDP Veza (Za prenos stream-a) @cancelled(22-12-24 19:33)
+  ✘ TCP Veza (Za povezivanje sa telefonom?) @cancelled(22-12-24 01:33)
+
+QoL zahtevi:
+  ✔ Napravi logger da bude dobar (da bude json objekat) @done(22-12-24 21:06)
+  ✔ Logovanje svih bitnih akcija @started(22-12-24 21:06) @done(22-12-24 22:04) @lasted(58m5s)
+  ✘ Omoguciti da su logovi podeljeni u sekcije po desavanjima, a ne samo po funkcijama (npr. logovanje -> userController -> userRepository -> result, registracija, itd.) @cancelled(23-01-10 16:52)
+
+Bagovi:
+  ✔ Kad se ukuca pogrešna šifra, nema Log In dugme @done(23-01-12 16:48)
+
+Nefunkcionalni zahtevi:
+  ✔ Sredi logs formatiranje @done(23-01-11 23:40)
+  ✔ Sredi logs raspored @done(23-01-12 00:21)
+  ✘ Dodaj cards na main page @cancelled(23-01-11 23:51)
+  ✔ Admin list users sredi formatiranje @done(23-01-11 23:42)
+  ✔ Sredi log in i register stranice @done(23-01-12 00:20)
+  ✔ Sredi changelog da ima header i naslov u main page @done(23-01-11 23:50)
+  ✔ Srediti navbar @done(23-01-11 23:50)
+  ✔ Dodati okvir za obične korisnike u komentarima na ticketima @done(23-01-11 23:50)
+  ☐ Uradi trim na svaki input
+  ☐ Promeniti da sve bude na Engleskom (Create propusnica)
+  ☐ Obezbediti svaku rutu posebno za eksterne izvore zahteva (Postman post npr.)
+  ✔ Razdvojiti rute po posebnim fajlovima (admin_routes, user_routes) @done(22-12-24 01:31)
+  ✔ Obezbediti proveru ako korisnik ukuca ručno link za admin stranice @done(22-12-24 01:31)
+  ☐ Obezbediti da se svi logovi pisu na isti nacin (radi jednostavnije pretrage kasnije)
+  ✔ Server ne sme da se ugasi u slucaju da dodje neka greska (vec da je loguje) @done(23-01-11 23:51)
+    ✔ Skloniti svaki throw err iz kooda @done(23-01-11 23:51)
