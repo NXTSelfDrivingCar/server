@@ -24,10 +24,10 @@ jobs:
     - name: Build docker image
       run: |
         docker build ./src -t antasmes/nxt-server:latest
+    - name: Save artifact
+      run: |
         docker save -o tmp_mage.tar antasmes/nxt-server:latest
-      continue-on-error: true
-    - name: Upload image artifact
-      uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v3
       with:
         name: image
         path: tmp_image.tar
