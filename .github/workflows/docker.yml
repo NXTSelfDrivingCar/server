@@ -21,5 +21,8 @@ jobs:
     - name: docker build nodeJS
       run: |
         docker build ./src -t antasmes/nxt-server:latest
+    - name: docker-push
+      run: |
+        docker push antasmes/nxt-server:latest
       
     
