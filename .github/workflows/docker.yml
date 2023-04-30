@@ -24,12 +24,12 @@ jobs:
     - name: Build docker image
       run: |
         docker build ./src -t antasmes/nxt-server:latest
-        docker save -o tmp_mage.tar antasmes/nxt-server
+        docker save -o tmp_mage.tar antasmes/nxt-server:latest
       continue-on-error: true
     - name: Upload image artifact
       uses: actions/upload-artifact@v2
       with:
-        name: tmp_image
+        name: image
         path: tmp_image.tar
   publish-main:
       if: github.ref == 'refs/heads/main'
@@ -39,7 +39,7 @@ jobs:
       - name: Download image artifact
         uses: actions/download-artifact@v2
         with:
-          name: tmp_image
+          name: image
       - name: Load image
         run: docker load -i tmp_image.tar
       - name: Docker push
@@ -53,7 +53,7 @@ jobs:
       - name: Download image artifact
         uses: actions/download-artifact@v2
         with:
-          name: tmp_image
+          name: image
       - name: Load image
         run: docker load -i tmp_image.tar
       - name: Re-tag image
