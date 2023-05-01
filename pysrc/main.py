@@ -27,8 +27,6 @@ async def joinClient():
     token = request_data['token']
     room = request_data['room']
 
-    print("Room: ", room)
-
     if token == None or room == None:
         return jsonify({'error' : 'Token or room are not provided', 'status' : 400})
 
@@ -44,6 +42,9 @@ async def joinClient():
 
     return jsonify({'status' : 200})
 
+@app.route('/api/python/verify', methods=['POST', 'GET'])
+async def verify():
+    return jsonify({'status' : 200})
 
 if __name__ ==  '__main__':
 
