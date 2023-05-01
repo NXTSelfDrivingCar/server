@@ -10,17 +10,17 @@ function verifyEmailService(){
     $.ajax({
         url: 'http://localhost:5000/api/admin/emailservice/verify',
         type: 'GET',
+        dataType: 'json',
+        jsonCallback: 'callback',
         success: function (result) {
             processResult(result)
         },
         error: function (err) {
-            console.log(err);
+            processResult(err)
         }
     });
 
     lockInputFields(false);
-
-    updateEmailTitle('Email service')
 }
 
 function _updateEmailService(){
@@ -47,23 +47,16 @@ function _updateEmailService(){
         type: 'POST',
         data: data,
         success: function (result) {
-            console.log(result)
             verifyEmailService();
         },
         error: function (err) {
-            console.log(err);
+            processResult(err)
         }
     });
 
     $('#verifyModal').modal('hide');
 
     lockInputFields(false);
-
-    updateEmailTitle('Email service')
-
-    clearEmailServiceFields();
-
-    collapse('email')
 }
 
 function updateEmailService(){
@@ -120,16 +113,24 @@ function clearEmailServiceFields(){
 
 function processResult(result){
     var emailCard = document.getElementById('email-card');
-
     resultStatus = result.status;
 
-    if(resultStatus == 'OK'){
+    if(resultStatus == 200){
         emailCard.classList.remove('service-card-off');
         emailCard.classList.add('service-card-on');
-    }else{
+        updateEmailTitle('Email service')
+        clearEmailServiceFields();
+        lockInputFields(false);
+        collapse('email','hide', false)
+    }
+    else if(resultStatus == 401){
+        lockInputFields(false);
+        updateEmailTitle('Email service -> Not updated')
+        $('#adminAuthAlertModal').modal('show');
+    }
+    else if(resultStatus == 500){
         updateEmailTitle('Email service -> Offline')
         emailCard.classList.remove('service-card-on');
         emailCard.classList.add('service-card-off');
     }
-
 }

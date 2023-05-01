@@ -66,24 +66,25 @@ module.exports = function(app: Application){
 
     app.get("/api/admin/emailservice/verify", RouteWatcher.logRoute("emailServiceVerification"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
         EmailHandler.getInstance().init().then((data) => {
-            res.json({status: "OK"});
+            res.status(200).end();
         }).catch((err) => {
-            res.json({status: "ERROR"});
-        })
+            res.status(500).end();
+        });
     });
+
 
     // ! =================== POST ROUTES =================== //
 
     app.post("/api/admin/emailservice/update", RouteWatcher.logRoute("emailServiceUpdate"), Authorization.authRole("admin"), Authorization.authUser(), async (req: Request, res: Response) => {
         var username = req.body.emailUsername;
         var password = req.body.emailPassword;
-
-        if(!username || !password) return res.json({error: "No username or password provided"});
+        
+        if(!username || !password) return res.status(400).json({error: "No username or password provided"});
 
         EmailHandler.getInstance().setUser(username);
         EmailHandler.getInstance().setPass(password);
 
-        res.json({success: "Email service updated"});
+        res.status(200).json({success: "Email service updated"});
     });
 
     app.post("/api/user/password/reset/", async (req: Request, res: Response) => {

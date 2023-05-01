@@ -65,6 +65,7 @@
   </style>
 
   <%- include('../resources/components/new_navbar_admin.ejs') %>
+  <%- include('../resources/components/modals/alerts.ejs') %>
 
   <br />
 
@@ -105,7 +106,7 @@
           <div class="card-body">
             <h4 class="card-title" id="email-card-title">Email service</h4>
             <p class="card-text">Check status and update email service credentials</p>
-            <a href="#" class="stretched-link" onclick="collapse('email')"></a>
+            <a href="#" class="stretched-link" onclick="collapse('email', 'toggle')"></a>
           </div>
           <div class="collapse" id="email-collapse" data="collapsed" style="z-index: 2; position: relative;">
             <div class="card-body">
@@ -152,9 +153,10 @@
   </div>
 
   <script>
-    function collapse(id){
-      $('#'+id+'-collapse').collapse('toggle');
-      if($('#'+id+'-collapse').attr('data') == 'collapsed'){
+    function collapse(id, showHide, noColors = true){
+      $('#'+id+'-collapse').collapse(showHide);
+      
+      if($('#'+id+'-collapse').attr('data') == 'collapsed' && noColors == true){
         $('#'+id+'-collapse').attr('data', 'expanded');
         $('#'+id+'-card').addClass('non-animated').addClass('non-coloured');
       }else{
