@@ -1,22 +1,23 @@
 import socketio
-import base64
-import io
-import cv2
-from imageio import imread
-import matplotlib.pyplot as plt
 import numpy as np
-from PIL import Image
+
+from controller import Controller
+from streamProcessing import StreamProcessor
+
+from config import load_config_from_file
 
 class WebSocket:
     def __init__(self):
         self.sio = socketio.Client()
+
+        self.controller = Controller(self.sio)
 
         self.sio.on("message", self.onMessage)
 
         self.sio.on("stream", self.onStream)
 
         self.index = 0
-        
+        self.limit = 3
 
     def connect(self, host, port) -> bool:
         try:
@@ -25,12 +26,19 @@ class WebSocket:
         except:
             print("Error connecting to server")
             return False
-    
+
+    def setNeuralNetwork(self):
+        print('loading models')
+        models = load_config_from_file('./networks/NN-98.npy')
+        self.perceptron = models['perceptron']
+        self.cnn = models['cnn']
+        print(self.cnn)
+
     async def onConnect(self):
         print("My sid is: ", self.sio.sid)
 
     def joinRoom(self, room, token):
-        self.sio.emit("joinRoom", {"room" : "ai", "token" : token})
+        self.sio.emit("joinRoom", {"room" : room, "token" : token})
         return self
 
     def disconnect(self):
@@ -40,24 +48,31 @@ class WebSocket:
     def emit(self, event, data):
         self.sio.emit(event, data)
         return self
-    
+
     def onMessage(self, data):
         print(data)
         return self
-    
+
     def onStream(self, data):
-        
 
-        # reconstruct image as an numpy array
-        img64 = base64.b64decode(data)
+        if self.index == self.limit:
 
-        image = Image.open(io.BytesIO(img64))
-        image_np = np.array(image)
+            image = StreamProcessor.processStream(data)
 
-        # show image
-        res = cv2.resize(image_np, dsize=(320, 240), interpolation=cv2.INTER_NEAREST)
-        res2 = cv2.cvtColor(res, cv2.COLOR_BGR2RGB)
-        cv2.imwrite("stream/image" + self.index + ".jpg", res2)
-        self.index += 1
+            #print("Got image")
+
+            imgPrepared = self.cnn.prepare_data([image], 1)
+            res = self.perceptron.FeedForwardFlex(np.array([imgPrepared[0]]).T)
+
+            #print("Got answer")
+            a = res[-1]
+            val = np.where(a == np.max(a), 1, 0)
+            val = val.flatten()
+
+            self.controller.emitControl(val)
+
+            self.index = 0
+        else:
+            self.index += 1
 
         return self
