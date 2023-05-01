@@ -1,0 +1,24 @@
+name: Docker Dev Build CI
+on:
+  push:
+    branches:
+      - dev
+      
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: docker-login
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USER_ANTASMES }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD_ANTASMES }}
+      run: |
+        docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+    - name: docker build nodeJS
+      run: |
+        docker build ./src -t antasmes/nxt-server:dev
+    - name: docker-push
+      run: |
+        docker push antasmes/nxt-server:dev
