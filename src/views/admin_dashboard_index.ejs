@@ -62,6 +62,15 @@
 
     }
 
+    .collapsing {
+      -webkit-transition-property: height, visibility;
+      transition-property: height, visibility;
+      -webkit-transition-duration: 0.25s;
+      transition-duration: 0.25s;
+      -webkit-transition-timing-function: ease;
+      transition-timing-function: ease;
+    }
+
   </style>
 
   <%- include('../resources/components/new_navbar_admin.ejs') %>
@@ -96,27 +105,22 @@
         <div class="card" id="python-card">
           <div class="card-body">
             <h4 class="card-title" id="python-card-title">Python service</h4>
-            <p class="card-text">Check if the python service is responsive</p>
+            <p class="card-text">Check if the python service is responsive <i class="bi bi-caret-down" id="python-collapsed-icon"></i></p>
             <a href="#" class="stretched-link" onclick="collapse('python', 'toggle')"></a>
           </div>  
-          <div class="collapse" id="python-collapse" data="collapsed" style="z-index: 2; position: relative;">
+          <div class="collapse" id="python-collapse" style="z-index: 2; position: relative;">
             <div class="card-body">
               <div class="container">
                 <div class="input-group flex-nowrap">
                   <span class="input-group-text" id="addon-wrapping">http://</span>
-                  <input type="text" id="email-username" class="form-control" placeholder="host" aria-label="host" aria-describedby="addon-wrapping">
+                  <input type="text" id="python-host" class="form-control" placeholder="host" aria-label="host" aria-describedby="addon-wrapping">
                   <span class="input-group-text" id="addon-wrapping">:</span>
-                  <input type="text" id="email-username" class="form-control" placeholder="port" aria-label="port" aria-describedby="addon-wrapping">
-                </div>
-                <br>
-                <div class="input-group flex-nowrap">
-                  <span class="input-group-text" id="addon-wrapping"><i class="bi bi-lock-fill"></i></span>
-                  <input type="password" id="email-password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="addon-wrapping">
+                  <input type="text" id="python-port" class="form-control" placeholder="port" aria-label="port" aria-describedby="addon-wrapping">
                 </div>
                 <br>
                 <div class="d-flex justify-content-between">
-                  <button class="btn btn-primary btn-refresh" id="refresh" onclick="verifyEmailService()"><i class="bi bi-arrow-clockwise"></i></button>
-                  <button class="btn btn-primary" id="email-submit" onclick="updateEmailService()">Update</button>
+                  <button class="btn btn-primary btn-refresh" id="python-refresh" onclick="verifyPythonService()"><i class="bi bi-arrow-clockwise"></i></button>
+                  <button class="btn btn-primary" id="python-submit" onclick="updatePythonService()">Update</button>
                 </div>
               </div>
             </div>
@@ -127,10 +131,10 @@
         <div class="card" id="email-card">
           <div class="card-body">
             <h4 class="card-title" id="email-card-title">Email service</h4>
-            <p class="card-text">Check status and update email service credentials</p>
+            <p class="card-text">Check status and update email service credentials <i class="bi bi-caret-down" id="email-collapsed-icon"></i></p>
             <a href="#" class="stretched-link" onclick="collapse('email', 'toggle')"></a>
           </div>
-          <div class="collapse" id="email-collapse" data="collapsed" style="z-index: 2; position: relative;">
+          <div class="collapse" id="email-collapse" style="z-index: 2; position: relative;">
             <div class="card-body">
               <div class="container">
                 <div class="input-group flex-nowrap">
@@ -144,7 +148,7 @@
                 </div>
                 <br>
                 <div class="d-flex justify-content-between">
-                  <button class="btn btn-primary btn-refresh" id="refresh" onclick="verifyEmailService()"><i class="bi bi-arrow-clockwise"></i></button>
+                  <button class="btn btn-primary btn-refresh" id="email-refresh" onclick="verifyEmailService()"><i class="bi bi-arrow-clockwise"></i></button>
                   <button class="btn btn-primary" id="email-submit" onclick="updateEmailService()">Update</button>
                 </div>
               </div>
@@ -188,11 +192,13 @@
       $('#'+id+'-collapse').collapse(showHide);
       
       $('#'+id+'-collapse').on('shown.bs.collapse', function () {
+        $('#'+id+'-collapsed-icon').removeClass('bi-caret-down').addClass('bi-caret-up');
         if (noColors)
           $('#'+id+'-card').addClass('non-animated').addClass('non-coloured');
       });
 
       $('#'+id+'-collapse').on('hidden.bs.collapse', function () {
+        $('#'+id+'-collapsed-icon').addClass('bi-caret-down').removeClass('bi-caret-up');
         if (noColors)
           $('#'+id+'-card').removeClass('non-animated').removeClass('non-coloured');
       });
@@ -201,6 +207,7 @@
 
   <script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
   <script type="text/javascript" src="http://localhost:5000/static/admin/emailService.js"></script>
+  <script type="text/javascript" src="http://localhost:5000/static/admin/pythonService.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 </body>
 

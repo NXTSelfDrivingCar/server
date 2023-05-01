@@ -1,5 +1,6 @@
 import { Authorization } from "../cookie/authorization";
 import axios from "axios";
+import { PythonServerConfig } from "../config/server/pythonServerConfig";
 
 
 // connectedClients: any = {}
@@ -333,7 +334,7 @@ export class WSClientHandler{
             }
         }
 
-        axios.post("http://python:5003/api/join/client", data, options)
+        axios.post(`${PythonServerConfig.CONNECTION}/api/join/client`, data, options)
             .then((res: any) => {
                 console.log("Python service connected!");
             }

@@ -13,6 +13,9 @@ import { EmailHandler } from "../emailHandler/emailHandler";
 import { EmailMessage } from "../emailHandler/messageModel";
 import { RouteWatcher } from "../cookie/routeWatcher";
 
+import { PythonServerConfig } from "../config/server/pythonServerConfig";
+
+import axios from "axios";
 
 const logger = new LogHandler();
 
@@ -72,8 +75,30 @@ module.exports = function(app: Application){
         });
     });
 
+    app.get("/api/admin/pythonservice/verify", RouteWatcher.logRoute("pythonVerification"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
+        axios.get(`${PythonServerConfig.CONNECTION}/api/python/verify`).then((data) => {
+            res.status(200).end();
+        }).catch((err) => {
+            res.status(500).end();
+        });
+    });
+
+    app.get("/api/admin/pythonservice/config", RouteWatcher.logRoute("pythonConfig"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
+        res.json({"host": PythonServerConfig.HOST, "port": PythonServerConfig.PORT});
+    });
 
     // ! =================== POST ROUTES =================== //
+
+    app.post("/api/admin/pythonservice/update", RouteWatcher.logRoute("pythonCheck"), Authorization.authRole("admin"), async (req: Request, res: Response) => {
+        var host = req.body.host;
+        var port = req.body.port;
+
+        if(!host || !port) return res.status(400).json({error: "No host or port provided"});
+
+        PythonServerConfig.updateConfig(host, port);
+        
+        res.status(200).json({success: "Python service updated"});
+    });
 
     app.post("/api/admin/emailservice/update", RouteWatcher.logRoute("emailServiceUpdate"), Authorization.authRole("admin"), Authorization.authUser(), async (req: Request, res: Response) => {
         var username = req.body.emailUsername;
