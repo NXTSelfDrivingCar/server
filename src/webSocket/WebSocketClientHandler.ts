@@ -98,7 +98,7 @@ export class WSClientHandler{
             return;
         }
 
-        
+
         this._removeFromConnectedClientsBySocketId(socketId);
         this._removeFromTmpClientsBySocketId(socketId);
         this._removeFromStreamerClientsBySocketId(socketId);
@@ -109,8 +109,8 @@ export class WSClientHandler{
     public async joinRooms(socket: any, data: any){
 
         console.log(" | " + socket.id + " Joining room: " + data.room);
-        
-        this._addToTmpClients(socket);        
+
+        this._addToTmpClients(socket);
 
         // If the room is not defined, disconnect the socket
         if (!data.room || socket.rooms.has(data.room)) {
@@ -163,13 +163,13 @@ export class WSClientHandler{
 
         // Get the client data
         var clientData = this._getConnectedClient(key)
-        
+
         // Get the user from the token
         var user = await Authorization.getUserFromToken(clientData.socket.token);
 
         // Get all rooms except the socket id room
         var rooms = [...clientData.socket.rooms]
-            .filter(room => room !== clientData.socket.id) 
+            .filter(room => room !== clientData.socket.id)
 
         if(user){
             return {
@@ -258,7 +258,7 @@ export class WSClientHandler{
     private _checkInSocket(socket: any, token: any){
 
         // If the socket is not a user, disconnect it or if it is not in any room
-        if(!socket["userId"] || socket.rooms.length < 2) 
+        if(!socket["userId"] || socket.rooms.length < 2)
         {
             this.removeClient(socket.id);
             socket.disconnect();
@@ -274,7 +274,7 @@ export class WSClientHandler{
             if(userAiSockets.length <= 0){
                 this._sendPythonRequest(token, rooms.get("ai"))
             }
-        } 
+        }
 
         if(socket.rooms.has("ai")){
             this._addToAiClients(socket);
@@ -283,8 +283,8 @@ export class WSClientHandler{
 
 
         // Socket cannot be a guest and not have the gps room (only GPS devices can be guests)
-        if(!socket.rooms.has("gps") && socket["userId"] === "guest") 
-        {   
+        if(!socket.rooms.has("gps") && socket["userId"] === "guest")
+        {
             this.removeClient(socket.id);
             socket.disconnect();
             return;
@@ -302,7 +302,7 @@ export class WSClientHandler{
     private async attachUserIdToSocket(socket: any, token: string = ""){
 
         console.log("Attaching user id to socket" + socket.id + " with token: " + token);
-        
+
 
         if(!token){
             token = Authorization.getTokenFromWS(socket, "auth");
@@ -333,7 +333,7 @@ export class WSClientHandler{
             }
         }
 
-        axios.post("http://localhost:5003/api/join/client", data, options)
+        axios.post("http://python:5003/api/join/client", data, options)
             .then((res: any) => {
                 console.log("Python service connected!");
             }
@@ -342,7 +342,7 @@ export class WSClientHandler{
             })
 
     }
-        
+
 
     // ? =================== INIT ===================
 

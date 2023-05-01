@@ -3,7 +3,6 @@ version: '3.0'
 services:
   node:
     container_name: node
-    image: antasmes/nxt-server:latest
     build: .
     volumes:
       - .:/usr/app/
@@ -33,21 +32,16 @@ services:
     container_name: python
     image: python
     build: ../pysrc
-    command:
-      - pip install numpy
-      - pip install socketio-python
-      - pip install asyncio
-      - pip install flask
-      - pip install opencv-python
-      - pip install matplotlib
-      - pip install imageio
-      - pip install flask[async]
+    volumes:
+      - ../pysrc:/usr/app/
+    working_dir: /usr/app
+    command: bash -c "pip install numpy python-socketio asyncio flask[async] opencv-python-headless matplotlib imageio requests && python main.py"
     ports:
       - "5003:5003"
     networks:
       - nodeNetwork
     depends_on:
-      - mongo
+      - node
   mongo:
     container_name: mongo
     image: mongo:latest
@@ -57,7 +51,7 @@ services:
       - c:/mongo/data:/data/db
     networks:
       - nodeNetwork
-      
+
 networks:
   nodeNetwork:
     driver: bridge
