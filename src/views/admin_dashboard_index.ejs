@@ -93,11 +93,33 @@
     <br />
     <div class="row">
       <div class="col-sm-6">
-        <div class="card">
+        <div class="card" id="python-card">
           <div class="card-body">
-            <h4 class="card-title">Logs</h4>
-            <p class="card-text">List all existing logs</p>
-            <a href="/admin/logs" class="stretched-link"></a>
+            <h4 class="card-title" id="python-card-title">Python service</h4>
+            <p class="card-text">Check if the python service is responsive</p>
+            <a href="#" class="stretched-link" onclick="collapse('python', 'toggle')"></a>
+          </div>  
+          <div class="collapse" id="python-collapse" data="collapsed" style="z-index: 2; position: relative;">
+            <div class="card-body">
+              <div class="container">
+                <div class="input-group flex-nowrap">
+                  <span class="input-group-text" id="addon-wrapping">http://</span>
+                  <input type="text" id="email-username" class="form-control" placeholder="host" aria-label="host" aria-describedby="addon-wrapping">
+                  <span class="input-group-text" id="addon-wrapping">:</span>
+                  <input type="text" id="email-username" class="form-control" placeholder="port" aria-label="port" aria-describedby="addon-wrapping">
+                </div>
+                <br>
+                <div class="input-group flex-nowrap">
+                  <span class="input-group-text" id="addon-wrapping"><i class="bi bi-lock-fill"></i></span>
+                  <input type="password" id="email-password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="addon-wrapping">
+                </div>
+                <br>
+                <div class="d-flex justify-content-between">
+                  <button class="btn btn-primary btn-refresh" id="refresh" onclick="verifyEmailService()"><i class="bi bi-arrow-clockwise"></i></button>
+                  <button class="btn btn-primary" id="email-submit" onclick="updateEmailService()">Update</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -142,6 +164,15 @@
           </div>
         </div>
       </div>
+      <div class="col-sm-6">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Logs</h4>
+            <p class="card-text">List all existing logs</p>
+            <a href="/admin/logs" class="stretched-link"></a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -153,16 +184,18 @@
   </div>
 
   <script>
-    function collapse(id, showHide, noColors = true){
+    async function collapse(id, showHide, noColors = true){
       $('#'+id+'-collapse').collapse(showHide);
       
-      if($('#'+id+'-collapse').attr('data') == 'collapsed' && noColors == true){
-        $('#'+id+'-collapse').attr('data', 'expanded');
-        $('#'+id+'-card').addClass('non-animated').addClass('non-coloured');
-      }else{
-        $('#'+id+'-collapse').attr('data', 'collapsed');
-        $('#'+id+'-card').removeClass('non-animated').removeClass('non-coloured');
-      }
+      $('#'+id+'-collapse').on('shown.bs.collapse', function () {
+        if (noColors)
+          $('#'+id+'-card').addClass('non-animated').addClass('non-coloured');
+      });
+
+      $('#'+id+'-collapse').on('hidden.bs.collapse', function () {
+        if (noColors)
+          $('#'+id+'-card').removeClass('non-animated').removeClass('non-coloured');
+      });
     }
   </script>
 
