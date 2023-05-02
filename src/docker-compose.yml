@@ -33,9 +33,7 @@ services:
   python:
     container_name: python
     image: antasmes/python-server:dev
-    volumes:
-      - ../pysrc:/usr/app/
-    working_dir: /usr/app
+    working_dir: /app
     command: bash -c "pip install numpy python-socketio asyncio flask[async] opencv-python-headless matplotlib imageio requests && python main.py"
     ports:
       - "5003:5003"

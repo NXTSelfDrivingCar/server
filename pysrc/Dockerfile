@@ -1,6 +1,6 @@
 FROM python
 
-WORKDIR /
+WORKDIR /app
 
 COPY . ./
 
