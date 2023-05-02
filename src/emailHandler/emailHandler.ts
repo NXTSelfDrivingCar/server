@@ -69,12 +69,33 @@ export class EmailHandler {
     }
 
     public async sendEmail(message: EmailMessage): Promise<any> {
-        return await this.transporter.sendMail({
-            from: this.getFrom(),
-            to: message.to,
-            subject: message.subject,
-            text: message.text
-        });
+        this.logData = {
+            origin: "EmailHandler",
+            action: "sendingEmail",
+            message: "Sending email to account",
+            auth: {
+                user: this.user,
+                pass: this.pass
+            },
+            email: {
+                from: this.getFrom(),
+                to: message.to,
+                subject: message.subject,
+                text: message.text
+            }            
+        }
+        try{
+            return await this.transporter.sendMail({
+                from: this.getFrom(),
+                to: message.to,
+                subject: message.subject,
+                text: message.text
+            });
+        }catch(err){
+            this.logData.method = "sendEmail";
+            this.logData.error = err;
+            logger.error(this.logData);
+        }
     }
 
     private getFrom(): string {

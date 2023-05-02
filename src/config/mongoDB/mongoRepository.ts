@@ -32,7 +32,7 @@ export abstract class MongoRepository<T> {
             await this._client!!.connect();
             this._db = this._client!!.db(MongoConfig.DATABASE);
             this._collection = this._db!!.collection(this._collectionName);
-            
+
             return true
         }
         catch(err)

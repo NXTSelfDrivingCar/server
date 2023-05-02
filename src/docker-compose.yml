@@ -3,7 +3,8 @@ version: '3.0'
 services:
   node:
     container_name: node
-    image: antasmes/nxt-server:dev
+    #image: antasmes/nxt-server:dev
+    build: .
     volumes:
       - .:/usr/app/
       - /usr/app/node_modules
@@ -13,27 +14,26 @@ services:
       - "5000:5000"
       - "5001:5001"
     environment:
-      - MONGODB_URL=mongodb://host.docker.internal
+      - MONGODB_URL=mongodb://mongo
       - MONGODB_PORT=27017
-      - MONGODB_DBATABASE=testDB
+      - MONGODB_DATABASE=testDB
       - JWT_SECRET=hocuNoviFont
-      - HTTP_SERVER_HOST:localhost
+      - HTTP_SERVER_HOST=localhost
       - HTTP_SERVER_PORT=5000
       - WS_SERVER_HOST=localhost
       - WS_SERVER_PORT=5001
       - PYTHON_SERVER_HOST=python
       - PYTHON_SERVER_PORT=5003
-      - B_SALT=9
-      - EMAIL_AUTH_USER = akitasevski113@gmail.com
-      - EMAIL_AUTH_PASS = skofigbukcdratsf
+      - B_SALT=8
+      - EMAIL_AUTH_USER=akitasevski113@gmail.com
+      - EMAIL_AUTH_PASS=skofigbukcdratsf
     depends_on:
       - mongo
     networks:
       - nodeNetwork
   python:
     container_name: python
-    image: python
-    build: ../pysrc
+    image: antasmes/python-server:dev
     volumes:
       - ../pysrc:/usr/app/
     working_dir: /usr/app
