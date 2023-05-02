@@ -3,7 +3,7 @@ version: '3.0'
 services:
   node:
     container_name: node
-    build: .
+    image: antasmes/nxt-server:dev
     volumes:
       - .:/usr/app/
       - /usr/app/node_modules
