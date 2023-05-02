@@ -16,9 +16,11 @@ jobs:
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD_ANTASMES }}
       run: |
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-    - name: docker build nodeJS
+    - name: docker build
       run: |
         docker build ./src -t antasmes/nxt-server:dev
+        docker build ./pysrc -t antasmes/python-server:dev
     - name: docker-push
       run: |
         docker push antasmes/nxt-server:dev
+        docker push antasmes/python-server:dev
