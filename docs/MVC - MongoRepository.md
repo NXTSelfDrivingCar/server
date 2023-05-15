@@ -37,7 +37,30 @@ Lista funkcija u klasi `MongoRepository<T>`
 
 ### Provera konekcije
 
-Provera konekcije sa MongoDB vrsi se u izvedenoj klasi pre svakog izvrsavanja upita nad bazom.
+Provera konekcije sa MongoDB vrsi se u izvedenoj klasi pre svakog izvrsavanja upita nad bazom, upotrebom funkcije `_isConnected()`.
+
+```js
+protected async _isConnected(): Promise<boolean> {
+        try
+        {
+            await this._client!!.connect();
+            this._db = this._client!!.db(MongoConfig.DATABASE);
+            this._collection = this._db!!.collection(this._collectionName);
+
+            return true
+        }
+        catch(err)
+        {
+            this.logData.method = "_isConnected";
+            this.logData.error = err;
+            logger.error(this.logData)
+
+            return false;
+        }
+    }
+```
+
+Funckija proverava da li _MongoDB Client_ moze da se poveze sa definisanim kredidencijalima. `MongoRepository` podesava `_db` i `_collection` na potrebne vrednosti.
 
 ```js
 public async delete(id: string): Promise<any> {
