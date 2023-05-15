@@ -64,31 +64,47 @@ Pored njih, kljuc `level` se dodaje kao filter nivoa tezine vaznosti loga i `tim
 
 ```json
 {
-    "origin": "UserRepository",
-    "collection": "users",
-    "method": "_findUserByFilter",
-    "filter": {
-      "id": "64092371-76d1-46f6-aebd-e60751dc93ec"
-    },
-    "level": "INFO",
-    "timestamp": 1679003046115
+  "origin": "UserRepository",
+  "collection": "users",
+  "method": "_findUserByFilter",
+  "filter": {
+  "id": "64092371-76d1-46f6-aebd-e60751dc93ec"
+  },
+  "level": "INFO",
+  "timestamp": 1679003046115
 }
 ```
 
-#### Logovanje ruti
+#### Logovanje ruti (RouteWatcher)
 
-Logovanje zahteva koji su poslati na neku adresu se moze obaviti upotrebom funkcije `logRoute(action: string, extra: any = {})`, koja za parametar `action` uzima naziv akcije koji je uradjen na nekoj adresi (recimo `GET` na adresi `/admin/users/list` bi mogao da bude `action = getUsers`). 
+> **Note**
+> Upotreba funkcije `logRoute` prebacena je iz `LogHandler` u `RouteWatcher` klasu, radi resavanja problema ciklicne zavisnosti.
+
+Logovanje zahteva koji su poslati na neku adresu se moze obaviti upotrebom staticke funkcije `logRoute(action: string, extra: any = {})` u klasi `RouteWatcher`, koja za parametar `action` uzima naziv akcije koji je uradjen na nekoj adresi (recimo `GET` na adresi `/admin/users/list` bi mogao da bude `action = getUsers`). 
 Upotreba ove funkcije zahteva njeno smestanje kao [middleware](https://github.com/NXTSelfDrivingCar/server/blob/main/docs/HTTPServer.md#rutiranje).
+
+```js
+// RouteWatcher class
+public static logRoute(action: string, extra: any = {}) {
+	return (req: Request, res: Response, next: any) => {
+	    RouteWatcher._logRoute(req, res, next, action, extra);
+	    next();
+	}
+}
+```
+
+Parametri koje korisnik prosledjuje su `action` i `extra`, dok se `req` i `res` prosledjuju automatski, kao deo _middleware_ procesa.
 
 > Logovi kreirani u procesu belezenja zahteva se oznacavaju kljucem `origin: route`
 
 ```js
-app.get("/admin/users/list", logger.logRoute("listUsers"), ... , async (req: Request, res: Response) => { ... }
+app.get("/admin/users/list", RouteWatcher.logRoute("listUsers"), ... , async (req: Request, res: Response) => { ... }
 ```
 
 Ovak log je zaduzen za belezenje svih zahteva i parametara koji su kroz njega prosledjeni. 
 
-> NOTE: `logRoute` ne belezi citav zahtev, vec samo prosledjene parametre. 
+> **Note**
+> `logRoute` ne belezi citav zahtev, vec samo prosledjene parametre. 
 
 Primer loga koji belezi pristupanje jednom od log fajlova.
 
@@ -163,3 +179,38 @@ U ovom logu se mogu pronaci mnoge bitne informacije o prosledjenom zahtevu ili k
 - Strana porekla
 - Ciljana strana
 - Podaci o korisniku
+
+## Proces inicijalizacije
+
+Pri svakoj inicijalizaciji klase `LogHandler` vrsi se provera dostupnosti direktorijuma za smestanje log fajlova i provera da li je neki trenutno otvoren. Ovaj proces pokrece se automatskim pozivanjem
+funkcije `open()`.
+- Inicijalizacija klase `LogHandler`
+- Provera trenutnog statusa aktivnosti loga (inicijalno **CLOSED**)
+- Provera dostupnosti direktorijuma za cuvanje log fajlova - `_prepareDir()`
+- Postavljanje putanje ka aktivnom logu
+- Postavljanje statusa aktivnosti loga na **OPEN**
+- Unosenje inicijalnih vrednosti u log radi postavljanja strukture JSON fajla - `_writeOpener()`
+
+```js
+// LogHandler class
+constructor(){
+        LogHandler.filePath = path.join(__dirname, "..", "logs");
+
+        this.open();
+    }
+    
+    open(){
+        if(LogHandler.status == statuses.OPEN){
+            return;
+        }
+
+        this._prepareDir();
+        
+        LogHandler.currentFile = path.join(LogHandler.filePath.toString(), fileName);
+        LogHandler.status = statuses.OPEN;
+
+        this._writeOpener();
+    }
+    
+    ...
+```
